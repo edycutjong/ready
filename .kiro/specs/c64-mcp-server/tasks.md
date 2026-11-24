@@ -80,9 +80,9 @@ spec itself; these tasks are the implementation plan.
   - _Requirements: R3.7, R3.8, R4.4, R4.5, R10.2, R10.3, R10.4, R10.5, R10.6, R10.7, R10.8, R14.1_
 
 - [x] 6. Crash recovery and isolation — claude-direct (P1b, Kiro credit line c64-mcp-server at 68.71/70 after task 5; 6.1 done, 6.2 core cases in `tests/unit/mcp-crash.test.ts`; file-set + import audit open)
-  - [ ] 6.1 Complete `withEmu` in `tools.ts` per `design.md` (reboot, re-type, `restart` + `load` events, one retry,
+  - [x] 6.1 Complete `withEmu` in `tools.ts` per `design.md` (reboot, re-type, `restart` + `load` events, one retry,
     fatal `emulator crashed twice`), with the crash count seeded from `events.jsonl` (R2.6).
-  - [ ] 6.2 Extend `tests/unit/mcp-tools.test.ts` with `throwingCore`: one crash during `c64_run` recovers and
+  - [~] 6.2 (core crash cases done in tests/unit/mcp-crash.test.ts + the updated R11.6 case; file-set test and import audit open) Extend `tests/unit/mcp-tools.test.ts` with `throwingCore`: one crash during `c64_run` recovers and
     returns the retry's result; a second crash ends the run with the exact tool error and `error` event; a crash
     during recovery is fatal; one crash in each of two process lifetimes is fatal; recovery leaves listing,
     `provisional`, `iteration` and `contract` unchanged. Add the file-set test (only the R13.1 files exist, no
@@ -91,10 +91,10 @@ spec itself; these tasks are the implementation plan.
   - _Requirements: R2.6, R4.4, R12.1, R12.2, R12.3, R13.1, R13.2, R13.3, R13.4, R14.1_
 
 - [x] 7. `server.ts` and the stdio test — claude-direct (P1b, same cap)
-  - [ ] 7.1 Create `mcp/c64-server/server.ts` per `design.md` "server.ts wiring": console redirect, `RUN_DIR` check,
+  - [x] 7.1 Create `mcp/c64-server/server.ts` per `design.md` "server.ts wiring": console redirect, `RUN_DIR` check,
     dynamic imports, `bootNodeCore()`, `createTools`, low-level `Server` with `ListToolsRequestSchema` and
     `CallToolRequestSchema` handlers, `StdioServerTransport`, exit 0 on stdin end, `SIGTERM`, `SIGINT`.
-  - [ ] 7.2 Tests in `tests/unit/mcp-stdio.test.ts`: spawn `node mcp/c64-server/server.ts` with `RUN_DIR` in `env`,
+  - [x] 7.2 Tests in `tests/unit/mcp-stdio.test.ts`: spawn `node mcp/c64-server/server.ts` with `RUN_DIR` in `env`,
     connect the SDK client, `listTools` returns the 6 names in order with object schemas, `callTool` `checksum_line`
     equals `computeChecksum`, a malformed call returns `isError`, `client.close()` then exit code 0; a spawn with no
     `RUN_DIR` exits non-zero with `RUN_DIR` on stderr and writes no file; a spawn with a bad `input.json` exits

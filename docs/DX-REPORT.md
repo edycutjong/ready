@@ -80,12 +80,13 @@ day-1 production deploys were made with `npm run deploy:prod` (`vercel build`, `
 | G1 | `scripts/record-run.mjs` → `--v3 --no-interactive --agent resurrector` | Spike G attempt 1 on the June 1984 title path: TITLE-PATH RESURRECTED; the recorder (ours) crashed after the cycle | claude-sonnet-5.5 | 2.48 |
 | G2 | same | Spike G attempt 2 = the K3 cost session: TITLE-PATH RESURRECTED, 5 `apply_patch` calls, 67.6 s, 1 cycle | claude-sonnet-5.5 | 2.20 |
 
-### Measured headless (kiro-cli 3.5.0, `evidence/spikes/spike-G.json`)
+### Measured headless (kiro-cli 3.6.0 — the K1–K3 probes ran on 3.5.0; `evidence/spikes/spike-G.json`)
 - The custom agent loads MCP tools on demand and works only through them: attempt 2 made 20 `checksum_line`, 5
   `apply_patch` and 3 `c64_run` calls; every patch was accepted by the gate (no refusal happened, so the on-screen
   refusal stays Cheat).
-- **All three inline hooks fire headless:** Session Start (`listing-context`) 2×, Pre Tool Use on `@c64/apply_patch`
-  (`checksum-gate`) 5× exit 0, Agent Stop (`until-title`) 1× — it allowed the stop because the contract computed by
+- **All three inline hooks fire headless:** Session Start (`listing-context`) 1× per session (a second logged firing
+  was the recorder's own `--context` spawn of the same script; it is now labelled `runner-context`), Pre Tool Use on
+  `@c64/apply_patch` (`checksum-gate`) 5× exit 0, Agent Stop (`until-title`) 1× — it allowed the stop because the contract computed by
   the MCP server was RESURRECTED.
 - Kiro's own scope rule denied its write to `.kiro/settings/mcp.json`; Kiro reported it and gave the exact content,
   which we wrote (claude-direct).
@@ -94,7 +95,8 @@ day-1 production deploys were made with `npm run deploy:prod` (`vercel build`, `
 ### What the build found
 - tesseract.js 7 (psm 6) read a printed `PR1NT` as `PRINT`: its dictionary "fixed" the planted misprint, so it never
   reached the C64. The authored page plants `PRIMT` instead; OCR also read its quote as `™` (`fixtures/authored/`).
-- Search without a model (E0) fixed 3 of the 18 failing title-path lines; the agent fixed all 18 (`evidence/experiments/e0.json`).
+- Search without a model (E0) made 3 of the 18 failing title-path lines checksum-consistent; the agent made all 18
+  checksum-consistent and the title path RESURRECTED (`evidence/experiments/e0.json`, `docs/EXPERIMENTS.md`).
 - Checksum-consistent is not source-exact: 19/28 of the resurrected title path equal the reference transcript.
 
 ### Who wrote what (P1b)
@@ -104,3 +106,18 @@ tests (tasks 1–5), `.kiro/agents/resurrector.json`, `.kiro/steering/resurrecto
 `server.ts`, stdio + crash tests) are claude-direct and labelled in `tasks.md` and the commits; `.kiro/settings/mcp.json`;
 the hook commands `scripts/hooks/{checksum-gate,until-title,listing-context}.mjs`; the REPLAY engine and desk UI;
 the recorder fixes; `scripts/{make-run-input,typeset-authored,e0-search,source-check,e2e-replay}.mjs`.
+
+### Tightened after QA round 1 (P1b)
+- The agent profile no longer grants the built-in `read` tool and denies `fs_read` outright (it had been a blocklist;
+  the G runs made 0 read calls). The listing reaches the agent only through the Session Start hook and the MCP tools.
+- Only CHECKSUM refusals are charged to a line (a refused deletion can never unlock `force_unverified`), and the
+  iteration cap counts refused calls, not lines.
+- The stop rule keeps the agent working when every line is checksum-consistent but the C64 still fails.
+- A run that ends with an accepted patch never RUN gets a final judge by the runner on a fresh headless C64.
+
+### Open (spec tasks not done yet, stated so nothing reads as finished)
+`c64-mcp-server` task 8 (property tests P4/P5/P7/P8/P9 + timing measurements). `resurrect-loop` T2–T6 are partly
+covered by the P1b fixes above and the harness tests; the `suspect` flag (a checksum-matching patch that makes the run
+worse) and `apply_patch` returning a re-run screen are not implemented — the agent calls `c64_run` after each patch, and
+the stop rule refuses to stop on an unrun patch.
+
