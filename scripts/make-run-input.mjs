@@ -16,12 +16,15 @@ const meta = listings[a.listing];
 if (!meta) throw new Error(`unknown listing ${a.listing}`);
 const rec = JSON.parse(readFileSync(a.recovered, "utf8"));
 const expected = new Set(meta.spec.expectedLines);
-const lines = rec.lines.map((l) => {
+// out-of-scope orphans are never typed (they would break clause 6); each exclusion is an event on the certificate
+const recovery = [...(rec.recovery ?? [])];
+for (const l of rec.lines.filter((x) => !expected.has(x.n))) recovery.push({ k: "recovery", op: "orphan", ocrNumber: l.n, outcome: "orphan-excluded" });
+const lines = rec.lines.filter((l) => expected.has(l.n)).map((l) => {
   const c = checkLine(l.n, l.body, l.printed ?? null);
   return { n: l.n, body: l.body, printed: l.printed ?? null, status: c.status === "mismatch" ? "unverified" : c.status, source: l.source ?? "ocr" };
 });
 const provisional = lines.filter((l) => l.source === "re-ocr" || l.source === "typed").map((l) => l.n);
-const input = { listingId: a.listing, scope: meta.scope, spec: meta.spec, lines, provisional, origin: { recovered: a.recovered.split("/").pop(), note: meta.note } };
+const input = { listingId: a.listing, scope: meta.scope, spec: meta.spec, lines, provisional, recovery, ocr: rec.ocr ?? null, certificateNote: meta.certificateNote ?? null, origin: { recovered: a.recovered.split("/").pop(), note: meta.note } };
 writeFileSync(a.out, JSON.stringify(input, null, 1) + "\n");
 const by = (s) => lines.filter((l) => expected.has(l.n) && l.status === s).length;
-console.log(JSON.stringify({ out: a.out, lines: lines.length, verified: by("verified"), digitMisread: by("digit-misread"), unverified: by("unverified"), provisional, outOfScope: lines.filter((l) => !expected.has(l.n)).map((l) => l.n) }));
+console.log(JSON.stringify({ out: a.out, lines: lines.length, verified: by("verified"), digitMisread: by("digit-misread"), unverified: by("unverified"), provisional, recovery: recovery.map((r) => `${r.op}:${r.line ?? r.ocrNumber}:${r.outcome}`) }));

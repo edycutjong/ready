@@ -46,7 +46,18 @@
     ],
     "screenContains": "RANDOM SEEDS."
    }
-  }
+  },
+  "scopeRanges": [
+   [
+    1,
+    100
+   ],
+   [
+    885,
+    941
+   ]
+  ],
+  "certificateNote": "DATA not executed"
  },
  "line20": {
   "title": "The Last Seance (authored 2026 page)",
@@ -76,6 +87,12 @@
     ],
     "screenContains": "THE SPIRITS ANSWER"
    }
-  }
+  },
+  "scopeRanges": [
+   [
+    0,
+    63999
+   ]
+  ]
  }
 }
