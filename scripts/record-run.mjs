@@ -5,7 +5,11 @@
  *
  *   node scripts/record-run.mjs --listing <id> --prompt-file <f> [--agent resurrector] [--model claude-sonnet-5.5]
  *        [--workspace .] [--trust-tools @c64/apply_patch,...] [--stop-check "node scripts/hooks/until-title.mjs --check"]
- *        [--out runs/<id>/<iso>.jsonl] [--ledger ledger]
+ *        [--out runs/<id>/<iso>.jsonl] [--ledger ledger] [--input <input.json>] [--kiro-bin kiro-cli]
+ *
+ * --input: the run's $RUN_DIR/input.json (listingId, scope, spec, canonical lines after recovery, provisional) that
+ * the c64 MCP server types in at start; copied into RUN_DIR and stored whole in the `start` event (replay fidelity,
+ * agents.md §6: REPLAY re-executes the patches on this exact OCR input, never on the judge's own OCR).
  *
  * Measured on kiro-cli 3.5.0 (spike K2, evidence/spikes/): in `--v3 --no-interactive` an Agent Stop hook's
  * {decision:"block"} forces ONE more turn per prompt and does not fire again. So the recorder runs cycles: after
@@ -14,7 +18,7 @@
  * Caps per run: 15 iterations (apply_patch calls), 8 credits, 600 s wall (runner/budget.ts). Never --trust-all-tools.
  */
 import { spawn, spawnSync } from "node:child_process";
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { parseLine, sessionIdOf } from "../runner/stream.ts";
 import { CAPS, capHit, addToLedger } from "../runner/budget.ts";
@@ -30,8 +34,11 @@ const trust = args["trust-tools"] ?? "@c64/c64_reload,@c64/c64_run,@c64/c64_read
 if (/trust-all/.test(trust)) throw new Error("never --trust-all-tools");
 if (!args["stop-check"]) throw new Error("--stop-check is required: the model never decides when to stop"); // validated before any credit is spent
 const prompt0 = readFileSync(args["prompt-file"], "utf8");
+const kiroBin = args["kiro-bin"] ?? process.env.KIRO_BIN ?? "kiro-cli"; // tests swap in a stub child
 mkdirSync(dirname(out), { recursive: true });
 mkdirSync(runDir, { recursive: true });
+let runInput = null;
+if (args.input) { copyFileSync(resolve(args.input), join(runDir, "input.json")); runInput = JSON.parse(readFileSync(join(runDir, "input.json"), "utf8")); }
 
 const t = () => new Date().toISOString();
 const emit = (e) => appendFileSync(out, JSON.stringify({ t: t(), ...e }) + "\n");
@@ -41,7 +48,8 @@ let sessionId = null;
 let cycles = 0;
 let stop = { stop: false, reason: "", result: "not-resurrected" };
 
-emit({ k: "start", model, mode: "live", listing, runner: { kiroCli: kiroVersion(), agent: args.agent ?? null, trustTools: trust.split(","), caps: CAPS } });
+emit({ k: "start", model, mode: "live", listing, runDir: runDir.replace(workspace, "."), runner: { kiroCli: kiroVersion(), agent: args.agent ?? null, trustTools: trust.split(","), caps: CAPS }, input: runInput });
+writeCredits();
 
 let prompt = prompt0;
 let liveCheck = () => {};
@@ -74,7 +82,7 @@ console.log(JSON.stringify({ out, runDir, cycles, iterations: state.iterations, 
 
 function runKiro(cliArgs, timeoutMs) {
   return new Promise((res) => {
-    const child = spawn("kiro-cli", cliArgs, { cwd: workspace, env: { ...process.env, RUN_DIR: runDir } });
+    const child = spawn(kiroBin, cliArgs, { cwd: workspace, env: { ...process.env, RUN_DIR: runDir } });
     let buf = "";
     let killed = false;
     const stop = (why) => { if (killed) return; killed = why; child.kill("SIGTERM"); setTimeout(() => child.kill("SIGKILL"), 5000).unref(); };
@@ -82,6 +90,8 @@ function runKiro(cliArgs, timeoutMs) {
     const calls = new Map();
     // live caps: iterations are counted from the stream as they happen; credits arrive once per process (K3), so
     // the credit cap can only be checked between cycles — a cycle may overshoot it by its own spend (logged).
+    // The iteration kill is armed on the RESULT of the cap-reaching call (QA P1a r2): killing on the call itself
+    // raced its tool_result, so the 15th fix attempt's verdict was lost from the record.
     liveCheck = () => { if (state.iterations >= CAPS.iterations) stop("iterations"); };
     child.stdout.on("data", (d) => {
       buf += d.toString();
@@ -98,22 +108,28 @@ function runKiro(cliArgs, timeoutMs) {
 }
 
 function onEvent(ev, calls) {
-  if (ev.k === "credits") { metered = true; state.credits = (state.credits ?? 0) + ev.usage; emit({ k: "credits", metered: true, delta: ev.usage, total: state.credits }); return; }
+  if (ev.k === "credits") { metered = true; state.credits = (state.credits ?? 0) + ev.usage; emit({ k: "credits", metered: true, delta: ev.usage, total: state.credits }); writeCredits(); return; }
   if (ev.k === "tool_load") { emit({ k: "kiro", op: "tool_load", id: ev.id }); return; }
   if (ev.k === "tool_call") {
     calls.set(ev.toolCallId, ev);
-    if (/apply_patch/.test(ev.title)) { state.iterations++; liveCheck(); }
+    if (/apply_patch/.test(ev.title)) { state.iterations++; writeCredits(); }
     emit({ k: "kiro", op: "tool_call", title: ev.title, server: ev.server, input: ev.input });
     return;
   }
   if (ev.k === "tool_result") {
     const call = calls.get(ev.toolCallId);
-    if (ev.hookRefusal) { state.iterations++; liveCheck(); } // a refused fix attempt is an iteration too (the hook stops it before the server)
-    if (ev.hookRefusal) emit({ k: "hook", hook: "checksum-gate", exit: 2, stderr: hookText(ev.text), tool: call?.title });
+    // a hook-refused fix attempt has a tool_call too (counted above); its result is the hook's STDERR
+    if (ev.hookRefusal) emit({ k: "hook", hook: "checksum-gate", exit: 2, stderr: hookText(ev.text), tool: call?.title, via: "kiro-stream" });
     else emit({ k: "kiro", op: "tool_result", title: call?.title, status: ev.status, permissionDenied: ev.permissionDenied, text: ev.text.slice(0, 4000) });
+    if (/apply_patch/.test(call?.title ?? "")) liveCheck();
     return;
   }
   if (ev.k === "finished") emit({ k: "kiro", op: "finished", status: ev.status, stopReason: ev.stopReason, finalText: ev.finalText.slice(0, 4000) });
+}
+
+/** $RUN_DIR/credits.json — the runner is the only writer; until-title.mjs reads it for the caps (agents.md §3). */
+function writeCredits() {
+  writeFileSync(join(runDir, "credits.json"), JSON.stringify({ metered, credits: metered ? state.credits : null, iterations: state.iterations, startedAt: state.startedAt }) + "\n");
 }
 
 function hookText(text) {
@@ -150,6 +166,6 @@ function finalResult() {
 }
 
 function kiroVersion() {
-  const r = spawnSync("kiro-cli", ["--version"], { encoding: "utf8" });
+  const r = spawnSync(kiroBin, ["--version"], { encoding: "utf8" });
   return (r.stdout || "").trim();
 }

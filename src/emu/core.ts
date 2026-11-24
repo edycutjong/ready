@@ -60,11 +60,7 @@ export type C64Error = { kind: string; line: number | null };
  * Only text after the last `RUN` is considered when `afterRun` is set.
  */
 export function parseError(screen: string, afterRun = true): C64Error | null {
-  let s = screen;
-  if (afterRun) {
-    const i = s.lastIndexOf("RUN");
-    if (i >= 0) s = s.slice(i);
-  }
+  const s = afterRun ? afterLastRun(screen) : screen;
   const all = [...s.matchAll(/\?([A-Z' ]+?)\s+ERROR(?: IN (\d+))?/g)];
   const m = all.at(-1);
   if (!m) return null;
@@ -139,9 +135,15 @@ export function pressKeys(core: C64Core, codes: readonly number[], frames = 100)
   return readScreenText(core);
 }
 
+/**
+ * Screen text after the echoed `RUN` command: the last ROW that is exactly "RUN" (P1a QA r2: a bare lastIndexOf
+ * matched "RUN" inside program output such as "RUNNING", hiding earlier text). If the program cleared the screen
+ * the echo is gone and the whole screen is program output.
+ */
 export function afterLastRun(screen: string): string {
-  const i = screen.lastIndexOf("RUN");
-  return i >= 0 ? screen.slice(i + 3) : screen;
+  const rows = screen.split("\n");
+  for (let r = rows.length - 1; r >= 0; r--) if (rows[r].trim() === "RUN") return rows.slice(r + 1).join("\n");
+  return screen;
 }
 
 /** The tokenized program resident in BASIC memory: bytes $0801 .. VARTAB-1 (contract clause 6). */
