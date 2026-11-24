@@ -1,0 +1,37 @@
+# Prompt/steering/gate freeze #2 — after /a2a arch round 01 (P1d), 2026-11-24T21:12:02Z
+git HEAD: 9817c32a96267125d83ca58ff56f380974ba5668
+
+Supersedes freeze-2026-11-25.txt for every run recorded from now on (held-out runs, evals release 2). Runs recorded
+before it (the line-20 hero, eval cases 1 and 3, the local Gazette G run + smoke) ran under freeze #1; each one re-judges
+with 0 mismatches and the same verdict under this code (evidence/e2e/replay-line20.json for the published run).
+
+Changed since freeze #1 (a2a arch-01 commits): checkLine refuses characters no C64 key types; clause 4 recomputes
+checksums; clause 2 needs text produced by the post-title press; the loader never types a line outside the
+inventory; c64_run records maxFrames; listing-context labels orphans as never typed.
+
+sha256 of the files the agent and the gate run on (21 from freeze #1, + the session and replay modules):
+b8f0b37eb5d65f10b5cc7a561b97a563f5b78edc32fee8a98c3399d6fd0af726  .kiro/agents/resurrector.json
+4d01b7865b335296d3f573e31acf3df84a1f2b7f6800507f581180cb912458a5  .kiro/steering/basic-modules.md
+413341152c372b10df2f9176db040936bf697fe1af2e6ccb1fe1d3eec7dc5bc8  .kiro/steering/commodore-basic-v2.md
+ff0f0ff7e0a1a6645ee3a0f06a7646a5b2ea2f38be757d9bb5eeef74e8c75ed9  .kiro/steering/gazette-notation.md
+0962b42f80ad597593322b06102850f34efd1289f4e324fff48a2ad7a7b77d78  .kiro/steering/product.md
+4e1e434a68bcbe8cfe1c73b5391013f8fa2beda4652f747c3b8a48cb84dba10b  .kiro/steering/resurrector.md
+a423358bfe523849c132c1c7d3b9ade65e1a82327f4ce5e261273d23bb9c128c  .kiro/steering/structure.md
+816337542b78b022193358ff3fe36fdd58bd7219e83e07c46eb5a9bf910d68b1  .kiro/steering/tech.md
+52b9105bf86ea8cdd8596c9ff93127be9aa6345d1a666aa86c18598f7ff404ce  .kiro/skills/petscii-notation/SKILL.md
+e582969f00e20a6b0d0626196f4fd6e8e7ac3c2309f6b2aadcc3966b9094d5e3  src/gate/checksum-gate.ts   (changed)
+165a8c93b7f34eaae5ac80a413f823c2ca31b66f11db009ffcda2a75b8c7ae7c  src/gate/contract.ts   (changed)
+919a7cc6b11a702660434a11730667b64e246013373e4577ed7b120b02e6c34c  src/basic/checksum.ts
+45d4e281d323daac97aedfb345dd0822428a14ebdfeef112722b01984e7cf9cb  scripts/hooks/checksum-gate.mjs
+2d88114d6448499f5bb8638f5253d82dddbe12abb47becea01a401dc466a170f  scripts/hooks/listing-context.mjs   (changed)
+ec67b38116ad50cffc606ba43ad7d09dfe077120a0eefd875da407715ef0a215  scripts/hooks/prop-tests-on-save.mjs
+e10636c28c396cb07e6ac398fe68705976931524ae820e51f9cb2e14f4e4fc99  scripts/hooks/until-title.mjs
+6d6e8aa323e6c87b4b073dfabc6a9a95407d428370addc5200ee473e52248452  mcp/c64-server/render.ts   (changed)
+278a236c2f10a2f0c6920cc50692f4bf856f99f858c03f400f491d9daf13cf01  mcp/c64-server/rundir.ts
+78c5385b72469680dbfe7a5deb8cc616736b0723996bdd4e2667231aedde6556  mcp/c64-server/schemas.ts
+50941d9ce273db3eed6dec8af88c46a2353ee5d7f9ac2bacf47a1729be1a8e6c  mcp/c64-server/server.ts
+64438c63d6f4cbfea40f3e9ad99fcf45cda7417d23b619af182789cd5fae820f  mcp/c64-server/tools.ts   (changed)
+ae1fd63ce3147d527c7f16d483839a73830eee45f16dedd7c70ebd040d230e47  src/emu/session.ts   (added)
+c2d7433557cb3bdbcbe055f080478a5915cfffaf069c52ddf9d9366ebee4bf32  src/replay/replay.ts   (added)
+
+prompt0 (run-prompt-resurrect.md) sha256: 2014ca8e246fbb9eb50a187ad092fb94c48dd8745863a185e3e859ef7e5398a1  (unchanged)
