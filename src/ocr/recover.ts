@@ -7,6 +7,17 @@
  * re-OCR'd, else a PERSON types it (scripts/type-lost-lines.mjs), labelled TYPED.
  */
 import { computeChecksum } from "../basic/checksum.ts";
+import { parseBody } from "../basic/notation.ts";
+
+/**
+ * Two readings are one line when the C64 would store the same bytes (a2a arch-01). The checksum ignores every space
+ * (R2.2), but a space inside quotes is typed (R1.4); stripping all whitespace let two readings that differ only in a
+ * quoted space count as one and "recover" the first.
+ */
+const typedKey = (body: string): string => {
+  const p = parseBody(body);
+  return `${p.codes.join(",")}|${p.dropped.map((d) => d.char).join("")}`;
+};
 
 export type Row = { text: string; bbox: { x0: number; y0: number; x1: number; y1: number } };
 export type Logical = { n: number; body: string; printed: number | null; rows: number[] };
@@ -67,7 +78,7 @@ export function planRecovery(logical: readonly Logical[], rows: readonly Row[], 
 /** One lost line from its re-OCR candidates: exactly one distinct checksum-valid body → recovered; else TYPED by a person. */
 export function chooseRecovered(n: number, candidates: readonly Logical[]): { outcome: "recovered" | "ambiguous" | "still-lost"; line?: Logical; validDistinct: number } {
   const good = candidates.filter((c) => c.n === n && c.printed !== null && computeChecksum(c.n, c.body) === c.printed);
-  const distinct = [...new Set(good.map((c) => c.body.replace(/\s/g, "")))];
+  const distinct = [...new Set(good.map((c) => typedKey(c.body)))];
   if (distinct.length === 1) return { outcome: "recovered", line: good[0], validDistinct: 1 };
   return { outcome: distinct.length > 1 ? "ambiguous" : "still-lost", validDistinct: distinct.length };
 }

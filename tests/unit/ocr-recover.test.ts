@@ -26,6 +26,10 @@ describe("recovery plan + choices", () => {
     const ok = `20 B=2 :rem ${sum(20, "B=2")}`;
     expect(chooseRecovered(20, logicalFromText(`${ok}\n${ok}`)).outcome).toBe("recovered");
     expect(chooseRecovered(20, logicalFromText(`${ok}\n20 B= 2 :rem ${sum(20, "B=2")}`)).outcome).toBe("recovered"); // spaces do not make a second reading
+    // a2a arch-01: a space inside quotes IS typed, so two readings that differ only there are two lines, not one
+    const q1 = 'PRINT"A B"', q2 = 'PRINT"AB"';
+    expect(sum(20, q1)).toBe(sum(20, q2));
+    expect(chooseRecovered(20, logicalFromText(`20 ${q1} :rem ${sum(20, q1)}\n20 ${q2} :rem ${sum(20, q2)}`)).outcome).toBe("ambiguous");
     expect(chooseRecovered(20, logicalFromText(`${ok}\n20 =B2 :rem ${sum(20, "=B2")}`)).outcome).toBe("ambiguous");
     expect(chooseRecovered(20, logicalFromText("20 B=7 :rem 1")).outcome).toBe("still-lost");
   });
