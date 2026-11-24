@@ -75,6 +75,17 @@ export function ScanView() {
         {msg && <p class="refused" data-testid="scan-msg">{msg}</p>}
         {img && <details><summary>the scan being read</summary><img class="page" src={img} alt="the scanned magazine page being read" /></details>}
       </section>
+      {!lines && !busy && (
+        <section class="preview" aria-label="what you will see">
+          <div class="galley">
+            <p class="paper-note">What a read looks like (a sample line from the authored page, not a result): <b>✓</b> the recomputed sum equals the printed <b>:rem</b>; <b>✗</b> it does not — edit the line until it does; <b>?</b> no checksum on that row.</p>
+            <table><tbody>
+              <tr class="ok"><td class="n">10</td><td class="body">PRINT"{'{'}CLR{'}'}{'{'}2 DOWN{'}'}"</td><td class="rem">:rem 231</td><td class="mk">✓</td></tr>
+              <tr class="bad"><td class="n">20</td><td class="body">PRIMT"   ** THE LAST SEANCE **"</td><td class="rem">:rem 159 (now 158)</td><td class="mk">✗ mismatch</td></tr>
+            </tbody></table>
+          </div>
+        </section>
+      )}
       {lines && sum && meta && (
         <section class="assisted" data-testid="assisted">
           <h2 data-testid="assisted-heading">{assistedHeading(sum)}</h2>

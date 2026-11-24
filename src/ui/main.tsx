@@ -138,7 +138,7 @@ function Desk() {
         <p class="kicker">Kiroween 2026 · Resurrection</p>
         {errText && <p class="err" data-testid="first-error">{errText}</p>}
         <h1>Syntax error in 20</h1>
-        <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A 1984 type-in listing refuses to run. The magazine printed a checksum on every line; a Kiro agent proposes the fix, a deterministic gate decides, and a real Commodore 64 gets the last word.</p>
+        <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A 1984 type-in listing refuses to run. The magazine printed a checksum on every line; a Kiro agent proposes the fix, a deterministic gate decides, and a Commodore 64 checks the result.</p>
         <p class="mode" data-testid="mode">
           {mode === "replay" && <><b>REPLAY</b> — a recorded real Kiro run, re-executed now: the gate re-judges every patch and this browser's C64 re-runs the program (replaying recorded OCR input).</>}
           {mode === "recorded" && <><b>RECORDED PLAYBACK</b> — captured screens of a recorded real Kiro run. The gate re-judges every patch in your browser; nothing runs on a C64 here (Commodore ROM rights not cleared).</>}
@@ -166,7 +166,7 @@ function Desk() {
         <>
           <div class="panes">
             <section class="galley" aria-label="galley">
-              <p class="paper-note">The printed page, as read. Blood-red = the line the C64 rejects or the checksum disagrees with; it re-inks C64 blue when the gate accepts the patch and the C64 re-runs.</p>
+              <p class="paper-note">{mode === "replay" ? "The printed page, as read. Blood-red = the line the C64 rejects or the checksum disagrees with; it re-inks C64 blue when the gate accepts the patch and this C64 re-runs." : "The printed page, as read. Blood-red = the line the C64 rejected or the checksum disagrees with; it re-inks blue when the gate accepts the patch (in the recorded run the C64 then ran it)."}</p>
               <table>
                 <tbody>
                   {view.listing.slice().sort((a, b) => a.n - b.n).map((l) => {
@@ -188,7 +188,7 @@ function Desk() {
             <section class="c64" aria-label="C64 screen">
               <pre data-testid="screen">{view.screen}</pre>
               <p class="note" data-testid="screen-caption">{mode === "replay" ? "A real C64 (c64-ready) re-ran the program in this tab." : step === 0 ? "No C64 is running here. Press Resurrect to play the recorded run." : `Recorded screen from ${String(start?.t ?? "").slice(0, 10)}'s run, shown as text. No C64 is running in this tab (ROM rights not cleared).`}</p>
-              <button class="danger" data-testid="cheat" onClick={() => { const c = cheat(view.listing, result.input.spec.expectedLines, view.errLine); setCheatOut(`Cheat: empty line ${c.line} → ${c.verdict.verdict.toUpperCase()} — ${c.verdict.reason}`); }}>Cheat: delete the error line</button>
+              <button data-testid="cheat" onClick={() => { const c = cheat(view.listing, result.input.spec.expectedLines, view.errLine); setCheatOut(`Cheat: empty line ${c.line} → ${c.verdict.verdict.toUpperCase()} — ${c.verdict.reason}`); }}>Cheat: delete the error line</button>
               <p class="note">Cheat runs the same gate code as the Kiro Pre Tool Use hook, in your browser. It does not call Kiro.</p>
               {cheatOut && <p data-testid="cheat-out" class="refused">{cheatOut}</p>}
             </section>
@@ -269,17 +269,21 @@ function KiroView() {
       <h1>/kiro — what Kiro's hooks did in recorded runs</h1>
       <p class="note">A static view over recorded run logs (each row names its run). Hook rows come from the hook processes themselves, not from the model's words.</p>
       <div class="tablewrap"><table data-testid="kiro-rows">
-        <thead><tr><th>run</th><th>time</th><th>what</th><th>detail</th></tr></thead>
+        <thead><tr><th>time</th><th>what</th><th>detail</th></tr></thead>
         <tbody>
-          {rows.map(({ run, e }) => (
+          {rows.map(({ run, e }, i) => (
+            <>
+            {(i === 0 || rows[i - 1].run !== run) && <tr class="grp"><td colSpan={3}>{run}</td></tr>}
             <tr class={e.k === "hook" && e.exit === 2 ? "refused" : ""}>
-              <td>{run}</td><td>{String(e.t ?? "").slice(11, 19)}</td>
+              <td class="t">{String(e.t ?? "").slice(11, 19)}</td>
               <td>{e.k === "hook" ? `hook ${String(e.hook)} (${String(e.via ?? "")}) exit ${String(e.exit ?? "")}${e.decision ? ` · ${String(e.decision)}` : ""}` : e.k === "credits" ? "credits" : `tool call ${String(e.title)}`}</td>
               <td>{e.k === "hook" ? String(e.stderr ?? e.reason ?? "") : e.k === "credits" ? `${e.metered ? `${String(e.delta ?? "")} (total ${String(e.total ?? "")})` : "unmetered"}` : JSON.stringify(e.input ?? "").slice(0, 160)}</td>
             </tr>
+            </>
           ))}
         </tbody>
       </table></div>
+      <p class="note scrollcue">← swipe the table sideways for each row's detail →</p>
     </main>
   );
 }
