@@ -146,3 +146,10 @@ covered by the P1b fixes above and the harness tests; the `suspect` flag (a chec
 worse) and `apply_patch` returning a re-run screen are not implemented — the agent calls `c64_run` after each patch, and
 the stop rule refuses to stop on an unrun patch.
 
+
+## P1c (2026-11-25): what Kiro did in this phase
+| # | Where | What | Model | Credits |
+|---|---|---|---|---|
+| L20 | `scripts/record-run.mjs` → `--agent resurrector` | The shipped agent fixed the authored line-20 typo through the gated `apply_patch` (1 accepted patch, 27 s); that recording is the hero on the live URL | claude-sonnet-5.5 | 0.85 |
+| EV1 | `scripts/eval-agents.mjs --model` | Evals release 1: case 3 N=3 (2.61) + case 1 N=3 (8.34), all 6 RESURRECTED | claude-sonnet-5.5 | 10.95 |
+Everything else in P1c (the `/api/page` function, the design pass, the ASSISTED OCR view, the harness scripts) was written claude-direct; no Kiro IDE or spec session ran this phase. Friction: `vercel build` fails on a TypeScript function when the project uses TypeScript 7 (`@vercel/node` reads sources via `ts.sys`), so the function is plain JS.
