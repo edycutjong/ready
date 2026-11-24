@@ -18,5 +18,5 @@ runs/gazette/
 # kitchen never enters the repo
 kiro-prompts/
 graphify-out/
-PRODUCT.md
+/PRODUCT.md
 *.traineddata

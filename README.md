@@ -12,6 +12,10 @@ npm ci
 npm test          # unit + property tests
 npm run typecheck
 ```
+The KERNAL-equality property (`tests/prop/kernal-equality.prop.ts`) types generated lines and every committed
+fixture into the real C64 core and compares its memory with our tokenizer. The 1984 magazine listings are also run
+through it locally (`READY_GAZETTE_FIXTURES=…`), but they are not in this repository (rights), so that run cannot be
+reproduced from a clone.
 
 ## Licence
 MIT for the code in this repository — see `LICENSE` for what it does not cover (emulator ROMs, magazine text).
