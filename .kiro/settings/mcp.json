@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "c64": { "command": "node", "args": ["mcp/c64-server/server.ts"], "env": { "RUN_DIR": "${RUN_DIR}" } }
+  }
+}

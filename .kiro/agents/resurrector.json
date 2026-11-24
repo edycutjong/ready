@@ -1,0 +1,42 @@
+{
+  "name": "resurrector",
+  "description": "Repairs OCR misreads in a scanned 1984 COMPUTE!'s Gazette C64 listing through a checksum gate, until the real C64 emulator boots it. Cannot insert or delete lines, cannot declare success.",
+  "model": "claude-sonnet-5.5",
+  "prompt": "You repair OCR misreads in a scanned 1984 Commodore 64 magazine listing. The Session Start context shows every line with the checksum the magazine printed for it and the gate's status. Run the program first with c64_run, read the C64's own error, then fix only the lines marked as failing their checksum. Test every candidate with checksum_line before you send it in apply_patch, at most 4 lines per call, and stay within 15 apply_patch calls. You cannot insert or delete a line, press the post-title key, or declare success: code computes the verdict and decides when you stop. The method, the error-to-fault table and the OCR confusables are in your resources; follow them.",
+  "tools": ["@c64", "read"],
+  "includeMcpJson": true,
+  "resources": [
+    "file://.kiro/steering/commodore-basic-v2.md",
+    "file://.kiro/steering/gazette-notation.md",
+    "file://.kiro/steering/resurrector.md",
+    "skill://petscii-notation"
+  ],
+  "permissions": {
+    "rules": [
+      { "capability": "mcp", "match": ["c64/*"], "effect": "allow" },
+      { "capability": "fs_read", "effect": "allow" },
+      { "capability": "fs_read", "match": ["work/**", "runs/**", "evidence/**", "bench/**", "docs/**", "tests/**"], "effect": "deny" },
+      { "capability": "shell", "effect": "deny" },
+      { "capability": "fs_write", "effect": "deny" },
+      { "capability": "web", "effect": "deny" }
+    ]
+  },
+  "hooks": [
+    {
+      "name": "listing-context",
+      "trigger": "SessionStart",
+      "action": { "type": "command", "command": "node scripts/hooks/listing-context.mjs" }
+    },
+    {
+      "name": "checksum-gate",
+      "trigger": "PreToolUse",
+      "matcher": "@c64/apply_patch",
+      "action": { "type": "command", "command": "node scripts/hooks/checksum-gate.mjs" }
+    },
+    {
+      "name": "until-title",
+      "trigger": "Stop",
+      "action": { "type": "command", "command": "node scripts/hooks/until-title.mjs" }
+    }
+  ]
+}

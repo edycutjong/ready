@@ -35,7 +35,7 @@ const model = args.model ?? "claude-sonnet-5.5";
 const trust = args["trust-tools"] ?? "@c64/c64_reload,@c64/c64_run,@c64/c64_read_screen,@c64/c64_press,@c64/checksum_line,@c64/apply_patch,read_file";
 if (/trust-all/.test(trust)) throw new Error("never --trust-all-tools");
 if (!args["stop-check"]) throw new Error("--stop-check is required: the model never decides when to stop"); // validated before any credit is spent
-const prompt0 = readFileSync(args["prompt-file"], "utf8");
+let prompt0 = readFileSync(args["prompt-file"], "utf8");
 const kiroBin = args["kiro-bin"] ?? process.env.KIRO_BIN ?? "kiro-cli"; // tests swap in a stub child
 mkdirSync(dirname(out), { recursive: true });
 mkdirSync(runDir, { recursive: true });
@@ -50,6 +50,13 @@ let sessionId = null;
 let cycles = 0;
 let stop = { stop: false, reason: "", result: "not-resurrected" };
 
+// --context: the runner also puts the Session Start context (scripts/hooks/listing-context.mjs, same script the hook
+// runs) into the FIRST prompt, so the run never depends on whether V3 headless injects a Session Start hook's STDOUT
+// (unmeasured); resumed cycles get the hook's refreshed context and the stop check's reason.
+if (args.context && runInput) {
+  const c = spawnSync(process.execPath, ["scripts/hooks/listing-context.mjs"], { cwd: workspace, env: { ...process.env, RUN_DIR: runDir }, encoding: "utf8" });
+  prompt0 = `${prompt0}\n\n${c.stdout}`;
+}
 emit({ k: "start", model, mode: "live", listing, runDir: runDir.replace(workspace, "."), runner: { kiroCli: kiroVersion(), agent: args.agent ?? null, trustTools: trust.split(","), caps: CAPS }, input: runInput });
 writeCredits();
 
