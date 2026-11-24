@@ -12,6 +12,9 @@ path), resampled to 800 / 1600 / 2376 px source width. tesseract.js **7.0.0**, `
 | tesseract.js @1600 | 27 | 8 | 0.296 | 2 | 1 | 2494 |
 | tesseract.js @2376 | 24 | 6 | 0.250 | 9 | 5 | 3181 |
 
+**Re-OCR of the DATA lines the CLI input lost (901, 909):** not needed at 1600 px — both were read with their numbers
+(G0). The gap re-OCR path ran on the one line that was absent there (see `spike-G0.md`).
+
 **Confusables, measured across the 3 widths (frozen at the end of this spike):**
 - line-number token: `0`→`9` ×6, `0`→`8` ×5, `0`→`¢` ×3, `0`→`6` ×2, `0`→`@` ×1, `0`→`2` ×1, `0`→`4` ×1.
 - printed `:rem` digits: **no misreads observed** in tesseract.js output → the gate's digit-misread set stays the

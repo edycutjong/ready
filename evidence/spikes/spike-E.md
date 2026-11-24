@@ -15,7 +15,7 @@ build `DEV.210823.FC.1`) written over the Commodore ROM images inside c64-ready'
 | randnum title path reaches the title | yes | **no** |
 
 **Verdict: FAIL.** Open ROMs is not behaviourally equivalent: the product's whole premise is the *real* C64 error.
-A VICE GPL core was not tried: VICE's web builds load the same Commodore ROM images (not GPL), so it would not change
-the rights position. **Kill rule (pre-decided):** c64-ready stays behind `C64Core`, is installed from npm at build
+A VICE GPL core was **not tried** (the box was closed after the Open ROMs result); whether a ROM-free VICE web build
+exists was not checked. **Kill rule (pre-decided):** c64-ready stays behind `C64Core`, is installed from npm at build
 time and is never committed; the ROM-bearing WASM is not served by the public site until the human signs the rights
 line (`deploy.yml` blocks the WASM by content hash); the URL shows RECORDED PLAYBACK until then.
