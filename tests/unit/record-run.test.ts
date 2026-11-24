@@ -38,4 +38,10 @@ describe("record-run.mjs with a stub kiro-cli", () => {
     expect(ev.at(-1)).toMatchObject({ k: "end", cap: null });
     expect(JSON.parse(r.stdout.trim().split("\n").at(-1)!)).toMatchObject({ credits: 0.75 });
   }, 60_000);
+  it("merges the server's events.jsonl into the run after a cycle (spike G attempt 1 crashed here)", () => {
+    const { r, ev } = record({ STUB_CALLS: "1", STUB_EVENT: "1" });
+    expect(r.status).toBe(0);
+    expect(ev.some((e) => e.k === "emu" && e.op === "run")).toBe(true);
+    expect(ev.at(-1).k).toBe("end");
+  }, 60_000);
 });

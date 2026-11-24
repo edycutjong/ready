@@ -49,6 +49,7 @@ let metered = false;
 let sessionId = null;
 let cycles = 0;
 let stop = { stop: false, reason: "", result: "not-resurrected" };
+let mergedLines = 0; // declared before the loop (spike G attempt 1 crashed here: TDZ on the first merge)
 
 // --context: the runner also puts the Session Start context (scripts/hooks/listing-context.mjs, same script the hook
 // runs) into the FIRST prompt, so the run never depends on whether V3 headless injects a Session Start hook's STDOUT
@@ -154,7 +155,6 @@ function hookText(text) {
   return (m ? m[1] : text).trim().slice(0, 2000);
 }
 
-let mergedLines = 0;
 function mergeServerEvents() {
   // the MCP server (and hooks) append their own events to $RUN_DIR/events.jsonl; copy new lines in order
   const f = join(runDir, "events.jsonl");

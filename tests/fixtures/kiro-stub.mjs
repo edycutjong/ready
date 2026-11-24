@@ -13,4 +13,5 @@ for (let i = 1; i <= calls; i++) {
   up({ sessionUpdate: "tool_call_update", toolCallId: `c${i}`, status: "completed", content: [{ content: { text: `ACCEPTED ${i}` } }] });
   await sleep(delay);
 }
+if (process.env.STUB_EVENT && process.env.RUN_DIR) (await import("node:fs")).appendFileSync(`${process.env.RUN_DIR}/events.jsonl`, JSON.stringify({ t: new Date().toISOString(), k: "emu", op: "run", error: null, titleSeen: false }) + "\n");
 out({ type: "runFinished", data: { status: "end_turn", finalText: "stub done", credits: [{ usage: Number(process.env.STUB_CREDITS ?? 0.25) }] } });
