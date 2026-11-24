@@ -1,6 +1,6 @@
 {
  "base": "https://ready.edycu.dev",
- "date": "2026-11-24T20:20:09.412Z",
+ "date": "2026-11-24T20:25:39.072Z",
  "checked": 22,
  "failing": 0,
  "fails": [],
@@ -153,7 +153,7 @@
    "route": "/scan",
    "label": "two columnsone column",
    "tag": "select",
-   "hoverChanged": true,
+   "hoverChanged": false,
    "focusRing": true,
    "nativeHover": true,
    "linkStatus": null
@@ -171,7 +171,7 @@
    "route": "/scan",
    "label": "INPUT",
    "tag": "input",
-   "hoverChanged": true,
+   "hoverChanged": false,
    "focusRing": true,
    "nativeHover": true,
    "linkStatus": null

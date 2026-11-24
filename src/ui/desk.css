@@ -152,3 +152,7 @@ select { max-width: 100%; }
 .kiro .scrollcue { display: none; } @media (max-width: 600px) { .kiro .scrollcue { display: block; } }
 .strip li .stamp.small { display: block; width: max-content; margin: 0 0 0.35rem; }
 .preview { opacity: 0.85; } .preview .paper-note b { font-family: var(--font-data); }
+
+.scan { grid-template-columns: minmax(0, 1fr); }
+.scan > * { min-width: 0; }
+.scan .controls input[type=file] { width: 100%; }

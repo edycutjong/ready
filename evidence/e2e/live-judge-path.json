@@ -1,13 +1,13 @@
 {
  "base": "https://ready.edycu.dev",
- "date": "2026-11-24T20:20:16.532Z",
+ "date": "2026-11-24T20:25:45.986Z",
  "ok": true,
  "checks": [
   {
    "name": "first playable paint ≤ 60 s, no install, clean profile",
    "pass": true,
    "detail": {
-    "ms": 222
+    "ms": 242
    }
   },
   {
@@ -59,8 +59,8 @@
    "name": "/kiro lists ≥ 1 real hook firing from the recorded run",
    "pass": true,
    "detail": [
-    "The Last Seance — authored 2026 page, line 20 typo (recorded real Kiro run)19:56:44hook listing-context (runner-context) exit 0",
-    "The Last Seance — authored 2026 page, line 20 typo (recorded real Kiro run)19:56:47hook listing-context (kiro-session-start) exit 0"
+    "19:56:44hook listing-context (runner-context) exit 0",
+    "19:56:47hook listing-context (kiro-session-start) exit 0"
    ]
   },
   {
