@@ -1,0 +1,25 @@
+/* Functional Day-3 styles only; the crypt-galley design (design.md) lands in P1c. */
+:root { color-scheme: dark; --bg: #0b0a09; --ink: #e8e2d4; --red: #c2271d; --blue: #4b6fd6; --c64bg: #352879; --c64fg: #a59ee6; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: ui-monospace, Menlo, monospace; }
+.desk { padding: 2rem 4vw; }
+.err { color: var(--red); letter-spacing: 0.2em; }
+h1 { margin: 0.2em 0; }
+.mode { max-width: 90ch; line-height: 1.5; }
+.strip ol { display: flex; flex-wrap: wrap; gap: 0.3rem; list-style: none; padding: 0; font-size: 0.75rem; }
+.strip li { border: 1px solid #444; padding: 0.2rem 0.4rem; max-width: 40ch; cursor: pointer; opacity: 0.5; }
+.strip li.done { opacity: 1; }
+.strip li.refused { border-color: var(--red); }
+.strip li.accepted { border-color: var(--blue); }
+.strip li.forced { border-color: orange; }
+.panes { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.5rem; align-items: start; }
+.galley table { border-collapse: collapse; font-size: 0.8rem; width: 100%; }
+.galley td { padding: 0.1rem 0.4rem; vertical-align: top; word-break: break-all; }
+.galley tr.bad .mk, .galley tr.forced .mk { color: var(--red); }
+.galley tr.ok .mk { color: var(--blue); }
+del { color: var(--red); } ins { color: var(--blue); text-decoration: none; }
+.c64 pre { background: var(--c64bg); color: var(--c64fg); padding: 1rem; font-size: 0.8rem; min-height: 25em; white-space: pre; overflow: auto; }
+button { font: inherit; background: none; color: var(--ink); border: 1px solid var(--red); padding: 0.4rem 0.8rem; cursor: pointer; }
+.refused { color: var(--red); }
+.note { opacity: 0.7; font-size: 0.8rem; }
+.cert { border-top: 1px solid #444; margin-top: 1.5rem; }
+.kiro table { font-size: 0.75rem; border-collapse: collapse; } .kiro td { padding: 0.15rem 0.5rem; border-bottom: 1px solid #222; }
