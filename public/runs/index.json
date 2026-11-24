@@ -1,5 +1,12 @@
 {
   "runs": [
-    { "id": "line20-hero", "file": "/runs/line20-2026-11-24T19-56-44Z.jsonl", "label": "The Last Seance — authored 2026 page, line 20 typo (recorded real Kiro run)" }
+    {
+      "id": "line20-hero",
+      "file": "/runs/line20-2026-11-24T19-56-44Z.jsonl",
+      "label": "The Last Seance \u2014 authored 2026 page, line 20 typo (recorded real Kiro run)",
+      "title": "The Last Seance",
+      "meta": "authored 2026 page \u00b7 typeset by us, read by real OCR \u00b7 recorded real Kiro run",
+      "cod": "?SYNTAX  ERROR IN 20"
+    }
   ]
 }

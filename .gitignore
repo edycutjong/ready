@@ -20,3 +20,7 @@ kiro-prompts/
 graphify-out/
 /PRODUCT.md
 *.traineddata
+
+# vendored by scripts/vendor-ocr.mjs at build time
+public/ocr/worker.min.js
+public/ocr/core/

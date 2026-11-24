@@ -2,7 +2,7 @@
   "name": "ready",
   "version": "0.1.0",
   "private": true,
-  "description": "SYNTAX ERROR IN 20 — resurrects 1984 type-in listings: OCR, checksum oracle, a real C64, and a Kiro agent behind a deterministic gate.",
+  "description": "SYNTAX ERROR IN 20 \u2014 resurrects 1984 type-in listings: OCR, checksum oracle, a real C64, and a Kiro agent behind a deterministic gate.",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -16,7 +16,8 @@
     "test:prop": "vitest run tests/prop",
     "test:watch": "vitest",
     "check:no-rom": "node scripts/check-no-rom.mjs",
-    "deploy:prod": "vercel build --prod && node scripts/check-no-rom.mjs .vercel/output && vercel deploy --prebuilt --prod"
+    "deploy:prod": "vercel build --prod && node scripts/check-no-rom.mjs .vercel/output && vercel deploy --prebuilt --prod",
+    "prebuild": "node scripts/vendor-ocr.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.2",

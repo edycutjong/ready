@@ -4,6 +4,9 @@ import { createC64ReadyCore, type C64Core } from "../emu/core.ts";
 import { cheat, replay, type ReplayResult, type RunEvent } from "../replay/replay.ts";
 import { certificateHeading, errata, errataText, prgBytes, provenance, type RecoveryEvent } from "../replay/certificate.ts";
 import type { CanonicalLine } from "../basic/types.ts";
+import { Nav } from "./nav.tsx";
+import { ScanView } from "./scan.tsx";
+import { Stamp, stampFor } from "./stamp.tsx";
 import "./desk.css";
 
 /**
@@ -12,7 +15,7 @@ import "./desk.css";
  * ROM-bearing WASM (public URL, rights not cleared) it is RECORDED PLAYBACK: captured screens, gate re-judged, no
  * C64 — and the page says so. Nothing on this page calls Kiro; recordings are labelled as recordings.
  */
-type RunRef = { id: string; file: string; label?: string; local?: boolean };
+type RunRef = { id: string; file: string; label?: string; local?: boolean; title?: string; meta?: string; cod?: string };
 type Mode = "loading" | "booting" | "replay" | "recorded" | "error";
 
 declare global { interface Window { __ready?: Record<string, unknown> } }
@@ -63,6 +66,13 @@ function Desk() {
   const [err, setErr] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const [cheatOut, setCheatOut] = useState<string | null>(null);
+  const [playing, setPlaying] = useState(false);
+  const play = () => {
+    if (!result || playing) return;
+    setPlaying(true); setStep(0); setCheatOut(null);
+    let i = 0;
+    const tick = setInterval(() => { i += 1; setStep(i); if (i >= result.steps.length) { clearInterval(tick); setPlaying(false); } }, 1100);
+  };
 
   useEffect(() => { fetch("/runs/index.json").then((r) => r.json()).then((j) => { setRuns(j.runs ?? []); if (!sel && j.runs?.[0]) setSel(j.runs[0].id); }).catch(() => setErr("no recorded runs index")); }, []);
   useEffect(() => { setMode("booting"); bootCore().then(setBooted); }, []);
@@ -75,7 +85,7 @@ function Desk() {
     if (!events || booted === undefined) return;
     try {
       const r = replay(events, booted.core, { wasmSha256: booted.wasmSha256 });
-      setResult(r); setStep(r.steps.length); setMode(booted.core && !r.refused ? "replay" : "recorded");
+      setResult(r); setStep(0); setMode(booted.core && !r.refused ? "replay" : "recorded");
     } catch (e) { setErr(String((e as Error).message)); setMode("error"); }
   }, [events, booted]);
 
@@ -111,24 +121,44 @@ function Desk() {
   const prov = result && inputFull ? provenance(inputFull, result.final) : null;
   const reasons = new Map<number, string>();
   for (const s of result?.steps ?? []) if (s.kind === "attempt" && s.recomputed.verdict !== "refused" && s.reason) for (const o of s.ops) reasons.set(Number(o.lineno), s.reason);
+  const stamp = stampFor(result?.contract?.verdict ?? (result?.recordedEnd?.result as string | undefined));
+  const accAttempts = (result?.steps ?? []).filter((x) => x.kind === "attempt");
+  const nRef = accAttempts.filter((x) => x.kind === "attempt" && x.recomputed.verdict === "refused").length;
+  const nForced = accAttempts.filter((x) => x.kind === "attempt" && x.recomputed.verdict === "forced").length;
+  const nAcc = accAttempts.length - nRef - nForced;
   const errataRows = result ? errata(result.input.lines, result.final, reasons) : [];
   const endCounts = (result?.recordedEnd?.counts ?? {}) as { sourceExact?: number; sourceTotal?: number };
   const note = (result?.input as { certificateNote?: string } | undefined)?.certificateNote ?? undefined;
   return (
     <main class="desk">
+      <Nav here="raise" />
       <header>
+        <p class="kicker">Kiroween 2026 · Resurrection</p>
         {errText && <p class="err" data-testid="first-error">{errText}</p>}
-        <h1>Resurrecting 1984 type-in programs</h1>
+        <h1>Syntax error in 20</h1>
+        <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A 1984 type-in listing refuses to run. The magazine printed a checksum on every line; a Kiro agent proposes the fix, a deterministic gate decides, and a real Commodore 64 gets the last word.</p>
         <p class="mode" data-testid="mode">
-          {mode === "replay" && "REPLAY — a recorded real Kiro run, re-executed now: the gate re-judges every patch and this browser's C64 re-runs the program (replaying recorded OCR input)."}
-          {mode === "recorded" && "RECORDED PLAYBACK — captured screens of a recorded real Kiro run. The gate re-judges every patch in your browser; nothing runs on a C64 here (Commodore ROM rights not cleared)."}
+          {mode === "replay" && <><b>REPLAY</b> — a recorded real Kiro run, re-executed now: the gate re-judges every patch and this browser's C64 re-runs the program (replaying recorded OCR input).</>}
+          {mode === "recorded" && <><b>RECORDED PLAYBACK</b> — captured screens of a recorded real Kiro run. The gate re-judges every patch in your browser; nothing runs on a C64 here (Commodore ROM rights not cleared).</>}
           {mode === "booting" && "booting the C64…"}
           {mode === "loading" && "loading…"}
           {mode === "error" && `error: ${err}`}
         </p>
         {runLabel && <p class="note" data-testid="run-label">{runLabel}</p>}
-        <label>Run <select value={sel ?? ""} onChange={(e) => setSel((e.target as HTMLSelectElement).value)}>{runs.map((r) => <option value={r.id}>{r.label ?? r.id}</option>)}</select></label>
       </header>
+      <ul class="stones" aria-label="recorded listings">
+        {runs.map((r) => (
+          <li>
+            <button class="stone" aria-pressed={r.id === sel} onClick={() => { setSel(r.id); setPlaying(false); }}>
+              <span class="t">{r.title ?? r.label ?? r.id}</span>
+              <span class="m">{r.meta ?? "recorded real Kiro run"}</span>
+              {r.cod && <span class="cod">cause of death · {r.cod}</span>}
+            </button>
+          </li>
+        ))}
+        <li><a class="stone" style="display:block;text-decoration:none" href="/scan"><span class="t">Your own page</span><span class="m">ASSISTED: OCR + the magazine's checksum, in your tab, 0 credits</span></a></li>
+      </ul>
+      {result && <p><button data-testid="resurrect" disabled={playing} onClick={play}>{playing ? "raising…" : step >= result.steps.length ? "Resurrect again (replay the run)" : "Resurrect"}</button> <span class="note">replays the recorded run step by step; or drag the slider.</span></p>}
       {result && view && (
         <>
           <section class="strip" aria-label="run strip">
@@ -139,13 +169,14 @@ function Desk() {
                 <li class={`${i < step ? "done" : ""} ${s.kind === "attempt" ? s.recomputed.verdict : "run"}`} onClick={() => setStep(i + 1)}>
                   {s.kind === "attempt" && <span class="iter">attempt {attemptNo.get(i)}/{capIter} · </span>}
                   {s.kind === "attempt" && s.reason && s.source === "server" && <span class="why">agent: “{s.reason}” → </span>}
-                  {s.kind === "attempt" ? `${s.recomputed.verdict.toUpperCase()}${s.source === "hook" ? " by the Kiro Pre Tool Use hook" : ""}: ${s.recomputed.reason}` : `RUN → ${s.facts ? (s.facts.run.error ? `?${s.facts.run.error.kind} ERROR${s.facts.run.error.line != null ? ` IN ${s.facts.run.error.line}` : ""}` : s.facts.titleSeen ? `title · post-title ${s.facts.postTitle}` : "no title") : `(recorded) ${s.recorded.error ? JSON.stringify(s.recorded.error) : s.recorded.titleSeen ? "title" : "no title"}`}${s.match === false ? " ≠ RECORD" : ""}`}
+                  {s.kind === "attempt" && s.recomputed.verdict === "refused" && i < step && <Stamp kind="refusal" small />}{" "}{s.kind === "attempt" ? `${s.recomputed.verdict.toUpperCase()}${s.source === "hook" ? " by the Kiro Pre Tool Use hook" : ""}: ${s.recomputed.reason}` : `RUN → ${s.facts ? (s.facts.run.error ? `?${s.facts.run.error.kind} ERROR${s.facts.run.error.line != null ? ` IN ${s.facts.run.error.line}` : ""}` : s.facts.titleSeen ? `title · post-title ${s.facts.postTitle}` : "no title") : `(recorded) ${s.recorded.error ? JSON.stringify(s.recorded.error) : s.recorded.titleSeen ? "title" : "no title"}`}${s.match === false ? " ≠ RECORD" : ""}`}
                 </li>
               ))}
             </ol>
           </section>
           <div class="panes">
             <section class="galley" aria-label="galley">
+              <p class="paper-note">The printed page, as read. Blood-red = the line the C64 rejects or the checksum disagrees with; it re-inks C64 blue when the gate accepts the patch and the C64 re-runs.</p>
               <table>
                 <tbody>
                   {view.listing.slice().sort((a, b) => a.n - b.n).map((l) => {
@@ -154,7 +185,7 @@ function Desk() {
                     return (
                       <tr class={m.cls}>
                         <td class="n">{l.n}</td>
-                        <td class="body">{was !== undefined && was !== l.body ? <><del>{was}</del><br /><ins>{l.body}</ins></> : l.body}</td>
+                        <td class="body">{was !== undefined && was !== l.body ? <><del>{was}</del><br /><ins class="accepted">{l.body}</ins></> : l.body}</td>
                         <td class="rem">:rem {l.printed ?? "??"}</td>
                         <td class="mk">{m.sym}</td>
                         <td class="src">{prov?.perLine.get(l.n) ?? ""}</td>
@@ -171,11 +202,26 @@ function Desk() {
               {cheatOut && <p data-testid="cheat-out" class="refused">{cheatOut}</p>}
             </section>
           </div>
-          <section class="cert" data-testid="certificate" aria-label="certificate">
+          <section class="cert" data-testid="certificate" aria-label="death certificate, reversed">
+            <div class="cert-head">
+              <div>
+                <p class="kicker">Certificate of resurrection</p>
+                {result.contract
+                  ? <h2>{certificateHeading(result.contract, result.input.scope, result.input.spec.expectedLines.length, { sourceExact: endCounts.sourceExact, sourceTotal: endCounts.sourceTotal, note })}</h2>
+                  : <h2>{String(result.recordedEnd?.result ?? "no end event").toUpperCase()} (recorded)</h2>}
+              </div>
+              {step >= result.steps.length && stamp && <Stamp kind={stamp} />}
+            </div>
+            <dl data-testid="cert-fields">
+              <dt>cause of death</dt><dd>{errText || "no C64 error recorded"} <span class="note">(the run's own first error, verbatim)</span></dd>
+              <dt>treatment</dt><dd>{nAcc} patch{nAcc === 1 ? "" : "es"} accepted · {nRef} refused · {nForced} forced</dd>
+              <dt>run ended</dt><dd>{String(result.recordedEnd?.t ?? "") ? `${String(result.recordedEnd?.t).slice(0, 19).replace("T", " ")} UTC` : "unrecorded"} <span class="note">(the run's own end event, not a clock we invent)</span></dd>
+              <dt>examined by</dt><dd>the checksum gate: Pre Tool Use hook + MCP, re-judged in this tab</dd>
+              <dt>pronounced alive by</dt><dd>{mode === "replay" ? "the C64 re-RUN in this tab" : "the recorded C64 screens (not re-run here)"}</dd>
+            </dl>
             {result.contract
-              ? <><h2>{certificateHeading(result.contract, result.input.scope, result.input.spec.expectedLines.length, { sourceExact: endCounts.sourceExact, sourceTotal: endCounts.sourceTotal, note })}</h2>
-                {result.recordedEnd?.sourceReference ? <p class="note" data-testid="source-ref">source-exact is measured against a reference transcript ({String(result.recordedEnd.sourceReference)}); it is never given to the agent, and "source-exact" means "matches that reference", not "matches the magazine".</p> : null}<p>recomputed now from the final listing and this browser's C64 · verified {result.contract.counts.verified} · digit-misread {result.contract.counts.digitMisread} · forced {result.contract.counts.forced} · unverified {result.contract.counts.unverified} · missing {result.contract.counts.missing} · typed {result.contract.counts.typed}</p></>
-              : <><h2>{String(result.recordedEnd?.result ?? "no end event").toUpperCase()} (recorded)</h2><p>the recorded certificate; the contract is recomputed only where a C64 can run</p></>}
+              ? <>{result.recordedEnd?.sourceReference ? <p class="note" data-testid="source-ref">source-exact is measured against a reference transcript ({String(result.recordedEnd.sourceReference)}); it is never given to the agent, and "source-exact" means "matches that reference", not "matches the magazine".</p> : null}<p class="counts">recomputed now from the final listing and this browser's C64 · verified {result.contract.counts.verified} · digit-misread {result.contract.counts.digitMisread} · forced {result.contract.counts.forced} · unverified {result.contract.counts.unverified} · missing {result.contract.counts.missing} · typed {result.contract.counts.typed}</p></>
+              : <p class="note">the recorded certificate; the contract is recomputed only where a C64 can run</p>}
             {prov && (
               <div data-testid="provenance">
                 <p>where every final line came from · page OCR {prov.counts.ocr} · re-OCR of a gap {prov.counts.reOcr} · TYPED by a person {prov.counts.typed} · changed by a gate-accepted Kiro patch {prov.counts.patched}</p>
@@ -214,6 +260,7 @@ function KiroView() {
   }, []);
   return (
     <main class="desk kiro">
+      <Nav here="kiro" />
       <h1>/kiro — what Kiro's hooks did in recorded runs</h1>
       <p class="note">A static view over recorded run logs (each row names its run). Hook rows come from the hook processes themselves, not from the model's words.</p>
       <table data-testid="kiro-rows">
@@ -232,4 +279,5 @@ function KiroView() {
   );
 }
 
-render(location.pathname.startsWith("/kiro") ? <KiroView /> : <Desk />, document.getElementById("app")!);
+const path = location.pathname;
+render(path.startsWith("/kiro") ? <KiroView /> : path.startsWith("/scan") ? <ScanView /> : <Desk />, document.getElementById("app")!);
