@@ -13,7 +13,7 @@ const rep = [];
 const sha = (b) => createHash("sha256").update(b).digest("hex");
 for (const route of ["/", "/scan", "/kiro"]) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  await page.goto(base + route);
+  await page.goto(base + route + (route === "/" ? "?still=1" : ""));
   await page.waitForTimeout(route === "/" ? 3500 : 800);
   const sel = "a[href], button:not(:disabled), select, input[type=file], input[type=range]";
   const els = await page.$$(sel);

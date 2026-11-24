@@ -73,13 +73,24 @@ function Desk() {
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stopTick = () => { if (tickRef.current !== null) { clearInterval(tickRef.current); tickRef.current = null; } };
   useEffect(() => stopTick, []);
-  const play = () => {
+  const play = (auto = false) => {
     if (!result || playing) return;
     stopTick();
     setPlaying(true); setStep(0); setCheatOut(null);
     let i = 0;
-    tickRef.current = setInterval(() => { i += 1; setStep(i); if (i >= result.steps.length) { stopTick(); setPlaying(false); setTimeout(() => document.querySelector("[data-testid=certificate]")?.scrollIntoView({ behavior: "smooth", block: "center" }), 500); } }, 1100);
+    tickRef.current = setInterval(() => { i += 1; setStep(i); if (i >= result.steps.length) { stopTick(); setPlaying(false); if (!auto) setTimeout(() => document.querySelector("[data-testid=certificate]")?.scrollIntoView({ behavior: "smooth", block: "center" }), 500); } }, 1100);
   };
+
+  // P1e (rubric gate): the first viewport used to be an empty READY. box until the visitor read two paragraphs and pressed
+  // Resurrect. Play the recorded run once on first load; ?still=1 and prefers-reduced-motion keep it still (the E2E scripts use ?still=1).
+  const autoDone = useRef(false);
+  useEffect(() => {
+    if (!result || autoDone.current) return;
+    autoDone.current = true;
+    if (new URLSearchParams(location.search).has("still") || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setTimeout(() => play(true), 900);
+    return () => clearTimeout(t);
+  }, [result]);
 
   useEffect(() => { fetch("/runs/index.json").then((r) => r.json()).then((j) => { setRuns(j.runs ?? []); if (!sel && j.runs?.[0]) setSel(j.runs[0].id); }).catch(() => setErr("no recorded runs index")); }, []);
   useEffect(() => { setMode("booting"); bootCore().then(setBooted); }, []);
@@ -172,7 +183,7 @@ function Desk() {
         <li><a class="stone" style="display:block;text-decoration:none" href="/scan"><span class="t">Random Number Test</span><span class="m">COMPUTE!'s Gazette, June 1984 · the real scan</span><span class="cod">checksum-flagged live · repair withheld (rights)</span></a></li>
         <li><a class="stone" style="display:block;text-decoration:none" href="/scan"><span class="t">Your own page</span><span class="m">ASSISTED: OCR + the magazine's checksum, in your tab, 0 credits</span></a></li>
       </ul>
-      {result && <p><button data-testid="resurrect" disabled={playing} onClick={play}>{playing ? "raising…" : step >= result.steps.length ? "Resurrect again (replay the run)" : "Resurrect"}</button> <span class="note">replays the recorded run step by step; or drag the slider.</span></p>}
+      {result && <p><button data-testid="resurrect" disabled={playing} onClick={() => play()}>{playing ? "raising…" : step >= result.steps.length ? "Resurrect again (replay the run)" : "Resurrect"}</button> <span class="note">replays the recorded run step by step; or drag the slider.</span></p>}
       {result && view && (
         <>
           <div class="panes">

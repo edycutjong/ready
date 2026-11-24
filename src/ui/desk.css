@@ -156,3 +156,9 @@ select { max-width: 100%; }
 .scan { grid-template-columns: minmax(0, 1fr); }
 .scan > * { min-width: 0; }
 .scan .controls input[type=file] { width: 100%; }
+
+/* P1e: the native "Choose File" chrome read as unstyled; use the same stamped-button language as the rest of the desk. */
+input[type="file"] { font: inherit; color: var(--muted); max-width: 100%; }
+input[type="file"]::file-selector-button { font: inherit; font-weight: 700; background: transparent; color: var(--ink); border: 1px solid var(--muted); border-radius: 3px; padding: 0.5rem 0.9rem; margin-right: 0.8rem; cursor: pointer; transition: border-color 0.15s, transform 0.15s; }
+input[type="file"]::file-selector-button:hover { border-color: var(--ink); transform: translateY(-1px); }
+input[type="file"]:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }

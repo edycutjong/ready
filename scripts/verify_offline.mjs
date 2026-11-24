@@ -20,7 +20,7 @@ try {
   const ctx = await browser.newContext(); // clean profile
   await ctx.route((url) => !["localhost", "127.0.0.1"].includes(url.hostname), (route) => { blocked.push(route.request().url()); route.abort(); });
   const page = await ctx.newPage();
-  await page.goto(`http://localhost:${port}/?run=line20-hero`);
+  await page.goto(`http://localhost:${port}/?still=1&run=line20-hero`);
   await page.waitForFunction(() => window.__ready?.mode === "replay" && window.__ready.steps > 0, null, { timeout: 120_000 });
   await page.click("[data-testid=resurrect]");
   await page.waitForFunction(() => window.__ready.step === window.__ready.steps, null, { timeout: 120_000 });

@@ -13,7 +13,7 @@ const page = await ctx.newPage();
 const checks = [];
 const check = (name, pass, detail) => checks.push({ name, pass: Boolean(pass), detail });
 const t0 = Date.now();
-await page.goto(base + "/");
+await page.goto(base + "/?still=1");
 await page.waitForFunction(() => window.__ready && window.__ready.steps > 0, null, { timeout: 60_000 });
 const firstPlayableMs = Date.now() - t0;
 check("first playable paint ≤ 60 s, no install, clean profile", firstPlayableMs <= 60_000, { ms: firstPlayableMs });

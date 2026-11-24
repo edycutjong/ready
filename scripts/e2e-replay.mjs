@@ -23,7 +23,7 @@ const checks = [];
 const check = (name, pass, detail) => { checks.push({ name, pass: Boolean(pass), detail }); };
 try {
   const page = await browser.newPage();
-  await page.goto(`http://localhost:${port}/?run=${encodeURIComponent(a.run)}`);
+  await page.goto(`http://localhost:${port}/?still=1&run=${encodeURIComponent(a.run)}`);
   await page.waitForFunction(() => window.__ready && ["replay", "recorded", "error"].includes(window.__ready.mode) && window.__ready.steps > 0, null, { timeout: 180_000 });
   await page.click("[data-testid=resurrect]"); // the judge path: press Resurrect, the recorded run replays step by step
   await page.waitForFunction(() => window.__ready.steps > 0 && window.__ready.step === window.__ready.steps, null, { timeout: 180_000 });

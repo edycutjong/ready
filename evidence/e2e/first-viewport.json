@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-24T21:45:45.863Z",
+  "ok": true,
+  "checks": [
+    {
+      "name": "autoplay: the recorded run advances with no click",
+      "pass": true,
+      "detail": {
+        "stepsDoneAtLoad": 0,
+        "after3_5s": 2
+      }
+    },
+    {
+      "name": "?still=1 keeps the run still",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "no horizontal overflow at 390px",
+      "pass": true,
+      "detail": {
+        "sw": 390,
+        "iw": 390,
+        "nav": 91
+      }
+    },
+    {
+      "name": "no horizontal overflow at 375px",
+      "pass": true,
+      "detail": {
+        "sw": 375,
+        "iw": 375,
+        "nav": 91
+      }
+    }
+  ]
+}
