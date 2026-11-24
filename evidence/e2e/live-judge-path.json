@@ -1,0 +1,80 @@
+{
+ "base": "https://ready.edycu.dev",
+ "date": "2026-11-24T20:13:36.140Z",
+ "ok": true,
+ "checks": [
+  {
+   "name": "first playable paint ≤ 60 s, no install, clean profile",
+   "pass": true,
+   "detail": {
+    "ms": 825
+   }
+  },
+  {
+   "name": "mode is stated (RECORDED PLAYBACK while ROM rights are not cleared)",
+   "pass": true,
+   "detail": {
+    "mode": "recorded"
+   }
+  },
+  {
+   "name": "the recorded run plays to its end",
+   "pass": true,
+   "detail": {
+    "steps": 3
+   }
+  },
+  {
+   "name": "certificate shows the recorded RESURRECTED result",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "name": "IT LIVES stamp lands, captioned 'as recorded' when nothing was re-run",
+   "pass": true,
+   "detail": {
+    "mode": "recorded"
+   }
+  },
+  {
+   "name": "C64 pane shows the program's own screen, not the tool report",
+   "pass": true,
+   "detail": [
+    " THE SPIRITS ANSWER",
+    " THE PAGE",
+    " THE CHECKSUM"
+   ]
+  },
+  {
+   "name": "Cheat is refused by the gate",
+   "pass": true,
+   "detail": "Cheat: empty line 10 → REFUSED — REFUSED (R4.4): replacing line 10 with an empty body deletes it. Deletion is a hard refusal; no flag or other operation can override it."
+  },
+  {
+   "name": ".PRG download works",
+   "pass": true,
+   "detail": "line20-recorded.prg"
+  },
+  {
+   "name": "/kiro lists ≥ 1 real hook firing from the recorded run",
+   "pass": true,
+   "detail": [
+    "The Last Seance — authored 2026 page, line 20 typo (recorded real Kiro run)19:56:44hook listing-context (runner-context) exit 0",
+    "The Last Seance — authored 2026 page, line 20 typo (recorded real Kiro run)19:56:47hook listing-context (kiro-session-start) exit 0"
+   ]
+  },
+  {
+   "name": "no ROM-bearing WASM is served",
+   "pass": true,
+   "detail": 404
+  },
+  {
+   "name": "/api/page serves the real archive.org page image",
+   "pass": true,
+   "detail": {
+    "status": 200,
+    "bytes": 390309
+   }
+  }
+ ]
+}
