@@ -295,17 +295,17 @@ describe("malformed calls and the run-over state (R11)", () => {
     expect((await call(t3, "checksum_line", { lineno: 10, body: "END" })).text).toBe("run is over: 3 malformed calls");
   });
 
-  it("an exception inside a tool is an internal error, recorded, and not malformed (R11.6)", async () => {
+  it("a throw from the emulator is a crash (R12), never a malformed call; recovery that throws again ends the run (R12.3)", async () => {
+    // claude-direct (P1b): written by Kiro in task 3 as an R11.6 internal error; task 6's withEmu makes any throw from
+    // core/session code a crash (design.md "Crash recovery"), so the expectation follows the crash budget now.
     const stub = new StubCore();
     const { r, t } = await setup({}, stub);
     stub.queueKeys = () => { throw new Error("kaboom"); };
-    for (let i = 0; i < 4; i++) {
-      const res = await call(t, "c64_reload");
-      expect(res).toMatchObject({ isError: true, text: "internal error: kaboom" });
-    }
-    expect(r.events().filter((e) => e.k === "error")).toHaveLength(4);
-    expect(r.events().at(-1)).toMatchObject({ k: "error", why: "internal", tool: "c64_reload", message: "kaboom" });
-    expect((await call(t, "checksum_line", { lineno: 10, body: "END" })).isError).toBe(false); // still running
+    const res = await call(t, "c64_reload");
+    expect(res).toMatchObject({ isError: true, text: "emulator crashed twice; the run ends" });
+    expect(r.events().filter((e) => e.k === "malformed")).toHaveLength(0);
+    expect(r.events().at(-1)).toMatchObject({ k: "error", why: "emulator crashed twice" });
+    expect((await call(t, "checksum_line", { lineno: 10, body: "END" })).text).toMatch(/run is over: emulator crashed twice/);
   });
 });
 

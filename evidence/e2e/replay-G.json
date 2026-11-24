@@ -1,0 +1,32 @@
+{
+ "t": "2026-11-24T19:22:47.843Z",
+ "run": "spike G attempt 2 (local tier-C run)",
+ "pass": true,
+ "checks": [
+  {
+   "name": "mode is REPLAY (in-browser C64 re-executes)",
+   "pass": true
+  },
+  {
+   "name": "replay agrees with the record",
+   "pass": true
+  },
+  {
+   "name": "recomputed contract = recorded end result",
+   "pass": true
+  },
+  {
+   "name": "screen RAM text shows \"RANDOM SEEDS.\"",
+   "pass": true
+  },
+  {
+   "name": "Cheat refused by the gate",
+   "pass": true
+  },
+  {
+   "name": "/kiro lists \u2265 1 real hook firing",
+   "pass": true
+  }
+ ],
+ "how": "node scripts/e2e-replay.mjs (vite dev + Playwright Chromium; the in-browser c64-ready core re-executes every accepted patch)"
+}

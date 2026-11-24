@@ -1,0 +1,72 @@
+{
+ "spike": "G \u2014 full gated run on the Day-1 core, runner-driven (scripts/record-run.mjs), resurrector agent over the c64 MCP server, Pre Tool Use gate + Agent Stop hook live",
+ "date": "2026-11-25",
+ "kiroCli": "3.5.0 --v3 --no-interactive --agent resurrector",
+ "model": "claude-sonnet-5.5",
+ "input": "June 1984 Gazette 'Random Number Test' title path (28 lines) \u2014 spike G0's recovered tesseract.js @1600 px listing: 10/28 checksum-valid, 18 failing, 1 line provisional (re-OCR), 0 TYPED",
+ "verdict": "PASS \u2014 TITLE-PATH RESURRECTED in both attempts (G passes only on TITLE-PATH RESURRECTED)",
+ "attempts": [
+  {
+   "run": "2026-11-24T19-19-08Z",
+   "apply_patch_calls": 5,
+   "checksum_line_calls": 24,
+   "c64_run_calls": 2,
+   "gate": {},
+   "hooks": {},
+   "credits": 2.4788,
+   "end": {
+    "result": "RESURRECTED (from RUN_DIR listing.json + the stop check; the recorder crashed after the cycle before writing its end event \u2014 fixed in commit 21082eb)",
+    "postTitle": "pass",
+    "counts": {
+     "verified": 28,
+     "unverified": 0,
+     "forced": 0,
+     "missing": 0,
+     "typed": 0,
+     "sourceExact": 19,
+     "sourceTotal": 28
+    }
+   }
+  },
+  {
+   "run": "2026-11-24T19-21-11Z",
+   "apply_patch_calls": 5,
+   "checksum_line_calls": 20,
+   "c64_run_calls": 3,
+   "gate": {
+    "accepted": 5
+   },
+   "hooks": {
+    "listing-context (kiro-session-start) exit 0": 2,
+    "checksum-gate (kiro-pre-tool-use) exit 0": 5,
+    "until-title (kiro-stop) exit 0": 1,
+    "until-title (runner-cycle) exit 0": 1
+   },
+   "credits": 2.1989,
+   "end": {
+    "result": "RESURRECTED",
+    "iterations": 5,
+    "wallMs": 67609,
+    "cap": null,
+    "cycles": 1,
+    "postTitle": "pass",
+    "counts": {
+     "verified": 28,
+     "digitMisread": 0,
+     "eyeVerified": 0,
+     "forced": 0,
+     "unverified": 0,
+     "present": 28,
+     "typed": 0,
+     "missing": 0,
+     "orphansExcluded": 0,
+     "sourceExact": 19,
+     "sourceTotal": 28
+    }
+   }
+  }
+ ],
+ "sourceCheck": "19/28 source-exact against the reference (vision transcript; 11/28 confirmed by a second OCR engine) \u2014 checksum-consistent is not source-exact: mod-256 collisions and the checksum ignores spaces",
+ "comparison": "E0 (search, no model) on the same input: 3/18 lines fixed, NOT RESURRECTED (evidence/experiments/e0.json)",
+ "tierC": "counts only; the run logs and Gazette text stay in the gitignored runs/gazette/ and the kitchen until rights clear"
+}
