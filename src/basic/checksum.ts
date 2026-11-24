@@ -24,6 +24,7 @@ function rawSum(s: string): number {
  * R2.1-R2.5. `lineNo` is a non-negative integer; its decimal digits are summed with no leading zeros (R2.1).
  * The `{...}` grammar comes from `notation.ts#scanBody`, so unknown and unterminated groups (R1.7) fall back
  * to their literal characters here exactly as they do when typed (R2.3, R2.5).
+ * Spec: .kiro/specs/checksum-oracle/requirements.md R2 (measured 43/43 on a June 1984 page).
  */
 export function computeChecksum(lineNo: number, body: string): number {
   let sum = rawSum(String(lineNo));
