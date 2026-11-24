@@ -7,8 +7,8 @@ import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { beforeAll, describe, expect, it } from "vitest";
 import { bootNodeCore } from "../../src/emu/node.ts";
-import { type C64Core, loadProgram, runProgram, pressKeys, dumpBasic, afterLastRun, readScreenText } from "../../src/emu/core.ts";
-import { typedLine } from "../../src/basic/notation.ts";
+import { type C64Core, dumpBasic, readScreenText } from "../../src/emu/core.ts";
+import { runListing, judge, untypeableLines, type ListingSpec } from "../../src/emu/session.ts";
 import { computeChecksum, splitLine } from "../../src/basic/checksum.ts";
 import { tokenizeProgram } from "../../src/basic/tokenizer.ts";
 import { applyPatch } from "../../src/gate/checksum-gate.ts";
@@ -26,15 +26,9 @@ const expected = truth.map((l) => l.n);
 const clone = (l: CanonicalListing): CanonicalListing => l.map((x) => ({ ...x }));
 const sha1 = (l: CanonicalListing) => createHash("sha1").update(JSON.stringify(l.map((x) => [x.n, x.body]))).digest("hex");
 
-/** Type the listing into the real C64, RUN, press the title key, report the facts the contract needs. */
-function machineFacts(core: C64Core, listing: CanonicalListing) {
-  loadProgram(core, [...listing].sort((a, b) => a.n - b.n).map((l) => typedLine(l.n, l.body).codes));
-  const resident = dumpBasic(core);
-  const run = runProgram(core, { maxFrames: 1500, until: (s) => TITLE.test(s) });
-  const titleSeen = TITLE.test(afterLastRun(run.screen));
-  const post = titleSeen ? (POST.test(pressKeys(core, [13], 150)) ? "pass" : "fail") : "not-reached";
-  return { resident, titleSeen, postTitle: post as "pass" | "fail" | "not-reached", run };
-}
+const SPEC: ListingSpec = { expectedLines: expected, titlePredicate: { screenContains: "THE CRYPT KEEPER" }, postTitle: { keys: [13], screenContains: "THE DOOR CREAKS OPEN." } };
+/** The shared core slice (src/emu/session.ts): load the canonical listing, RUN, title, post-title press, dump. */
+const machineFacts = (core: C64Core, listing: CanonicalListing) => runListing(core, listing, SPEC, 1500);
 
 let core: C64Core;
 beforeAll(async () => { core = await bootNodeCore(); });
@@ -123,7 +117,35 @@ describe("contract harness part 1 (real core)", () => {
     expect(r.failed.find((x) => x.clause === 4)?.lines).toContain(20);
   });
 
-  it("title with a fixable unverified line is not met; a forced line is never RESURRECTED (clause 5)", () => {
+  it("title with a fixable checksum-mismatched line is not met (clause 4), on the real core", () => {
+    const l = clone(truth);
+    const l60 = l.find((x) => x.n === 60)!; l60.body = "FORI=1TO3:READX:PRINTX;:NEXT:REM"; l60.status = "unverified";
+    const f = machineFacts(core, l);
+    expect(f.titleSeen).toBe(true);
+    const r = judge(l, SPEC, f);
+    expect(r.verdict).toBe("BOOTED-PARTIAL");
+    expect(r.failed.find((x) => x.clause === 4)?.lines).toEqual([60]);
+  });
+
+  it("no title on the real machine (an OCR error stops the run first) → NOT-RESURRECTED", () => {
+    const l = clone(truth);
+    l.find((x) => x.n === 10)!.body = 'PR1NT"{CLR}{DOWN} THE CRYPT KEEPER"';
+    const f = machineFacts(core, l);
+    expect(f.titleSeen).toBe(false);
+    expect(f.postTitle).toBe("not-reached");
+    expect(judge(l, SPEC, f).verdict).toBe("NOT-RESURRECTED");
+  });
+
+  it("the loader refuses to type a line whose control code fell outside the quotes", () => {
+    const l = clone(truth);
+    l.find((x) => x.n === 10)!.body = 'PRINT0{CLR}{DOWN} THE CRYPT KEEPER"';
+    expect(untypeableLines(l)).toEqual([{ n: 10, why: "control-outside-quotes" }]);
+    const f = machineFacts(core, l);
+    expect(f.untypeable.map((u) => u.n)).toEqual([10]);
+    expect(judge(l, SPEC, f).failed.map((x) => x.clause)).toContain(6);
+  });
+
+  it("a forced line is never RESURRECTED, even when the program runs (clause 5)", () => {
     const l = clone(truth);
     l.find((x) => x.n === 60)!.status = "forced";
     const f = machineFacts(core, l);
@@ -148,8 +170,8 @@ describe("contract harness part 1 (real core)", () => {
     const f = machineFacts(core, l);
     expect(f.titleSeen).toBe(true);
     expect(f.postTitle).toBe("fail");
-    const r = evaluate({ listing: truth, expectedLines: expected, titleSeen: false, postTitle: "not-reached", residentBytes: f.resident, provisional: new Set() });
-    expect(r.verdict).toBe("NOT-RESURRECTED");
+    expect(judge(l, SPEC, f).verdict).toBe("BOOTED-PARTIAL");
+    expect(judge(l, SPEC, f).failed).toContainEqual({ clause: 2, lines: [] });
     expect(readScreenText(core).length).toBeGreaterThan(0);
   });
 });
