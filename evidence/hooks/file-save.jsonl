@@ -1,0 +1,3 @@
+{"t":"2026-11-24T17:09:38.203Z","hook":"prop-tests-on-save","file":"src/basic/types.ts","exit":1,"failed":0,"passed":null,"ms":498}
+{"t":"2026-11-24T17:10:31.939Z","hook":"prop-tests-on-save","file":"src/basic/keywords.ts","exit":1,"failed":0,"passed":null,"ms":431}
+{"t":"2026-11-24T17:10:44.764Z","hook":"prop-tests-on-save","file":"src/basic/tokenizer.ts","exit":1,"failed":0,"passed":null,"ms":431}

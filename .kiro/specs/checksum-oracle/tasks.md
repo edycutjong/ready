@@ -3,42 +3,42 @@
 Each task is one focused edit plus its own tests. Work top to bottom; a later task may assume every earlier
 task's exports exist and are tested. `npm test` (Vitest) must pass after every numbered task.
 
-- [ ] 1. Shared types
-  - [ ] 1.1 Create `src/basic/types.ts` exporting `LineStatus`, `CanonicalLine`, `CanonicalListing`,
+- [x] 1. Shared types
+  - [x] 1.1 Create `src/basic/types.ts` exporting `LineStatus`, `CanonicalLine`, `CanonicalListing`,
     `Dropped`, `ParseBodyResult`, `TypedLineResult` exactly as in `design.md`'s "Shared types" section.
-  - [ ] 1.2 Add `tests/unit/types.test.ts` asserting (via `satisfies`/type-only checks compiled by `tsc
+  - [x] 1.2 Add `tests/unit/types.test.ts` asserting (via `satisfies`/type-only checks compiled by `tsc
     --noEmit`, plus one runtime smoke object per type) that a `LineStatus` value outside the five allowed
     strings is a compile error, not just a runtime possibility.
   - _Requirements: R1 (preamble), R4 (preamble), R5 (preamble)_
 
-- [ ] 2. `src/basic/tokenizer.ts` — keyword table and single-line crunch
-  - [ ] 2.1 Export `KEYWORDS` as the 76-entry ROM-order array from R3.1.
-  - [ ] 2.2 Implement `crunchLine(lineNo, body, startAddr)` per R3.2–R3.8 (quotes, REM, DATA, `?`,
+- [x] 2. `src/basic/tokenizer.ts` — keyword table and single-line crunch
+  - [x] 2.1 Export `KEYWORDS` as the 76-entry ROM-order array from R3.1.
+  - [x] 2.2 Implement `crunchLine(lineNo, body, startAddr)` per R3.2–R3.8 (quotes, REM, DATA, `?`,
     abbreviation, table-order first match, pass-through for ≥0x80 bytes not consumed by abbreviation).
-  - [ ] 2.3 Unit tests in `tests/unit/tokenizer.test.ts`: a plain keyword line, `?` as PRINT, a quoted string
+  - [x] 2.3 Unit tests in `tests/unit/tokenizer.test.ts`: a plain keyword line, `?` as PRINT, a quoted string
     containing a keyword-looking substring (not crunched), REM swallowing the rest of the line including a
     `:`, DATA swallowing until the next unquoted `:` then resuming, an abbreviation (`P` + shifted `R` for
     PRINT), a byte already ≥0x80 that is not part of a valid abbreviation (copied through unchanged), and
     table-order precedence when two keywords share a prefix (e.g. `GO` vs `GOTO` vs `GOSUB`).
   - _Requirements: R3.1, R3.2, R3.3, R3.4, R3.5, R3.6, R3.7, R3.8_
 
-- [ ] 3. `src/basic/tokenizer.ts` — whole-program image
-  - [ ] 3.1 Implement `tokenizeProgram(lines)` per R3.9–R3.12 (last-wins dedup by number, ascending sort,
+- [x] 3. `src/basic/tokenizer.ts` — whole-program image
+  - [x] 3.1 Implement `tokenizeProgram(lines)` per R3.9–R3.12 (last-wins dedup by number, ascending sort,
     link-address threading from `$0801`, final `0,0` terminator).
-  - [ ] 3.2 Unit tests: two lines in descending input order sort correctly in output; a duplicate line number
+  - [x] 3.2 Unit tests: two lines in descending input order sort correctly in output; a duplicate line number
     keeps only the later input occurrence; link addresses match a hand-computed example; an empty program
     yields exactly `[0,0]`.
-  - [ ] 3.3 Property test `tests/prop/tokenizer-determinism.prop.ts`: P7-style — `tokenizeProgram` called
+  - [x] 3.3 Property test `tests/prop/tokenizer-determinism.prop.ts`: P7-style — `tokenizeProgram` called
     twice on line sets that are identical after last-wins dedup returns byte-identical `Uint8Array`s
     (`numRuns: 100`).
   - _Requirements: R3.9, R3.10, R3.11, R3.12, R3.13_
 
-- [ ] 4. `src/basic/notation.ts` — `parseBody`
-  - [ ] 4.1 Export `TOKENS` (the 21-entry name→PETSCII-code table from R1.1).
-  - [ ] 4.2 Implement `parseBody(body)` per the algorithm in `design.md` (quotes, `{NAME}`/`{n NAME(S)}`
+- [x] 4. `src/basic/notation.ts` — `parseBody`
+  - [x] 4.1 Export `TOKENS` (the 21-entry name→PETSCII-code table from R1.1).
+  - [x] 4.2 Implement `parseBody(body)` per the algorithm in `design.md` (quotes, `{NAME}`/`{n NAME(S)}`
     recognition, unknown/unterminated-group literal fallback, space in/out of quotes, upper-case fold,
     32–95 range check into `dropped`).
-  - [ ] 4.3 Unit tests in `tests/unit/notation.test.ts`: every fixed token from R1.1 individually; `{3 DOWN}`
+  - [x] 4.3 Unit tests in `tests/unit/notation.test.ts`: every fixed token from R1.1 individually; `{3 DOWN}`
     and `{1 DOWNS}` both produce the expected repeat; `{0 DOWN}` produces zero codes; a space outside quotes
     produces no code, a space inside quotes produces code 32; a lower-case letter folds to upper; a character
     outside 32–95 (e.g. a literal `~` or a stray `£`) lands in `dropped` with its original (non-folded)
@@ -47,35 +47,35 @@ task's exports exist and are tested. `npm test` (Vitest) must pass after every n
     of string literally.
   - _Requirements: R1.1, R1.2, R1.3, R1.4, R1.5, R1.6, R1.7, R1.8_
 
-- [ ] 5. `src/basic/notation.ts` — `render`, `typedLine`, abbreviation
-  - [ ] 5.1 Implement `render(codes)` as `parseBody`'s inverse for codes with no corresponding `dropped`
+- [x] 5. `src/basic/notation.ts` — `render`, `typedLine`, abbreviation
+  - [x] 5.1 Implement `render(codes)` as `parseBody`'s inverse for codes with no corresponding `dropped`
     entries (each fixed-token code renders to its `{NAME}`, each 65–90/32–95 code renders to its character).
-  - [ ] 5.2 Implement `typedLine(lineNo, body)` per R1.9–R1.13, importing `KEYWORDS` from `tokenizer.ts` for
+  - [x] 5.2 Implement `typedLine(lineNo, body)` per R1.9–R1.13, importing `KEYWORDS` from `tokenizer.ts` for
     the abbreviation step (R1.11), splicing codes for the rightmost eligible occurrence first.
-  - [ ] 5.3 Unit tests: a line at exactly 80 typed codes returns `tooLong: false` unchanged; a line at 81
+  - [x] 5.3 Unit tests: a line at exactly 80 typed codes returns `tooLong: false` unchanged; a line at 81
     abbreviates exactly one rightmost keyword occurrence and returns `tooLong: false`; a line so long that
     every keyword occurrence is abbreviated and it still exceeds 80 returns `tooLong: true` with the fully
     abbreviated codes; an abbreviation inside a quoted string is never touched (quotes are excluded from the
     scan in step 5 of `typedLine`'s algorithm).
-  - [ ] 5.4 Property test `tests/prop/notation-roundtrip.prop.ts` for **P2**: generate bodies from only
+  - [x] 5.4 Property test `tests/prop/notation-roundtrip.prop.ts` for **P2**: generate bodies from only
     recognized tokens/typeable characters, assert `parseBody(render(parseBody(body).codes)).codes` deep-equals
     `parseBody(body).codes` (`numRuns: 100`).
   - _Requirements: R1.9, R1.10, R1.11, R1.12, R1.13, R1.14_
 
-- [ ] 6. `src/basic/checksum.ts`
-  - [ ] 6.1 Implement `computeChecksum(lineNo, body)` per R2.1–R2.6, importing `TOKENS` from `notation.ts` and
+- [x] 6. `src/basic/checksum.ts`
+  - [x] 6.1 Implement `computeChecksum(lineNo, body)` per R2.1–R2.6, importing `TOKENS` from `notation.ts` and
     applying its own (unfolded, all-spaces-ignored) counting rules rather than `parseBody`'s typing rules.
-  - [ ] 6.2 Implement `parsePrinted(remText)` per R2.7–R2.8 (anchored regex, 1–3 digits, 0–255, `null` on
+  - [x] 6.2 Implement `parsePrinted(remText)` per R2.7–R2.8 (anchored regex, 1–3 digits, 0–255, `null` on
     anything else).
-  - [ ] 6.3 Implement `splitLine(raw)` per R2.9.
-  - [ ] 6.4 Unit tests in `tests/unit/checksum.test.ts`: the worked example from `steering/gazette-notation.md`
+  - [x] 6.3 Implement `splitLine(raw)` per R2.9.
+  - [x] 6.4 Unit tests in `tests/unit/checksum.test.ts`: the worked example from `steering/gazette-notation.md`
     (or an authored 2026 fixture of equivalent shape — no magazine text committed, per `structure.md`) computes
     the expected sum; a space inside quotes contributes 0 to the sum (differs from `notation.ts`'s typed code
     for the same input); `{SPACE}`/`{3 SPACES}` contribute 0; a lower-case letter in `body` contributes its
     lower-case ASCII code, not its upper-cased one; `parsePrinted` rejects 4 digits, rejects 256, rejects
     missing `:rem`, accepts `":rem 7"`, `":rem 007"`; `splitLine` splits a line with no trailing `:rem` into
     `{ body: entire remainder, printed: null }`.
-  - [ ] 6.5 Property test `tests/prop/checksum-ignores-spaces.prop.ts` for **P1**: generate a body and a
+  - [x] 6.5 Property test `tests/prop/checksum-ignores-spaces.prop.ts` for **P1**: generate a body and a
     variant with extra/removed literal spaces inserted anywhere outside token braces; assert
     `computeChecksum` is unchanged (`numRuns: 100`).
   - _Requirements: R2.1, R2.2, R2.3, R2.4, R2.5, R2.6, R2.7, R2.8, R2.9, R2.10_
