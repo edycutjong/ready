@@ -33,6 +33,8 @@ h2 { font-size: 1.5rem; }
 .nav { display: flex; gap: 1.2rem; font-family: var(--font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.95rem; margin-bottom: 1.4rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.7rem; }
 .nav a { color: var(--muted); text-decoration: none; padding: 0.25rem 0; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
 .nav a:hover, .nav a:focus-visible, .nav a[aria-current] { color: var(--ink); border-bottom-color: var(--before); }
+.nav a { padding: 0.25rem 0.5rem; border-radius: 2px; }
+.nav a:hover { background: color-mix(in srgb, var(--before) 16%, transparent); text-shadow: 0 0 12px color-mix(in srgb, var(--before) 55%, transparent); }
 :focus-visible { outline: 2px solid var(--after); outline-offset: 3px; }
 
 /* headstones = the picker */

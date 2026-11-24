@@ -1,0 +1,226 @@
+{
+ "base": "https://ready.edycu.dev",
+ "date": "2026-11-24T20:10:28.120Z",
+ "checked": 21,
+ "failing": 3,
+ "fails": [
+  {
+   "route": "/",
+   "label": "Raise a listing",
+   "tag": "a",
+   "hoverChanged": false,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/scan",
+   "label": "Check a page (assisted)",
+   "tag": "a",
+   "hoverChanged": false,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/kiro",
+   "label": "/kiro hooks",
+   "tag": "a",
+   "hoverChanged": false,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  }
+ ],
+ "all": [
+  {
+   "route": "/",
+   "label": "Raise a listing",
+   "tag": "a",
+   "hoverChanged": false,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/",
+   "label": "Check a page (assisted)",
+   "tag": "a",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/",
+   "label": "/kiro hooks",
+   "tag": "a",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/",
+   "label": "The Last Seanceauthored 2026 page · typeset ",
+   "tag": "button",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": null
+  },
+  {
+   "route": "/",
+   "label": "Your own pageASSISTED: OCR + the magazine's ",
+   "tag": "a",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/",
+   "label": "Resurrect",
+   "tag": "button",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": null
+  },
+  {
+   "route": "/",
+   "label": "step",
+   "tag": "input",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": true,
+   "linkStatus": null
+  },
+  {
+   "route": "/",
+   "label": "Cheat: delete the error line",
+   "tag": "button",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": null
+  },
+  {
+   "route": "/",
+   "label": "download .PRG (loads at $0801)",
+   "tag": "button",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": null
+  },
+  {
+   "route": "/",
+   "label": "download errata (1 line)",
+   "tag": "button",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": null
+  },
+  {
+   "route": "/scan",
+   "label": "Raise a listing",
+   "tag": "a",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/scan",
+   "label": "Check a page (assisted)",
+   "tag": "a",
+   "hoverChanged": false,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/scan",
+   "label": "/kiro hooks",
+   "tag": "a",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/scan",
+   "label": "800 px wide1600 px wide2376 px wide",
+   "tag": "select",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": true,
+   "linkStatus": null
+  },
+  {
+   "route": "/scan",
+   "label": "n177 — printed page 174 (two columns)n178 — ",
+   "tag": "select",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": true,
+   "linkStatus": null
+  },
+  {
+   "route": "/scan",
+   "label": "two columnsone column",
+   "tag": "select",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": true,
+   "linkStatus": null
+  },
+  {
+   "route": "/scan",
+   "label": "Read the real 1984 page",
+   "tag": "button",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": null
+  },
+  {
+   "route": "/scan",
+   "label": "INPUT",
+   "tag": "input",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": true,
+   "linkStatus": null
+  },
+  {
+   "route": "/kiro",
+   "label": "Raise a listing",
+   "tag": "a",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/kiro",
+   "label": "Check a page (assisted)",
+   "tag": "a",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/kiro",
+   "label": "/kiro hooks",
+   "tag": "a",
+   "hoverChanged": false,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  }
+ ]
+}
