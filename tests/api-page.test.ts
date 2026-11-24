@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { GET } from "../api/page.ts";
+import { GET } from "../api/page.js";
 
 const req = (qs: string) => new Request(`https://ready.test/api/page?${qs}`);
 afterEach(() => vi.unstubAllGlobals());
