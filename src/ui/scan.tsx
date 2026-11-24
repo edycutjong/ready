@@ -30,12 +30,12 @@ export function ScanView() {
   const [lines, setLines] = useState<FlaggedLine[] | null>(null);
   const [meta, setMeta] = useState<{ ms: number; width: number; rows: number; engine: string; source: string } | null>(null);
 
-  async function run(blob: Blob, source: string) {
+  async function run(blob: Blob, source: string, cols: 1 | 2 = columns) {
     setBusy("reading the page in this tab…"); setPct(0); setLines(null);
     if (img) URL.revokeObjectURL(img);
     setImg(URL.createObjectURL(blob));
     try {
-      const r = await ocrImage(blob, stop, columns, (p, s) => { setPct(p); setBusy(s); });
+      const r = await ocrImage(blob, stop, cols, (p, s) => { setPct(p); setBusy(s); });
       const q = scanQuality(r.logical);
       if (!q.readable) { setMsg(`This scan is unreadable: ${q.reason}. Try a sharper image or a higher scan quality. Nothing else was run.`); window.__scan = { done: true, unreadable: true, reason: q.reason }; setBusy(null); return; }
       const flagged = flagAll(r.logical);
@@ -51,7 +51,17 @@ export function ScanView() {
       const r = await fetch(`/api/page?id=${ITEM}&n=${page}${stop === 2376 ? "" : `&w=${stop}`}`);
       if (!r.ok) throw new Error(`/api/page answered ${r.status}`);
       await run(await r.blob(), `archive.org ${ITEM} n${page} (via /api/page)`);
-    } catch (e) { setBusy(null); setMsg(`scan unavailable — ${(e as Error).message}. The recorded run on the first page still plays.`); }
+    } catch (e) { setBusy(null); setMsg(`scan unavailable — ${(e as Error).message}. "Read our authored page" works without archive.org, and the recorded run on the first page still plays.`); }
+  }
+  /** a2a arch-01: a page that never depends on archive.org — the 2026 page we typeset ourselves (the hero run's input). */
+  async function readAuthored() {
+    setMsg(null); setBusy("loading our authored page…");
+    try {
+      const r = await fetch("/pages/authored-line20.png");
+      if (!r.ok) throw new Error(`answered ${r.status}`);
+      setColumns(1);
+      await run(await r.blob(), "our authored 2026 page, typeset by us (served from this site; not a 1984 scan)", 1);
+    } catch (e) { setBusy(null); setMsg(`authored page unavailable — ${(e as Error).message}`); }
   }
   const edit = (n: number, body: string) => setLines((ls) => ls && ls.map((l) => (l.n === n ? flagLine(l.n, body, l.printed, true) : l)));
   const sum = lines ? summarize(lines) : null;
@@ -68,6 +78,7 @@ export function ScanView() {
           <label>Page <select value={page} onChange={(e) => setPage(Number((e.target as HTMLSelectElement).value))}>{PAGES.map((p) => <option value={p.n}>{p.label}</option>)}</select></label>
           <label>Layout <select value={columns} onChange={(e) => setColumns(Number((e.target as HTMLSelectElement).value) as 1 | 2)} data-testid="columns"><option value={2}>two columns</option><option value={1}>one column</option></select></label>
           <button data-testid="read-archive" disabled={!!busy} onClick={fetchPage}>Read the real 1984 page</button>
+          <button data-testid="read-authored" disabled={!!busy} onClick={readAuthored}>Read our authored page</button>
           <label>or your own scan <input type="file" accept="image/*" data-testid="upload" disabled={!!busy} onChange={(e) => { const f = (e.target as HTMLInputElement).files?.[0]; if (f) run(f, `your upload (${f.name})`); }} /></label>
         </div>
         <p class="note">Source width stops are measured in pixels of the source image, not dpi. The page image is archive.org's own public scan, fetched on demand and never stored here.</p>
