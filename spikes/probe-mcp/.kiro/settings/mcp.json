@@ -1,1 +1,0 @@
-{ "mcpServers": { "c64": { "command": "node", "args": ["server.mjs"], "env": { "RUN_DIR": "${RUN_DIR}" } } } }
