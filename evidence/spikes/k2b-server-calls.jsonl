@@ -1,0 +1,2 @@
+{"t":"2026-11-24T16:53:27.459Z","tool":"apply_patch","args":{"ops":[{"op":"replace","lineno":20,"new_body":"PRINT 1"}],"reason":"k2b"},"runDir":"/tmp/ready-k2b-1795539199"}
+{"t":"2026-11-24T16:53:32.067Z","tool":"apply_patch","args":{"ops":[{"op":"replace","lineno":30,"new_body":"PRINT 2"}],"reason":"stop-hook turn 1"},"runDir":"/tmp/ready-k2b-1795539199"}

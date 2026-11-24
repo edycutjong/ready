@@ -1,0 +1,2 @@
+{"t":"2026-11-24T16:52:42.203Z","tool":"apply_patch","args":{"ops":[{"op":"replace","lineno":20,"new_body":"PRINT 1"}],"reason":"probe: allowed"},"runDir":"/tmp/ready-k1-1795539149"}
+{"t":"2026-11-24T16:52:50.751Z","tool":"apply_patch","args":{"ops":[{"op":"replace","lineno":30,"new_body":"PRINT 2"}],"reason":"stop-hook turn"},"runDir":"/tmp/ready-k1-1795539149"}
