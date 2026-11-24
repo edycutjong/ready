@@ -87,6 +87,6 @@ export function runListing(core: C64Core, listing: CanonicalListing, spec: Listi
 }
 
 /** Machine facts → the contract (the model is never consulted). */
-export function judge(listing: CanonicalListing, spec: ListingSpec, facts: MachineFacts, provisional: ReadonlySet<number> = new Set()): ContractResult {
-  return evaluate({ listing, expectedLines: spec.expectedLines, titleSeen: facts.titleSeen, postTitle: facts.postTitle, residentBytes: facts.resident, provisional });
+export function judge(listing: CanonicalListing, spec: ListingSpec, facts: MachineFacts, provisional: ReadonlySet<number> = new Set(), scope?: string): ContractResult {
+  return evaluate({ listing, expectedLines: spec.expectedLines, titleSeen: facts.titleSeen, postTitle: facts.postTitle, residentBytes: facts.resident, provisional, scope });
 }

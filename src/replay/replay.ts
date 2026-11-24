@@ -56,13 +56,26 @@ export function attemptsOf(events: readonly RunEvent[]): RunEvent[] {
     || e.k === "proposal" || e.k === "gate" || (e.k === "emu" && e.op === "run"));
 }
 
-export function replay(events: readonly RunEvent[], core: C64Core | null): ReplayResult {
+/**
+ * Spec F9: REPLAY refuses re-execution on a different emulator — a different c64-ready version (core id) or different
+ * WASM bytes (sha256, when both sides know it). Refused = the gate still re-judges every attempt, but no C64 re-runs
+ * anything (recorded playback), and the refusal is reported as a mismatch.
+ */
+export function emulatorRefusal(start: RunEvent | undefined, core: C64Core | null, wasmSha256?: string): string | null {
+  if (!core) return null;
+  const rec = start?.emulator as { id?: string; wasmSha256?: string } | undefined;
+  if (rec?.id && core.id !== rec.id) return `REPLAY refused: recorded on ${rec.id}, this browser has ${core.id}`;
+  if (rec?.wasmSha256 && wasmSha256 && rec.wasmSha256 !== wasmSha256) return `REPLAY refused: recorded on WASM sha256 ${rec.wasmSha256.slice(0, 12)}…, this browser has ${wasmSha256.slice(0, 12)}…`;
+  return null;
+}
+
+export function replay(events: readonly RunEvent[], coreIn: C64Core | null, opts: { wasmSha256?: string } = {}): ReplayResult & { refused: string | null } {
   const start = events.find((e) => e.k === "start");
   const input = start?.input as RunInput | undefined;
   if (!input) throw new Error("recorded run has no start.input: it cannot be replayed (agents.md §6)");
   const expected = input.spec.expectedLines;
-  const recEmu = (start?.emulator as { id?: string } | undefined)?.id;
-  const emuMismatch = core && recEmu && core.id !== recEmu ? `emulator: recorded on ${recEmu}, replaying on ${core.id}` : null;
+  const emuMismatch = emulatorRefusal(start, coreIn, opts.wasmSha256);
+  const core = emuMismatch ? null : coreIn;
   let listing: CanonicalListing = plain(input.lines);
   const provisional = new Set<number>(input.provisional ?? input.lines.filter((l) => l.provisional).map((l) => l.n));
   const counts: Record<number, number> = {};
@@ -108,12 +121,12 @@ export function replay(events: readonly RunEvent[], core: C64Core | null): Repla
       steps.push({ kind: "run", recorded, facts, match, listing });
     }
   }
-  const contract = core && lastFacts ? judge(listing, input.spec, lastFacts, provisional) : null;
+  const contract = core && lastFacts ? judge(listing, input.spec, lastFacts, provisional, input.scope) : null;
   const recordedEnd = [...events].reverse().find((e) => e.k === "end") ?? null;
   if (contract && recordedEnd && typeof recordedEnd.result === "string" && recordedEnd.result.toUpperCase() !== contract.verdict) {
     mismatches.push(`contract: recorded ${recordedEnd.result}, recomputed ${contract.verdict}`);
   }
-  return { input, steps, final: listing, contract, recordedEnd, mismatches };
+  return { input, steps, final: listing, contract, recordedEnd, mismatches, refused: emuMismatch };
 }
 
 /**

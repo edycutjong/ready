@@ -18,6 +18,8 @@ export interface ContractInput {
   postTitle: "pass" | "fail" | "not-reached";
   residentBytes: Uint8Array;
   provisional: ReadonlySet<number>;
+  /** the listing's certificate scope ("title-path" | "whole listing"); omitted = title-path (QA P1b r3: the heading names the scope) */
+  scope?: string;
 }
 
 export type Verdict = "RESURRECTED" | "BOOTED-PARTIAL" | "NOT-RESURRECTED";
@@ -73,6 +75,7 @@ export function evaluate(input: ContractInput): ContractResult {
   const verdict: Verdict = !input.titleSeen ? "NOT-RESURRECTED" : failed.length === 0 ? "RESURRECTED" : "BOOTED-PARTIAL";
   const k = inScope.filter((l) => GOOD.has(l.status)).length;
   const state = verdict === "RESURRECTED" ? "RESURRECTED" : verdict === "BOOTED-PARTIAL" ? "BOOTED — PARTIAL" : "NOT RESURRECTED";
-  const heading = `${input.titleSeen ? "TITLE-PATH" : "NO-TITLE"} ${state} · ${k}/${input.expectedLines.length} checksum-consistent`;
+  const prefix = !input.titleSeen ? "NO-TITLE " : (input.scope ?? "title-path") === "title-path" ? "TITLE-PATH " : "";
+  const heading = `${prefix}${state} · ${k}/${input.expectedLines.length} checksum-consistent`;
   return { verdict, counts, failed: verdict === "RESURRECTED" ? [] : failed, heading };
 }

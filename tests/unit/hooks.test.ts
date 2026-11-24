@@ -97,6 +97,22 @@ describe("until-title.mjs (Agent Stop hook + runner --check)", () => {
     const c = JSON.parse(hook("until-title", d, null, ["--check"]).stdout);
     expect(c).toMatchObject({ stop: true, cap: "iteration cap (15/15)" });
   });
+  it("allows stop at the 8-credit cap when metered, never when unmetered (QA P1b r3)", () => {
+    const d = runDir(undefined, { state: "NOT-RESURRECTED" });
+    ev(d, run);
+    writeFileSync(join(d, "credits.json"), JSON.stringify({ metered: true, credits: 8.02, iterations: 3, startedAt: Date.now() }));
+    expect(JSON.parse(hook("until-title", d, null, ["--check"]).stdout)).toMatchObject({ stop: true, cap: "credit cap (8.02/8)" });
+    writeFileSync(join(d, "credits.json"), JSON.stringify({ metered: false, credits: 99, iterations: 3, startedAt: Date.now() }));
+    expect(JSON.parse(hook("until-title", d, null, ["--check"]).stdout).cap).toBeUndefined();
+  });
+  it("allows stop at the 600 s wall cap (QA P1b r3)", () => {
+    const d = runDir(undefined, { state: "NOT-RESURRECTED" });
+    ev(d, run);
+    writeFileSync(join(d, "credits.json"), JSON.stringify({ metered: true, credits: 1, iterations: 3, startedAt: Date.now() - 601_000 }));
+    const c = JSON.parse(hook("until-title", d, null, ["--check"]).stdout);
+    expect(c.stop).toBe(true);
+    expect(c.cap).toMatch(/^wall cap \(60\d s\/600 s\)$/);
+  });
 });
 
 describe("until-title.mjs — consistent is not runs (QA P1b r1)", () => {

@@ -280,7 +280,7 @@ export class C64Tools {
       return { facts: f, screen: readScreenText(this.core) };
     });
     if (facts.postTitle === "pass") for (const l of this.lines) l.provisional = false; // R3.8
-    const res = judge(this.plain(), this.spec, facts, this.provisionalSet());
+    const res = judge(this.plain(), this.spec, facts, this.provisionalSet(), this.scope);
     this.postTitle = facts.postTitle;
     this.contract = this.toContractFile(res);
     const hash = this.hash();

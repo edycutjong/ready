@@ -72,7 +72,7 @@ for (const line of listing.filter((l) => l.status === "unverified" && l.printed 
   perLine.push({ n: line.n, candidates: cands.length, how });
 }
 const facts = runListing(core, listing, spec);
-const contract = judge(listing, spec, facts, new Set(facts.postTitle === "pass" ? [] : input.provisional ?? []));
+const contract = judge(listing, spec, facts, new Set(facts.postTitle === "pass" ? [] : input.provisional ?? []), input.scope);
 const result = {
   experiment: "E0 checksum-constrained confusable search + emulator re-run (no model)", listing: input.listingId, credits: 0, wallMs: Date.now() - t0,
   start: { error: facts0.run.error, titleSeen: facts0.titleSeen, unverified: input.lines.filter((l) => l.status === "unverified").length },

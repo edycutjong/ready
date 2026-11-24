@@ -27,6 +27,8 @@ describe("contract", () => {
     expect(r.verdict).toBe("RESURRECTED");
     expect(r.failed).toEqual([]);
     expect(r.heading).toBe("TITLE-PATH RESURRECTED · 3/3 checksum-consistent");
+    expect(evaluate(good({ scope: "whole listing" })).heading).toBe("RESURRECTED · 3/3 checksum-consistent"); // the heading names the scope (QA P1b r3)
+    expect(evaluate(good({ scope: "whole listing", titleSeen: false })).heading).toBe("NO-TITLE NOT RESURRECTED · 3/3 checksum-consistent");
     expect(r.counts).toEqual({ verified: 1, digitMisread: 1, eyeVerified: 1, forced: 0, unverified: 0, present: 3, typed: 1, missing: 0, orphansExcluded: 0 });
   });
   it("one forced line flips to BOOTED — PARTIAL with clause 5 naming it", () => {

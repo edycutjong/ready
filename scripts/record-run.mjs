@@ -190,7 +190,7 @@ async function finalJudgeIfStale() {
   const lines = l.lines.map(({ n, body, printed, status, source }) => ({ n, body, printed, status, source }));
   const facts = runListing(await bootNodeCore(), lines, runInput.spec);
   const prov = new Set(facts.postTitle === "pass" ? [] : l.lines.filter((x) => x.provisional).map((x) => x.n));
-  const c = judge(lines, runInput.spec, facts, prov);
+  const c = judge(lines, runInput.spec, facts, prov, runInput.scope);
   l.lines = l.lines.map((x) => ({ ...x, provisional: prov.has(x.n) }));
   l.contract = { ...l.contract, state: c.verdict, heading: c.heading, counts: c.counts, failed: c.failed, lines: l.lines.map((x) => ({ n: x.n, status: x.status, source: x.source, provisional: x.provisional })) };
   l.postTitle = facts.postTitle;
