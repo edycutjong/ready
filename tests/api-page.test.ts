@@ -9,6 +9,24 @@ describe("/api/page proxy", () => {
     const r = await GET(req("id=evil-item&n=1"));
     expect(r.status).toBe(400);
   });
+  it("refuses prototype keys: the allow-list is own keys only (a2a arch-01)", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    for (const id of ["constructor", "__proto__", "toString", "hasOwnProperty"]) expect((await GET(req(`id=${id}&n=0`))).status).toBe(400);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+  it("refuses a redirect that leaves archive.org and an oversized Content-Length before buffering", async () => {
+    const off = new Response(new Uint8Array([0xff, 0xd8]), { status: 200, headers: { "content-type": "image/jpeg" } });
+    Object.defineProperty(off, "url", { value: "https://evil.example/x.jpg" });
+    vi.stubGlobal("fetch", vi.fn(async () => off));
+    expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(502);
+    const ia = new Response(new Uint8Array([0xff, 0xd8]), { status: 200, headers: { "content-type": "image/jpeg" } });
+    Object.defineProperty(ia, "url", { value: "https://ia800300.us.archive.org/x/page/n1.jpg" });
+    vi.stubGlobal("fetch", vi.fn(async () => ia));
+    expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(200);
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array([1]), { status: 200, headers: { "content-type": "image/jpeg", "content-length": "9000000" } })));
+    expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(502);
+  });
   it("refuses a width outside the allow-list and a page out of range", async () => {
     expect((await GET(req("id=1984-06-computegazette&n=1&w=3200"))).status).toBe(400);
     expect((await GET(req("id=1984-06-computegazette&n=9999"))).status).toBe(400);
