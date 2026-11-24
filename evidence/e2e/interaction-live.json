@@ -1,7 +1,7 @@
 {
  "base": "https://ready.edycu.dev",
- "date": "2026-11-24T20:11:17.121Z",
- "checked": 21,
+ "date": "2026-11-24T20:20:09.412Z",
+ "checked": 22,
  "failing": 0,
  "fails": [],
  "all": [
@@ -43,6 +43,15 @@
   },
   {
    "route": "/",
+   "label": "Random Number TestCOMPUTE!'s Gazette, June 1",
+   "tag": "a",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": false,
+   "linkStatus": 200
+  },
+  {
+   "route": "/",
    "label": "Your own pageASSISTED: OCR + the magazine's ",
    "tag": "a",
    "hoverChanged": true,
@@ -61,20 +70,20 @@
   },
   {
    "route": "/",
-   "label": "step",
-   "tag": "input",
-   "hoverChanged": true,
-   "focusRing": true,
-   "nativeHover": true,
-   "linkStatus": null
-  },
-  {
-   "route": "/",
    "label": "Cheat: delete the error line",
    "tag": "button",
    "hoverChanged": true,
    "focusRing": true,
    "nativeHover": false,
+   "linkStatus": null
+  },
+  {
+   "route": "/",
+   "label": "step",
+   "tag": "input",
+   "hoverChanged": true,
+   "focusRing": true,
+   "nativeHover": true,
    "linkStatus": null
   },
   {

@@ -1,13 +1,13 @@
 {
  "base": "https://ready.edycu.dev",
- "date": "2026-11-24T20:13:36.140Z",
+ "date": "2026-11-24T20:20:16.532Z",
  "ok": true,
  "checks": [
   {
    "name": "first playable paint ≤ 60 s, no install, clean profile",
    "pass": true,
    "detail": {
-    "ms": 825
+    "ms": 222
    }
   },
   {
