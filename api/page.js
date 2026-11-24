@@ -41,17 +41,22 @@ export async function GET(request) {
     } catch { return json(504, { error: "archive.org unreachable or slow" }); }
     if (up.status < 300 || up.status >= 400) break;
     const loc = up.headers.get("location");
+    await up.body?.cancel();
     if (!loc || hop >= MAX_HOPS) return json(502, { error: "archive.org redirected too often or without a location" });
     const next = new URL(loc, target).toString();
-    if (!isArchiveHost(next)) return json(502, { error: "archive.org redirected off archive.org" });
+    if (!isArchiveHost(next)) return json(502, { error: "archive.org redirected off archive.org (or off https)" });
     target = next;
   }
   if (!up.ok) return json(up.status === 404 ? 404 : 502, { error: `archive.org answered ${up.status}` });
   if (Number(up.headers.get("content-length") ?? 0) > MAX_BYTES) return json(502, { error: "image larger than the function limit" });
   const type = up.headers.get("content-type") ?? "";
   if (!/^image\/jpeg/.test(type)) return json(502, { error: "unexpected content type" });
-  const buf = await readCapped(up, MAX_BYTES); // a chunked body has no Content-Length: stop reading past the limit
+  /** @type {Uint8Array | null} */ let buf;
+  try {
+    buf = await readCapped(up, MAX_BYTES); // a chunked body has no Content-Length: stop reading past the limit
+  } catch { return json(504, { error: "archive.org unreachable or slow" }); } // the shared 8 s budget also covers the body
   if (!buf) return json(502, { error: "image larger than the function limit" });
+  if (buf.byteLength === 0) return json(502, { error: "archive.org sent an empty image" });
   return new Response(buf, {
     status: 200,
     headers: {
@@ -85,8 +90,8 @@ async function readCapped(res, max) {
 
 /** @param {string} u */
 function isArchiveHost(u) {
-  const h = new URL(u).hostname;
-  return h === "archive.org" || h.endsWith(".archive.org");
+  const { protocol, hostname: h } = new URL(u);
+  return protocol === "https:" && (h === "archive.org" || h.endsWith(".archive.org"));
 }
 
 /** @param {number} status @param {unknown} body */

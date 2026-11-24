@@ -189,7 +189,7 @@ function Desk() {
                         <td class="body">{was !== undefined && was !== l.body ? <><del>{was}</del><br /><ins class="accepted">{l.body}</ins></> : l.body}</td>
                         <td class="rem">:rem {l.printed ?? "??"}</td>
                         <td class="mk">{m.sym}</td>
-                        <td class="src">{(() => { const v = prov?.perLine.get(l.n) ?? ""; return was !== undefined && was === l.body && /patched/i.test(v) ? "OCR" : v; })()}</td>
+                        <td class="src">{(() => { const v = prov?.perLine.get(l.n) ?? ""; return was !== undefined && was === l.body && /patched|forced/i.test(v) ? "OCR" : v; })()}</td>
                       </tr>
                     );
                   })}

@@ -50,7 +50,6 @@ export function refusedLines(v: GateVerdict, _patch: readonly PatchOp[]): number
 
 const plain = (l: CanonicalListing): CanonicalListing => l.map(({ n, body, printed, status, source }) => ({ n, body, printed, status, source }));
 
-/** The attempts and runs of a recorded run, in order. Server-side events only (no model text is trusted). */
 /**
  * The frame budget a recorded `c64_run` used, so REPLAY re-executes the same experiment (a2a arch-01). Events
  * since arch-01 carry `maxFrames`. Older ones carry only the elapsed `frames` and `stoppedOn`: a run that stopped on
@@ -66,6 +65,7 @@ export function replayBudget(e: RunEvent): number {
   return e.stoppedOn === "frames" && elapsed > 0 ? elapsed : Math.max(3000, elapsed);
 }
 
+/** The attempts and runs of a recorded run, in order. Server-side events only (no model text is trusted). */
 export function attemptsOf(events: readonly RunEvent[]): RunEvent[] {
   return events.filter((e) => (e.k === "hook" && e.hook === "checksum-gate" && e.via === "kiro-pre-tool-use" && e.exit === 2)
     || e.k === "proposal" || e.k === "gate" || (e.k === "emu" && e.op === "run"));

@@ -33,6 +33,15 @@ describe("/api/page proxy", () => {
     expect(loop).toHaveBeenCalledTimes(4);
     vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array([1]), { status: 200, headers: { "content-type": "image/jpeg", "content-length": "9000000" } })));
     expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(502);
+    const http = vi.fn(async () => redirect("http://ia800300.us.archive.org/x.jpg"));
+    vi.stubGlobal("fetch", http);
+    expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(502); // no https → http downgrade
+    expect(http).toHaveBeenCalledTimes(1);
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array(0), { status: 200, headers: { "content-type": "image/jpeg" } })));
+    expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(502); // never a zero-byte "image"
+    const broken = new ReadableStream({ start(c) { c.enqueue(new Uint8Array([0xff])); c.error(new Error("aborted")); } });
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(broken, { status: 200, headers: { "content-type": "image/jpeg" } })));
+    expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(504); // a body that dies mid-read is a JSON 504
     const big = new ReadableStream({ start(c) { for (let i = 0; i < 5; i++) c.enqueue(new Uint8Array(1_000_000)); c.close(); } });
     vi.stubGlobal("fetch", vi.fn(async () => new Response(big, { status: 200, headers: { "content-type": "image/jpeg" } })));
     expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(502);
