@@ -9,6 +9,7 @@
  */
 import pages from "../data/pages.json" with { type: "json" };
 
+const MAX_HOPS = 3;
 const MAX_BYTES = 4_500_000; // Vercel function response limit is 4.5 MB; the full page image measured 1.16 MB
 
 /** @param {Request} request @returns {Promise<Response>} */
@@ -29,19 +30,28 @@ export async function GET(request) {
   }
   const url = `https://archive.org/download/${id}/page/n${n}${w ? `_w${w}` : ""}.jpg`;
   const t0 = Date.now();
+  // Redirects are followed by hand so every hop is checked BEFORE it is fetched: archive.org sends /download/ to its own
+  // ia*.us.archive.org hosts, and nothing else may be contacted (a2a arch-01). One 8 s budget covers every hop.
+  const signal = AbortSignal.timeout(8000);
+  let target = url;
   /** @type {Response} */ let up;
-  try {
-    up = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(8000), headers: { "user-agent": "ready-page-proxy/0.1 (hackathon demo; allow-listed)" } });
-  } catch { return json(504, { error: "archive.org unreachable or slow" }); }
+  for (let hop = 0; ; hop++) {
+    try {
+      up = await fetch(target, { redirect: "manual", signal, headers: { "user-agent": "ready-page-proxy/0.1 (hackathon demo; allow-listed)" } });
+    } catch { return json(504, { error: "archive.org unreachable or slow" }); }
+    if (up.status < 300 || up.status >= 400) break;
+    const loc = up.headers.get("location");
+    if (!loc || hop >= MAX_HOPS) return json(502, { error: "archive.org redirected too often or without a location" });
+    const next = new URL(loc, target).toString();
+    if (!isArchiveHost(next)) return json(502, { error: "archive.org redirected off archive.org" });
+    target = next;
+  }
   if (!up.ok) return json(up.status === 404 ? 404 : 502, { error: `archive.org answered ${up.status}` });
-  // archive.org redirects /download/ to its own ia*.us.archive.org hosts; anything else is not the page we allow-listed.
-  // (`up.url` is empty only on a Response built in a test, never on a real fetch.)
-  if (up.url && !isArchiveHost(up.url)) return json(502, { error: "archive.org redirected off archive.org" });
   if (Number(up.headers.get("content-length") ?? 0) > MAX_BYTES) return json(502, { error: "image larger than the function limit" });
   const type = up.headers.get("content-type") ?? "";
   if (!/^image\/jpeg/.test(type)) return json(502, { error: "unexpected content type" });
-  const buf = new Uint8Array(await up.arrayBuffer());
-  if (buf.byteLength > MAX_BYTES) return json(502, { error: "image larger than the function limit" });
+  const buf = await readCapped(up, MAX_BYTES); // a chunked body has no Content-Length: stop reading past the limit
+  if (!buf) return json(502, { error: "image larger than the function limit" });
   return new Response(buf, {
     status: 200,
     headers: {
@@ -52,6 +62,25 @@ export async function GET(request) {
       "x-upstream-bytes": String(buf.byteLength),
     },
   });
+}
+
+/** @param {Response} res @param {number} max @returns {Promise<Uint8Array | null>} */
+async function readCapped(res, max) {
+  const reader = res.body?.getReader();
+  if (!reader) return new Uint8Array(0);
+  /** @type {Uint8Array[]} */ const chunks = [];
+  let n = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    n += value.byteLength;
+    if (n > max) { await reader.cancel(); return null; }
+    chunks.push(value);
+  }
+  const out = new Uint8Array(n);
+  let o = 0;
+  for (const c of chunks) { out.set(c, o); o += c.byteLength; }
+  return out;
 }
 
 /** @param {string} u */

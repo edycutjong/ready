@@ -15,16 +15,26 @@ describe("/api/page proxy", () => {
     for (const id of ["constructor", "__proto__", "toString", "hasOwnProperty"]) expect((await GET(req(`id=${id}&n=0`))).status).toBe(400);
     expect(fetchMock).not.toHaveBeenCalled();
   });
-  it("refuses a redirect that leaves archive.org and an oversized Content-Length before buffering", async () => {
-    const off = new Response(new Uint8Array([0xff, 0xd8]), { status: 200, headers: { "content-type": "image/jpeg" } });
-    Object.defineProperty(off, "url", { value: "https://evil.example/x.jpg" });
-    vi.stubGlobal("fetch", vi.fn(async () => off));
+  it("checks every redirect hop before fetching it, and refuses an oversized body before or while reading (a2a arch-01)", async () => {
+    const img = () => new Response(new Uint8Array([0xff, 0xd8]), { status: 200, headers: { "content-type": "image/jpeg" } });
+    const redirect = (to: string) => new Response(null, { status: 302, headers: { location: to } });
+    const off = vi.fn(async () => redirect("https://evil.example/x.jpg"));
+    vi.stubGlobal("fetch", off);
     expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(502);
-    const ia = new Response(new Uint8Array([0xff, 0xd8]), { status: 200, headers: { "content-type": "image/jpeg" } });
-    Object.defineProperty(ia, "url", { value: "https://ia800300.us.archive.org/x/page/n1.jpg" });
-    vi.stubGlobal("fetch", vi.fn(async () => ia));
+    expect(off).toHaveBeenCalledTimes(1); // the off-archive host is never contacted
+    const ia = vi.fn().mockResolvedValueOnce(redirect("https://ia800300.us.archive.org/x/page/n1.jpg")).mockResolvedValueOnce(img());
+    vi.stubGlobal("fetch", ia);
     expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(200);
+    expect(ia.mock.calls[1]![0]).toBe("https://ia800300.us.archive.org/x/page/n1.jpg");
+    expect(ia.mock.calls[1]![1]).toMatchObject({ redirect: "manual" });
+    const loop = vi.fn(async () => redirect("https://archive.org/download/again"));
+    vi.stubGlobal("fetch", loop);
+    expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(502);
+    expect(loop).toHaveBeenCalledTimes(4);
     vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array([1]), { status: 200, headers: { "content-type": "image/jpeg", "content-length": "9000000" } })));
+    expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(502);
+    const big = new ReadableStream({ start(c) { for (let i = 0; i < 5; i++) c.enqueue(new Uint8Array(1_000_000)); c.close(); } });
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(big, { status: 200, headers: { "content-type": "image/jpeg" } })));
     expect((await GET(req("id=1984-06-computegazette&n=1"))).status).toBe(502);
   });
   it("refuses a width outside the allow-list and a page out of range", async () => {
