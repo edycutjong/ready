@@ -1,0 +1,61 @@
+{
+ "date": "2026-11-24T20:08:32.990Z",
+ "machine": "darwin arm64 node v22.22.0",
+ "emulator": "c64-ready@3.4.0 dad5965346c0…",
+ "rows": [
+  {
+   "name": "gate: applyPatch (authored line-20 fix)",
+   "n": 2000,
+   "unit": "ms",
+   "p50": 0.009,
+   "p95": 0.023,
+   "min": 0.009,
+   "max": 0.596
+  },
+  {
+   "name": "emulator boot (c64-ready WASM, node)",
+   "n": 10,
+   "unit": "ms",
+   "p50": 644.194,
+   "p95": 665.616,
+   "min": 634.851,
+   "max": 665.616
+  },
+  {
+   "name": "type listing + RUN to the first screen (12 lines)",
+   "n": 10,
+   "unit": "ms",
+   "p50": 490.936,
+   "p95": 525.68,
+   "min": 487.172,
+   "max": 525.68
+  },
+  {
+   "name": "REPLAY of the recorded run (gate re-judge + C64 re-run)",
+   "n": 10,
+   "unit": "ms",
+   "p50": 2349.905,
+   "p95": 3727.59,
+   "min": 2264.633,
+   "max": 3727.59
+  },
+  {
+   "name": "OCR: tesseract.js 7 on the authored page image (node, warm worker)",
+   "n": 5,
+   "unit": "ms",
+   "p50": 865.017,
+   "p95": 890.755,
+   "min": 857.546,
+   "max": 890.755
+  }
+ ],
+ "modelCallTimingsFromRecordedRuns": [
+  {
+   "file": "line20-2026-11-24T19-56-44Z.jsonl",
+   "result": "RESURRECTED",
+   "wallMs": 27084,
+   "iterations": 1
+  }
+ ],
+ "note": "Browser OCR on the deployed site is measured separately (spike-P-ocr-live.json). Model timings are read from the recorded run, not re-run."
+}

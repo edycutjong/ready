@@ -1,0 +1,35 @@
+{
+ "date": "2026-11-24T20:07:34.458Z",
+ "ok": true,
+ "checks": [
+  {
+   "name": "REPLAY plays offline on the in-browser C64 and recomputes RESURRECTED",
+   "pass": true,
+   "detail": {
+    "mode": "replay",
+    "verdict": "RESURRECTED",
+    "mismatches": []
+   }
+  },
+  {
+   "name": "OCR (self-hosted tesseract.js) + checksum flags work offline on an uploaded page",
+   "pass": true,
+   "detail": {
+    "done": true,
+    "lines": 12,
+    "ok": 9,
+    "ms": 982,
+    "width": 1600,
+    "source": "your upload (line20.page.png)"
+   }
+  },
+  {
+   "name": "no non-local request was needed (everything is self-hosted)",
+   "pass": true,
+   "detail": {
+    "blockedAttempts": 0,
+    "urls": []
+   }
+  }
+ ]
+}

@@ -1,6 +1,6 @@
 # Spike P — /api/page on Vercel, measured from the deployed URL (2026-11-25)
 
-Verdict: **PASS (proxy + CDN cache)**. OCR timing in the browser on proxied pixels: see "OCR in the tab" below (added when the F2 worker shipped).
+Verdict: **PASS (proxy + CDN cache + in-tab OCR)**.
 
 Target: `https://ready.edycu.dev/api/page?id=1984-06-computegazette&n=177[&w=…]` → archive.org `/download/<id>/page/n177[_w…].jpg`.
 Measured with `curl` from the builder's machine (Indonesia) against the production alias; function = `api/page.js`, Node runtime,
@@ -21,3 +21,12 @@ Vercel Hobby limits (default function duration; response ≤ 4.5 MB). No disk is
 
 ## ScanQuality stops
 Source width stops are 800 / 1600 / 2376 px (never labelled "dpi"). Their OCR yield is the P1a spike O result on the same page: tesseract.js 7.0.0 → 4/28, 8/27, 6/24 checksum-valid lines (`spike-O.md`).
+
+## OCR in the tab (live, 2026-11-25) — `scripts/live-ocr.mjs` → `spike-P-ocr-live.json`
+Chromium (Playwright, builder machine), `https://ready.edycu.dev/scan`: Read the real 1984 page (`n177`, two columns, each column read on its own) through `/api/page`, then self-hosted tesseract.js 7.0.0 (worker, WASM core, traineddata all from `/ocr/`; **0 third-party origins requested**).
+| ScanQuality stop | lines found | checksum-matching (✓) | OCR time in the tab |
+|---|---|---|---|
+| 800 px wide | 55 | 2 | 4.9 s |
+| 1600 px wide | 83 | 16 | 5.5 s |
+| 2376 px wide (full) | 82 | 11 | 6.9 s |
+One run per stop (N=1); the numbers describe this page on this machine, not a general rate. Finding on the way: reading the two-column page as one block interleaves the columns (0–1 ✓); reading each column on its own is what makes the checksum useful.
