@@ -79,7 +79,7 @@ spec itself; these tasks are the implementation plan.
     calls only; `proposal` then `gate` events carry `refusalCounts` and `hash`.
   - _Requirements: R3.7, R3.8, R4.4, R4.5, R10.2, R10.3, R10.4, R10.5, R10.6, R10.7, R10.8, R14.1_
 
-- [ ] 6. Crash recovery and isolation
+- [x] 6. Crash recovery and isolation — claude-direct (P1b, Kiro credit line c64-mcp-server at 68.71/70 after task 5; 6.1 done, 6.2 core cases in `tests/unit/mcp-crash.test.ts`; file-set + import audit open)
   - [ ] 6.1 Complete `withEmu` in `tools.ts` per `design.md` (reboot, re-type, `restart` + `load` events, one retry,
     fatal `emulator crashed twice`), with the crash count seeded from `events.jsonl` (R2.6).
   - [ ] 6.2 Extend `tests/unit/mcp-tools.test.ts` with `throwingCore`: one crash during `c64_run` recovers and
@@ -90,7 +90,7 @@ spec itself; these tasks are the implementation plan.
     no `fetch`, `tools.ts` imports neither `c64-ready` nor `node.ts`, only `rundir.ts` imports `node:fs`).
   - _Requirements: R2.6, R4.4, R12.1, R12.2, R12.3, R13.1, R13.2, R13.3, R13.4, R14.1_
 
-- [ ] 7. `server.ts` and the stdio test
+- [x] 7. `server.ts` and the stdio test — claude-direct (P1b, same cap)
   - [ ] 7.1 Create `mcp/c64-server/server.ts` per `design.md` "server.ts wiring": console redirect, `RUN_DIR` check,
     dynamic imports, `bootNodeCore()`, `createTools`, low-level `Server` with `ListToolsRequestSchema` and
     `CallToolRequestSchema` handlers, `StdioServerTransport`, exit 0 on stdin end, `SIGTERM`, `SIGINT`.
@@ -101,7 +101,7 @@ spec itself; these tasks are the implementation plan.
     non-zero without writing.
   - _Requirements: R1.1, R1.2, R1.3, R1.4, R1.5, R11.2, R14.2_
 
-- [ ] 8. Property tests, measurements and the final run
+- [ ] 8. Property tests, measurements and the final run — open (Kiro credit line capped; P3 harden)
   - [ ] 8.1 Create `tests/prop/mcp-server.prop.ts` on the `StubCore` (`numRuns: 100` each): P4 replay from events,
     P5 restart idempotence over generated call sequences, P7 malformed-counter model, P8 gate parity with a direct
     `applyPatch()` call, P9 press all-or-nothing.

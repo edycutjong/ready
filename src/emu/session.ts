@@ -78,11 +78,12 @@ export function runListing(core: C64Core, listing: CanonicalListing, spec: Listi
   }
   let postTitle: MachineFacts["postTitle"] = "not-reached";
   let postScreen: string | undefined;
+  if (titleSeen && titleScreen === undefined) titleScreen = readScreenText(core); // capture the title BEFORE the post-title press (P1b smoke test)
   if (titleSeen) {
     postScreen = pressKeys(core, spec.postTitle.keys, 300);
     postTitle = postScreen.includes(spec.postTitle.screenContains) ? "pass" : "fail";
   }
-  return { resident, untypeable, run, titleSeen, postTitle, screens: { afterRun: run.screen, title: titleScreen ?? (titleSeen ? readScreenText(core) : undefined), postTitle: postScreen } };
+  return { resident, untypeable, run, titleSeen, postTitle, screens: { afterRun: run.screen, title: titleScreen, postTitle: postScreen } };
 }
 
 /** Machine facts → the contract (the model is never consulted). */

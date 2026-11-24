@@ -126,11 +126,35 @@ export class C64Tools {
   }
 
   /**
-   * Runs the emulator part of a tool. Crash recovery (reboot, re-type, one retry) is added by task 6; until then the
-   * section is called once and a throw becomes an internal error.
+   * Runs the emulator part of a tool with crash recovery (design.md "Crash recovery", R12): any throw from core or
+   * session code is a crash → reboot, re-type the canonical listing, record `restart` + `load`, re-run the section
+   * once. The crash budget is per RUN, not per process (R2.6: seeded from events.jsonl), so the second crash —
+   * including one during recovery — ends the run.
+   * claude-direct (P1b): Kiro credit line c64-mcp-server reached its cap after task 5 (docs/DX-REPORT.md).
    */
   protected async withEmu<T>(section: () => T): Promise<T> {
-    return section();
+    for (;;) {
+      try { return section(); } catch {
+        this.crashes++;
+        if (this.crashes >= 2) this.fatal("emulator crashed twice");
+        let untypeable: Untypeable[];
+        try {
+          await this.core.boot();
+          untypeable = loadCanonical(this.core, this.plain());
+        } catch {
+          this.crashes++;
+          this.fatal("emulator crashed twice");
+        }
+        appendEvent(this.dir, { k: "emu", op: "restart", cause: "crash" });
+        appendEvent(this.dir, { k: "emu", op: "load", hash: this.hash(), untypeable: untypeable! });
+      }
+    }
+  }
+
+  private fatal(why: "emulator crashed twice"): never {
+    appendEvent(this.dir, { k: "error", why });
+    this.over = why;
+    throw new CrashFatal(`${why}; the run ends`);
   }
 
   /** R2.5: type the loaded listing, record it, persist it. A throw here rejects `createTools` (no tool is running). */
