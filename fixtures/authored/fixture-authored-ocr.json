@@ -1,0 +1,90 @@
+{
+ "label": "authored 2026 page — typeset by us, real OCR, line 20 typo planted",
+ "listing": "line20",
+ "source": "fixtures/authored/line20.bas",
+ "page": "fixtures/authored/line20.page.png",
+ "pageSha256": "1bbfa6db73ac1fe3f789630cd5035331da507368422e7abe9e8cc1db01ac0195",
+ "ocr": {
+  "engine": "tesseract.js 7.0.0",
+  "psm": 6,
+  "lang": "eng",
+  "font": "Atkinson Hyperlegible Mono 500, 22 px @2x"
+ },
+ "printedLines": 12,
+ "ocrLines": 12,
+ "text": "Program 1: The Last Seance\n\nAn original type-in listing, written in 2026 for this project.\n\n10 PRINT\"{CLR}{2 DOWN}\" :rem 231\n\n20 PRIMT™   ** THE LAST SEANCE **\" :rem 159\n\n30 PRINT\"{DOWN} A TYPE-IN FROM 2026\" :rem 138\n\n40 PRINT\"{2 DOWN} KNOCK ONCE: PRESS {RVS}RETURN{OFF}\" :rem 61\n50 GETK$:IFK$=\"\"THEN50 :rem 1\n\n60 IFK$<>CHR$(13)THEN50 :rem 40\n\n70 PRINT\"{CLR}{RVS} THE SPIRITS ANSWER {OFF}{DOWN}\" :rem 95\n80 FORI=1TO5:READN$:PRINT\" \";N$:NEXT :rem 215\n\n90 PRINT\"{DOWN} READY TO RISE.\" :rem 196\n\n100 END :rem 104\n\n110 DATA \"THE PAGE\", \"THE CHECKSUM\", \"THE MACHINE\" :rem 216\n120 DATA \"THE AGENT\",\"IT LIVES\" :rem 209\n",
+ "lines": [
+  {
+   "raw": "10 PRINT\"{CLR}{2 DOWN}\" :rem 231",
+   "n": 10,
+   "body": "PRINT\"{CLR}{2 DOWN}\" ",
+   "printed": 231
+  },
+  {
+   "raw": "20 PRIMT™   ** THE LAST SEANCE **\" :rem 159",
+   "n": 20,
+   "body": "PRIMT™   ** THE LAST SEANCE **\" ",
+   "printed": 159
+  },
+  {
+   "raw": "30 PRINT\"{DOWN} A TYPE-IN FROM 2026\" :rem 138",
+   "n": 30,
+   "body": "PRINT\"{DOWN} A TYPE-IN FROM 2026\" ",
+   "printed": 138
+  },
+  {
+   "raw": "40 PRINT\"{2 DOWN} KNOCK ONCE: PRESS {RVS}RETURN{OFF}\" :rem 61",
+   "n": 40,
+   "body": "PRINT\"{2 DOWN} KNOCK ONCE: PRESS {RVS}RETURN{OFF}\" ",
+   "printed": 61
+  },
+  {
+   "raw": "50 GETK$:IFK$=\"\"THEN50 :rem 1",
+   "n": 50,
+   "body": "GETK$:IFK$=\"\"THEN50 ",
+   "printed": 1
+  },
+  {
+   "raw": "60 IFK$<>CHR$(13)THEN50 :rem 40",
+   "n": 60,
+   "body": "IFK$<>CHR$(13)THEN50 ",
+   "printed": 40
+  },
+  {
+   "raw": "70 PRINT\"{CLR}{RVS} THE SPIRITS ANSWER {OFF}{DOWN}\" :rem 95",
+   "n": 70,
+   "body": "PRINT\"{CLR}{RVS} THE SPIRITS ANSWER {OFF}{DOWN}\" ",
+   "printed": 95
+  },
+  {
+   "raw": "80 FORI=1TO5:READN$:PRINT\" \";N$:NEXT :rem 215",
+   "n": 80,
+   "body": "FORI=1TO5:READN$:PRINT\" \";N$:NEXT ",
+   "printed": 215
+  },
+  {
+   "raw": "90 PRINT\"{DOWN} READY TO RISE.\" :rem 196",
+   "n": 90,
+   "body": "PRINT\"{DOWN} READY TO RISE.\" ",
+   "printed": 196
+  },
+  {
+   "raw": "100 END :rem 104",
+   "n": 100,
+   "body": "END ",
+   "printed": 104
+  },
+  {
+   "raw": "110 DATA \"THE PAGE\", \"THE CHECKSUM\", \"THE MACHINE\" :rem 216",
+   "n": 110,
+   "body": "DATA \"THE PAGE\", \"THE CHECKSUM\", \"THE MACHINE\" ",
+   "printed": 216
+  },
+  {
+   "raw": "120 DATA \"THE AGENT\",\"IT LIVES\" :rem 209",
+   "n": 120,
+   "body": "DATA \"THE AGENT\",\"IT LIVES\" ",
+   "printed": 209
+  }
+ ]
+}

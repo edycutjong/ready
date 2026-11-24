@@ -47,5 +47,35 @@
     "screenContains": "RANDOM SEEDS."
    }
   }
+ },
+ "line20": {
+  "title": "The Last Seance (authored 2026 page)",
+  "scope": "whole listing",
+  "note": "authored 2026 page \u2014 typeset by us, real OCR, line 20 typo planted (fixtures/authored/line20.bas, fixture-authored-ocr.json)",
+  "spec": {
+   "expectedLines": [
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100,
+    110,
+    120
+   ],
+   "titlePredicate": {
+    "screenContains": "THE LAST SEANCE"
+   },
+   "postTitle": {
+    "keys": [
+     13
+    ],
+    "screenContains": "THE SPIRITS ANSWER"
+   }
+  }
  }
 }
