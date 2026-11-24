@@ -277,7 +277,7 @@ function KiroView() {
             <tr class={e.k === "hook" && e.exit === 2 ? "refused" : ""}>
               <td class="t">{String(e.t ?? "").slice(11, 19)}</td>
               <td>{e.k === "hook" ? `hook ${String(e.hook)} (${String(e.via ?? "")}) exit ${String(e.exit ?? "")}${e.decision ? ` · ${String(e.decision)}` : ""}` : e.k === "credits" ? "credits" : `tool call ${String(e.title)}`}</td>
-              <td>{e.k === "hook" ? String(e.stderr ?? e.reason ?? "") : e.k === "credits" ? `${e.metered ? `${String(e.delta ?? "")} (total ${String(e.total ?? "")})` : "unmetered"}` : JSON.stringify(e.input ?? "").slice(0, 160)}</td>
+              <td>{e.k === "hook" ? String(e.stderr ?? e.reason ?? "") : e.k === "credits" ? `${e.metered ? `${e.delta == null ? "" : `+${Number(e.delta).toFixed(2)} `}(total ${Number(e.total).toFixed(2)})` : "unmetered"}` : JSON.stringify(e.input ?? "").slice(0, 160)}</td>
             </tr>
             </>
           ))}
