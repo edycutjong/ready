@@ -1,5 +1,5 @@
 {
- "t": "2026-11-24T20:03:17.149Z",
+ "t": "2026-11-24T21:11:37.242Z",
  "run": "line20-hero",
  "pass": true,
  "checks": [
@@ -61,9 +61,9 @@
    "name": "/kiro lists ≥ 1 real hook firing",
    "pass": true,
    "detail": [
-    "local tier-C run randnum-smoke-2026-11-24T19-41-57Z.jsonl19:41:57hook listing-context (runner-context) exit 0",
-    "local tier-C run randnum-smoke-2026-11-24T19-41-57Z.jsonl19:42:00hook listing-context (kiro-session-start) exit 0",
-    "local tier-C run randnum-smoke-2026-11-24T19-41-57Z.jsonl19:42:42hook checksum-gate (kiro-pre-tool-use) exit 0 · acceptedACCEPTED: 1: checksum 163 = printed 163; 2: checksum 135 = printed 135; 5: checksum 167 = printed 167; 10: checksum 215 = printed 215"
+    "19:21:11hook listing-context (kiro-session-start) exit 0",
+    "19:21:14hook listing-context (kiro-session-start) exit 0",
+    "19:21:47hook checksum-gate (kiro-pre-tool-use) exit 0 · acceptedACCEPTED: 1: checksum 163 = printed 163; 2: checksum 135 = printed 135; 5: checksum 167 = printed 167; 10: checksum 215 = printed 215"
    ]
   }
  ]
