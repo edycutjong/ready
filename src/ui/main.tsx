@@ -74,11 +74,12 @@ function Desk() {
   const stopTick = () => { if (tickRef.current !== null) { clearInterval(tickRef.current); tickRef.current = null; } };
   useEffect(() => stopTick, []);
   const play = (auto = false) => {
-    if (!result || playing) return;
+    // The autoplay timer fires from a stale closure: a press inside its 900 ms window already owns the tick (rubric gate review).
+    if (!result || playing || (auto && tickRef.current !== null)) return;
     stopTick();
     setPlaying(true); setStep(0); setCheatOut(null);
     let i = 0;
-    tickRef.current = setInterval(() => { i += 1; setStep(i); if (i >= result.steps.length) { stopTick(); setPlaying(false); if (!auto) setTimeout(() => document.querySelector("[data-testid=certificate]")?.scrollIntoView({ behavior: "smooth", block: "center" }), 500); } }, 1100);
+    tickRef.current = setInterval(() => { i += 1; setStep(i); if (i >= result.steps.length) { stopTick(); setPlaying(false); if (!auto) setTimeout(() => document.querySelector("[data-testid=certificate]")?.scrollIntoView({ behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }), 500); } }, 1100);
   };
 
   // P1e (rubric gate): the first viewport used to be an empty READY. box until the visitor read two paragraphs and pressed
