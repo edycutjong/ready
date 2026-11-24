@@ -1,5 +1,5 @@
 import { render } from "preact";
-import { useEffect, useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { createC64ReadyCore, type C64Core } from "../emu/core.ts";
 import { cheat, replay, type ReplayResult, type RunEvent } from "../replay/replay.ts";
 import { certificateHeading, errata, errataText, lineOrigins, prgBytes, provenance, type RecoveryEvent } from "../replay/certificate.ts";
@@ -69,11 +69,16 @@ function Desk() {
   const [step, setStep] = useState(0);
   const [cheatOut, setCheatOut] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
+  // One playback timer at a time, owned here: a new stone, a second press or unmount stops it (a2a arch-01).
+  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const stopTick = () => { if (tickRef.current !== null) { clearInterval(tickRef.current); tickRef.current = null; } };
+  useEffect(() => stopTick, []);
   const play = () => {
     if (!result || playing) return;
+    stopTick();
     setPlaying(true); setStep(0); setCheatOut(null);
     let i = 0;
-    const tick = setInterval(() => { i += 1; setStep(i); if (i >= result.steps.length) { clearInterval(tick); setPlaying(false); setTimeout(() => document.querySelector("[data-testid=certificate]")?.scrollIntoView({ behavior: "smooth", block: "center" }), 500); } }, 1100);
+    tickRef.current = setInterval(() => { i += 1; setStep(i); if (i >= result.steps.length) { stopTick(); setPlaying(false); setTimeout(() => document.querySelector("[data-testid=certificate]")?.scrollIntoView({ behavior: "smooth", block: "center" }), 500); } }, 1100);
   };
 
   useEffect(() => { fetch("/runs/index.json").then((r) => r.json()).then((j) => { setRuns(j.runs ?? []); if (!sel && j.runs?.[0]) setSel(j.runs[0].id); }).catch(() => setErr("no recorded runs index")); }, []);
@@ -81,7 +86,11 @@ function Desk() {
   useEffect(() => {
     const ref = runs.find((r) => r.id === sel);
     if (!ref) return;
-    fetch(ref.file).then((r) => r.text()).then((t) => setEvents(parseJsonl(t))).catch(() => setErr(`run ${ref.id} unavailable`));
+    // A slower earlier load must never paint over the stone just chosen (a2a arch-01): clear, then ignore stale replies.
+    let live = true;
+    stopTick(); setPlaying(false); setEvents(null); setResult(null); setStep(0); setErr(null);
+    fetch(ref.file).then((r) => r.text()).then((t) => { if (live) setEvents(parseJsonl(t)); }).catch(() => { if (live) setErr(`run ${ref.id} unavailable`); });
+    return () => { live = false; };
   }, [sel, runs]);
   useEffect(() => {
     if (!events || booted === undefined) return;
@@ -140,7 +149,7 @@ function Desk() {
         <p class="kicker">Kiroween 2026 · Resurrection</p>
         {errText && <p class="err" data-testid="first-error">{errText}</p>}
         <h1>Syntax error in 20</h1>
-        <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A 1984 type-in listing refuses to run. The magazine printed a checksum on every line; a Kiro agent proposes the fix, a deterministic gate decides, and a Commodore 64 checks the result.</p>
+        <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A 1984 type-in listing refuses to run. The magazine printed a checksum on every line; a Kiro agent proposes the fix, a deterministic gate decides, and an emulated Commodore 64 runs the result. Below: one recorded real run, played back.</p>
         <p class="mode" data-testid="mode">
           {mode === "replay" && <><b>REPLAY</b> — a recorded real Kiro run, re-executed now: the gate re-judges every patch and this browser's C64 re-runs the program (replaying recorded OCR input).</>}
           {mode === "recorded" && <><b>RECORDED PLAYBACK</b> — captured screens of a recorded real Kiro run. The gate re-judges every patch in your browser; nothing runs on a C64 here (Commodore ROM rights not cleared).</>}
@@ -212,7 +221,9 @@ function Desk() {
             <div class="cert-head">
               <div>
                 <p class="kicker">Certificate of resurrection</p>
-                {result.contract
+                {step < result.steps.length
+                  ? <><h2 data-testid="cert-pending">Verdict at the end of the run</h2><p class="note">press Resurrect, or drag the slider to the end</p></>
+                  : result.contract
                   ? <h2>{certificateHeading(result.contract, result.input.scope, result.input.spec.expectedLines.length, { sourceExact: endCounts.sourceExact, sourceTotal: endCounts.sourceTotal, note })}</h2>
                   : <h2>{String(result.recordedEnd?.result ?? "no end event").toUpperCase()} (recorded)</h2>}
               </div>
@@ -223,7 +234,7 @@ function Desk() {
               <dt>treatment</dt><dd>{nAcc} patch{nAcc === 1 ? "" : "es"} accepted · {nRef} refused · {nForced} forced</dd>
               <dt>run ended</dt><dd>{String(result.recordedEnd?.t ?? "") ? `${String(result.recordedEnd?.t).slice(0, 19).replace("T", " ")} UTC` : "unrecorded"} <span class="note">(the run's own end event, not a clock we invent)</span></dd>
               <dt>examined by</dt><dd>the checksum gate: Pre Tool Use hook + MCP, re-judged in this tab</dd>
-              <dt>pronounced alive by</dt><dd>{mode === "replay" ? "the C64 re-RUN in this tab" : "the recorded C64 screens (not re-run here)"}</dd>
+              <dt>machine check</dt><dd>{mode === "replay" ? "the C64 re-RUN in this tab" : "the recorded C64 screens (not re-run here)"}</dd>
             </dl>
             {result.contract
               ? <>{result.recordedEnd?.sourceReference ? <p class="note" data-testid="source-ref">source-exact is measured against a reference transcript ({String(result.recordedEnd.sourceReference)}); it is never given to the agent, and "source-exact" means "matches that reference", not "matches the magazine".</p> : null}<p class="counts">recomputed now from the final listing and this browser's C64 · verified {result.contract.counts.verified} · digit-misread {result.contract.counts.digitMisread} · forced {result.contract.counts.forced} · unverified {result.contract.counts.unverified} · missing {result.contract.counts.missing} · typed {result.contract.counts.typed}</p></>
