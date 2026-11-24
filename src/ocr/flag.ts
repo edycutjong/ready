@@ -27,7 +27,8 @@ export function summarize(lines: readonly FlaggedLine[]): AssistedSummary {
 
 /** The ASSISTED certificate is never "resurrected": nothing was run, and the page's full line inventory is unknown. */
 export function assistedHeading(s: AssistedSummary): string {
-  return `ASSISTED — not automatically resurrected · ${s.ok} of ${s.total} lines match the printed checksum${s.digitMisread ? ` (+${s.digitMisread} digit-misread)` : ""} · ${s.mismatch} mismatch · ${s.noChecksum} without a checksum · missing lines: unknown`;
+  const withSum = s.total - s.noChecksum;
+  return `ASSISTED — not automatically resurrected · ${s.ok} of ${withSum} lines with a printed checksum match${s.digitMisread ? ` (+${s.digitMisread} digit-misread)` : ""} · ${s.mismatch} mismatch · ${s.noChecksum} numbered row${s.noChecksum === 1 ? "" : "s"} without a checksum · missing lines: unknown`;
 }
 
 /** `.bas`-style export: only lines whose checksum matches are emitted as verified; the rest are listed as comments. */

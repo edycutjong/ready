@@ -1,8 +1,8 @@
 import type { ComponentChildren } from "preact";
 
 /** The ink stamp (crypt-galley signature): IT LIVES only for a computed RESURRECTED state; never decorative. */
-export type StampKind = "lives" | "stirs" | "dead" | "refusal";
-export const STAMP_TEXT: Record<StampKind, string> = { lives: "IT LIVES", stirs: "IT STIRS", dead: "STILL DEAD", refusal: "REFUSED" };
+export type StampKind = "lives" | "stirs" | "dead" | "refusal" | "accepted";
+export const STAMP_TEXT: Record<StampKind, string> = { lives: "IT LIVES", stirs: "IT STIRS", dead: "STILL DEAD", refusal: "REFUSED", accepted: "ACCEPTED" };
 
 export function stampFor(verdict: string | null | undefined): StampKind | null {
   if (!verdict) return null;

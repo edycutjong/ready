@@ -73,7 +73,7 @@ function Desk() {
     if (!result || playing) return;
     setPlaying(true); setStep(0); setCheatOut(null);
     let i = 0;
-    const tick = setInterval(() => { i += 1; setStep(i); if (i >= result.steps.length) { clearInterval(tick); setPlaying(false); } }, 1100);
+    const tick = setInterval(() => { i += 1; setStep(i); if (i >= result.steps.length) { clearInterval(tick); setPlaying(false); setTimeout(() => document.querySelector("[data-testid=certificate]")?.scrollIntoView({ behavior: "smooth", block: "center" }), 500); } }, 1100);
   };
 
   useEffect(() => { fetch("/runs/index.json").then((r) => r.json()).then((j) => { setRuns(j.runs ?? []); if (!sel && j.runs?.[0]) setSel(j.runs[0].id); }).catch(() => setErr("no recorded runs index")); }, []);
@@ -132,7 +132,7 @@ function Desk() {
   const endCounts = (result?.recordedEnd?.counts ?? {}) as { sourceExact?: number; sourceTotal?: number };
   const note = (result?.input as { certificateNote?: string } | undefined)?.certificateNote ?? undefined;
   return (
-    <main class="desk">
+    <main class={`desk${step >= (result?.steps.length ?? 1) && step > 0 && stamp === "lives" ? " alive" : ""}`}>
       <Nav here="raise" />
       <header>
         <p class="kicker">Kiroween 2026 · Resurrection</p>
@@ -158,24 +158,12 @@ function Desk() {
             </button>
           </li>
         ))}
+        <li><a class="stone" style="display:block;text-decoration:none" href="/scan"><span class="t">Random Number Test</span><span class="m">COMPUTE!'s Gazette, June 1984 · the real scan</span><span class="cod">checksum-flagged live · repair withheld (rights)</span></a></li>
         <li><a class="stone" style="display:block;text-decoration:none" href="/scan"><span class="t">Your own page</span><span class="m">ASSISTED: OCR + the magazine's checksum, in your tab, 0 credits</span></a></li>
       </ul>
       {result && <p><button data-testid="resurrect" disabled={playing} onClick={play}>{playing ? "raising…" : step >= result.steps.length ? "Resurrect again (replay the run)" : "Resurrect"}</button> <span class="note">replays the recorded run step by step; or drag the slider.</span></p>}
       {result && view && (
         <>
-          <section class="strip" aria-label="run strip">
-            <input type="range" min={0} max={result.steps.length} value={step} onInput={(e) => setStep(Number((e.target as HTMLInputElement).value))} aria-label="step" />
-            <span>step {step}/{result.steps.length}</span>
-            <ol>
-              {result.steps.map((s, i) => (
-                <li class={`${i < step ? "done" : ""} ${s.kind === "attempt" ? s.recomputed.verdict : "run"}`} onClick={() => setStep(i + 1)}>
-                  {s.kind === "attempt" && <span class="iter">attempt {attemptNo.get(i)}/{capIter} · </span>}
-                  {s.kind === "attempt" && s.reason && s.source === "server" && <span class="why">agent: “{s.reason}” → </span>}
-                  {s.kind === "attempt" && s.recomputed.verdict === "refused" && i < step && <Stamp kind="refusal" small />}{" "}{s.kind === "attempt" ? `${s.recomputed.verdict.toUpperCase()}${s.source === "hook" ? " by the Kiro Pre Tool Use hook" : ""}: ${s.recomputed.reason}` : `RUN → ${s.facts ? (s.facts.run.error ? `?${s.facts.run.error.kind} ERROR${s.facts.run.error.line != null ? ` IN ${s.facts.run.error.line}` : ""}` : s.facts.titleSeen ? `title · post-title ${s.facts.postTitle}` : "no title") : `(recorded) ${s.recorded.error ? recordedErr(s.recorded.error) : s.recorded.titleSeen ? "title" : "no title"}`}${s.match === false ? " ≠ RECORD" : ""}`}
-                </li>
-              ))}
-            </ol>
-          </section>
           <div class="panes">
             <section class="galley" aria-label="galley">
               <p class="paper-note">The printed page, as read. Blood-red = the line the C64 rejects or the checksum disagrees with; it re-inks C64 blue when the gate accepts the patch and the C64 re-runs.</p>
@@ -190,7 +178,7 @@ function Desk() {
                         <td class="body">{was !== undefined && was !== l.body ? <><del>{was}</del><br /><ins class="accepted">{l.body}</ins></> : l.body}</td>
                         <td class="rem">:rem {l.printed ?? "??"}</td>
                         <td class="mk">{m.sym}</td>
-                        <td class="src">{prov?.perLine.get(l.n) ?? ""}</td>
+                        <td class="src">{(() => { const v = prov?.perLine.get(l.n) ?? ""; return was !== undefined && was === l.body && /patched/i.test(v) ? "OCR" : v; })()}</td>
                       </tr>
                     );
                   })}
@@ -199,11 +187,25 @@ function Desk() {
             </section>
             <section class="c64" aria-label="C64 screen">
               <pre data-testid="screen">{view.screen}</pre>
-              <button data-testid="cheat" onClick={() => { const c = cheat(view.listing, result.input.spec.expectedLines, view.errLine); setCheatOut(`Cheat: empty line ${c.line} → ${c.verdict.verdict.toUpperCase()} — ${c.verdict.reason}`); }}>Cheat: delete the error line</button>
+              <p class="note" data-testid="screen-caption">{mode === "replay" ? "A real C64 (c64-ready) re-ran the program in this tab." : step === 0 ? "No C64 is running here. Press Resurrect to play the recorded run." : `Recorded screen from ${String(start?.t ?? "").slice(0, 10)}'s run, shown as text. No C64 is running in this tab (ROM rights not cleared).`}</p>
+              <button class="danger" data-testid="cheat" onClick={() => { const c = cheat(view.listing, result.input.spec.expectedLines, view.errLine); setCheatOut(`Cheat: empty line ${c.line} → ${c.verdict.verdict.toUpperCase()} — ${c.verdict.reason}`); }}>Cheat: delete the error line</button>
               <p class="note">Cheat runs the same gate code as the Kiro Pre Tool Use hook, in your browser. It does not call Kiro.</p>
               {cheatOut && <p data-testid="cheat-out" class="refused">{cheatOut}</p>}
             </section>
           </div>
+          <section class="strip" aria-label="run strip">
+            <input type="range" min={0} max={result.steps.length} value={step} onInput={(e) => setStep(Number((e.target as HTMLInputElement).value))} aria-label="step" />
+            <span>step {step}/{result.steps.length}</span>
+            <ol>
+              {result.steps.map((s, i) => (
+                <li class={`${i < step ? "done" : ""} ${s.kind === "attempt" ? s.recomputed.verdict : "run"}`} onClick={() => setStep(i + 1)}>
+                  {s.kind === "attempt" && <span class="iter">attempt {attemptNo.get(i)}/{capIter} · </span>}
+                  {s.kind === "attempt" && s.reason && s.source === "server" && <span class="why">agent: “{s.reason}” → </span>}
+                  {s.kind === "attempt" && i < step && <Stamp kind={s.recomputed.verdict === "refused" ? "refusal" : "accepted"} small />}{" "}{s.kind === "attempt" ? `${s.source === "hook" ? "by the Kiro Pre Tool Use hook: " : ""}${s.recomputed.reason.replace(/^((ACCEPTED|REFUSED|FORCED)\b:?\s*)+/i, "")}` : `RUN → ${s.facts ? (s.facts.run.error ? `?${s.facts.run.error.kind} ERROR${s.facts.run.error.line != null ? ` IN ${s.facts.run.error.line}` : ""}` : s.facts.titleSeen ? `title · post-title ${s.facts.postTitle}` : "no title") : `(recorded) ${s.recorded.error ? recordedErr(s.recorded.error) : s.recorded.titleSeen ? "title" : "no title"}`}${s.match === false ? " ≠ RECORD" : ""}`}
+                </li>
+              ))}
+            </ol>
+          </section>
           <section class="cert" data-testid="certificate" aria-label="death certificate, reversed">
             <div class="cert-head">
               <div>
@@ -257,6 +259,7 @@ function KiroView() {
         // a hook refusal is logged by the hook itself (kiro-pre-tool-use) and seen again in Kiro's stream: show it once
         for (const e of parseJsonl(t)) if ((e.k === "hook" && e.via !== "kiro-stream") || e.k === "credits" || (e.k === "kiro" && e.op === "tool_call")) all.push({ run: ref.label ?? ref.id, e });
       }
+      all.sort((x, y) => String(x.e.t ?? "").localeCompare(String(y.e.t ?? "")));
       setRows(all);
     });
   }, []);
@@ -265,7 +268,7 @@ function KiroView() {
       <Nav here="kiro" />
       <h1>/kiro — what Kiro's hooks did in recorded runs</h1>
       <p class="note">A static view over recorded run logs (each row names its run). Hook rows come from the hook processes themselves, not from the model's words.</p>
-      <table data-testid="kiro-rows">
+      <div class="tablewrap"><table data-testid="kiro-rows">
         <thead><tr><th>run</th><th>time</th><th>what</th><th>detail</th></tr></thead>
         <tbody>
           {rows.map(({ run, e }) => (
@@ -276,7 +279,7 @@ function KiroView() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
     </main>
   );
 }

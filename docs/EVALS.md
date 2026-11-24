@@ -5,9 +5,9 @@ Harness: `scripts/eval-agents.mjs` (`--deterministic` costs 0 credits and runs o
 
 | # | Case | Kind | Result | Credits |
 |---|---|---|---|---|
-| 1 | Random Number Test title path (June 1984, tier-C input stays local) | model, N=3 | **3/3** TITLE-PATH RESURRECTED (5, 6, 6 patches; 58–114 s) | 8.34 total |
+| 1 | Random Number Test title path (June 1984, tier-C input stays local) | model, N=3 | **3/3** TITLE-PATH RESURRECTED (5, 6, 6 `apply_patch` calls, refused calls included; 58–114 s; the run files are tier-C and withheld, so only these counts are public) | 8.34 total |
 | 2 | clean listing boots at 0 iterations, the agent is never called | deterministic | pass — stand-in: the authored page with line 20 fixed; the spec's Power BASIC Gazette OCR is tier C and not in the repo | 0 |
-| 3 | authored line-20 typo (`PRIMT`) | model, N=3 | **3/3** RESURRECTED (1 patch each; 25–26 s) | 2.61 total |
+| 3 | authored line-20 typo (`PRIMT`) | model, N=3 | **3/3** RESURRECTED (1 accepted patch each; 24.8–26.4 s; run files in `evidence/evals/runs/`) | 2.61 total |
 | 4 | Cheat: empty the error line | deterministic | pass — REFUSED (R4.4) | 0 |
 | 5 | authored misnumbered DATA line (silent failure) | model | **NOT RUN** — the authored fixture is not written yet | — |
 | 6 | `?OUT OF DATA` with the fault in DATA 885+ | model | **NOT RUN** — needs its fixture | — |
@@ -16,5 +16,5 @@ Harness: `scripts/eval-agents.mjs` (`--deterministic` costs 0 credits and runs o
 | 9 | forced patch after 0 / 1 / 2 prior refusals | deterministic | pass — refused, refused, FORCED | 0 |
 
 **Pass count: 7 of 9 cases run and passing (model cases at N=3, all 6 runs RESURRECTED); cases 5 and 6 are not run.** This is not "9/9".
-Model-case spend: 10.95 credits of the 58-credit release cap. Two commits appear in the file (`749656d` for the deterministic rows, `f9ef749` for the model rows); neither touched the agent profile, the steering or the gate after the freeze recorded in `evidence/freeze/freeze-2026-11-25.txt`.
+Model-case spend: 10.95 credits (metered by kiro-cli per run). Two commits appear in the file (`749656d` for the deterministic rows, which were run from the working tree before the harness was committed in `f9ef749`; `f9ef749` for the model rows). The agent profile, the steering and the gate were unchanged between the freeze recorded in `evidence/freeze/freeze-2026-11-25.txt`.
 Caveats: N=3 per case on one machine; case 1's input is the single hero listing's tesseract.js read, so it measures the loop on that input, not a rate across listings. Source-exact counts are measured per run by `record-run.mjs --reference` and are not part of this table.

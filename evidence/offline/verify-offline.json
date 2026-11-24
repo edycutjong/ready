@@ -1,5 +1,5 @@
 {
- "date": "2026-11-24T20:07:34.458Z",
+ "date": "2026-11-24T20:16:59.332Z",
  "ok": true,
  "checks": [
   {
@@ -18,13 +18,13 @@
     "done": true,
     "lines": 12,
     "ok": 9,
-    "ms": 982,
+    "ms": 963,
     "width": 1600,
     "source": "your upload (line20.page.png)"
    }
   },
   {
-   "name": "no non-local request was needed (everything is self-hosted)",
+   "name": "no non-local request was even attempted (everything is self-hosted)",
    "pass": true,
    "detail": {
     "blockedAttempts": 0,
