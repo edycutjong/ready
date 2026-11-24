@@ -1,15 +1,18 @@
-# Prompt/steering/gate freeze #2 — after /a2a arch round 01 (P1d), 2026-11-24T21:12:02Z
-git HEAD: 9817c32a96267125d83ca58ff56f380974ba5668
+# Prompt/steering/gate freeze #2 — after /a2a arch round 01 (P1d), 2026-11-24T21:35:02Z
+git HEAD: 3e2be513f1802dbcde00391c79772ef705fb2481
 
-Supersedes freeze-2026-11-25.txt for every run recorded from now on (held-out runs, evals release 2). Runs recorded
-before it (the line-20 hero, eval cases 1 and 3, the local Gazette G run + smoke) ran under freeze #1; each one re-judges
-with 0 mismatches and the same verdict under this code (evidence/e2e/replay-line20.json for the published run).
+Supersedes freeze-2026-11-25.txt for every run recorded from now on (held-out runs, evals release 2). The 9 runs
+recorded before it ran under freeze #1: the line-20 hero (published), eval case 3 x3 (evidence/evals/runs/), eval case 1 x3
+and the Gazette G run + smoke (tier C, kept local). Under this code each of the 9 re-judges with 0 mismatches and its
+recorded verdict (Node REPLAY on the real core; the published hero also in a browser, evidence/e2e/replay-line20.json).
+At freeze #1's code, eval case 1 run 3 did NOT: REPLAY typed the next program into the title's still-running GET loop
+(BOOTED-PARTIAL, clause 6). Fixed here: a load resets a still-running program to READY. first.
 
 Changed since freeze #1 (a2a arch-01 commits): checkLine refuses characters no C64 key types; clause 4 recomputes
 checksums; clause 2 needs text produced by the post-title press; the loader never types a line outside the
-inventory; c64_run records maxFrames; listing-context labels orphans as never typed.
+inventory, and never types into a running program; c64_run records maxFrames; listing-context labels orphans as never typed.
 
-sha256 of the files the agent and the gate run on (21 from freeze #1, + the session and replay modules):
+sha256 of the files the agent and the gate run on (21 from freeze #1, + the emulator session, core and replay modules):
 b8f0b37eb5d65f10b5cc7a561b97a563f5b78edc32fee8a98c3399d6fd0af726  .kiro/agents/resurrector.json
 4d01b7865b335296d3f573e31acf3df84a1f2b7f6800507f581180cb912458a5  .kiro/steering/basic-modules.md
 413341152c372b10df2f9176db040936bf697fe1af2e6ccb1fe1d3eec7dc5bc8  .kiro/steering/commodore-basic-v2.md
@@ -32,6 +35,7 @@ e10636c28c396cb07e6ac398fe68705976931524ae820e51f9cb2e14f4e4fc99  scripts/hooks/
 50941d9ce273db3eed6dec8af88c46a2353ee5d7f9ac2bacf47a1729be1a8e6c  mcp/c64-server/server.ts
 64438c63d6f4cbfea40f3e9ad99fcf45cda7417d23b619af182789cd5fae820f  mcp/c64-server/tools.ts   (changed)
 ae1fd63ce3147d527c7f16d483839a73830eee45f16dedd7c70ebd040d230e47  src/emu/session.ts   (added)
-c2d7433557cb3bdbcbe055f080478a5915cfffaf069c52ddf9d9366ebee4bf32  src/replay/replay.ts   (added)
+32df105ce41843650cc07943cb360aad08771785908609ac56f14f26f6812b56  src/emu/core.ts   (added)
+a3e0e31b757b3680c10e68e964198872299659aa32d852291fa686547c5edb56  src/replay/replay.ts   (added)
 
 prompt0 (run-prompt-resurrect.md) sha256: 2014ca8e246fbb9eb50a187ad092fb94c48dd8745863a185e3e859ef7e5398a1  (unchanged)
