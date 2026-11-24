@@ -51,6 +51,18 @@ export function refusedLines(v: GateVerdict, _patch: readonly PatchOp[]): number
 const plain = (l: CanonicalListing): CanonicalListing => l.map(({ n, body, printed, status, source }) => ({ n, body, printed, status, source }));
 
 /** The attempts and runs of a recorded run, in order. Server-side events only (no model text is trusted). */
+/**
+ * The frame budget a recorded `c64_run` used, so REPLAY re-executes the same experiment (a2a arch-01). Events
+ * since arch-01 carry `maxFrames`. Older ones carry only the elapsed `frames` and `stoppedOn`: a run that stopped on
+ * an error or the title stops at the same frame under any budget at least that long, and one that ran out of budget
+ * used exactly its elapsed frames (runProgram steps in whole checks, so the count is reproduced exactly).
+ */
+export function replayBudget(e: RunEvent): number {
+  if (typeof e.maxFrames === "number" && e.maxFrames > 0) return e.maxFrames;
+  const elapsed = typeof e.frames === "number" && e.frames > 0 ? e.frames : 0;
+  return e.stoppedOn === "frames" && elapsed > 0 ? elapsed : Math.max(3000, elapsed);
+}
+
 export function attemptsOf(events: readonly RunEvent[]): RunEvent[] {
   return events.filter((e) => (e.k === "hook" && e.hook === "checksum-gate" && e.via === "kiro-pre-tool-use" && e.exit === 2)
     || e.k === "proposal" || e.k === "gate" || (e.k === "emu" && e.op === "run"));
@@ -111,7 +123,7 @@ export function replay(events: readonly RunEvent[], coreIn: C64Core | null, opts
       let facts: MachineFacts | null = null;
       let match: boolean | null = null;
       if (core) {
-        facts = runListing(core, listing, input.spec);
+        facts = runListing(core, listing, input.spec, replayBudget(e));
         lastFacts = facts;
         if (facts.postTitle === "pass") provisional.clear();
         match = facts.titleSeen === recorded.titleSeen && JSON.stringify(facts.run.error) === JSON.stringify(recorded.error)

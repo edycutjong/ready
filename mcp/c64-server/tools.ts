@@ -286,7 +286,7 @@ export class C64Tools {
     this.contract = this.toContractFile(res);
     const hash = this.hash();
     appendEvent(this.dir, {
-      k: "emu", op: "run", error: facts.run.error, titleSeen: facts.titleSeen, frames: facts.run.frames,
+      k: "emu", op: "run", error: facts.run.error, titleSeen: facts.titleSeen, frames: facts.run.frames, maxFrames: a.frames,
       stoppedOn: facts.run.stoppedOn, postTitle: facts.postTitle, hash,
     });
     this.writeListing();

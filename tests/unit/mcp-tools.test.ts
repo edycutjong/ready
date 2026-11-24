@@ -549,6 +549,21 @@ describe("c64_run (R6)", () => {
     expect((await call(t, "c64_run", { frames: 20001 })).isError).toBe(true);
   });
 
+  it("records the requested budget as maxFrames, so REPLAY re-runs the same experiment (a2a arch-01)", async () => {
+    const { replayBudget } = await import("../../src/replay/replay.ts");
+    const never = { ...spec, titlePredicate: { screenContains: "NEVER ON SCREEN" } };
+    const { t, r } = await setup({ spec: never });
+    await call(t, "c64_run", { frames: 120 });
+    const ev = r.events().at(-1)!;
+    expect(ev).toMatchObject({ k: "emu", op: "run", frames: 150, maxFrames: 120, stoppedOn: "frames" });
+    expect(replayBudget(ev)).toBe(120);
+    // a pre-arch-01 event (no maxFrames): out of budget → exactly its elapsed frames; stopped early → any budget ≥ 3000
+    expect(replayBudget({ k: "emu", op: "run", frames: 150, stoppedOn: "frames" })).toBe(150);
+    expect(replayBudget({ k: "emu", op: "run", frames: 4200, stoppedOn: "predicate" })).toBe(4200);
+    expect(replayBudget({ k: "emu", op: "run", frames: 900, stoppedOn: "error" })).toBe(3000);
+    expect(replayBudget({ k: "emu", op: "run" })).toBe(3000);
+  });
+
   it("with no typeable line it still runs and reports what the machine did, inventing nothing (R6.7)", async () => {
     const all = [10, 20, 30, 40].map((n) => line(n, "{CLR}END"));
     const { t } = await setup({ lines: all });

@@ -188,14 +188,14 @@ async function finalJudgeIfStale() {
   if (lastChange <= lastRun) return;
   const l = JSON.parse(readFileSync(lf, "utf8"));
   const lines = l.lines.map(({ n, body, printed, status, source }) => ({ n, body, printed, status, source }));
-  const facts = runListing(await bootNodeCore(), lines, runInput.spec);
+  const facts = runListing(await bootNodeCore(), lines, runInput.spec, 3000); // the c64_run default; recorded as maxFrames
   const prov = new Set(facts.postTitle === "pass" ? [] : l.lines.filter((x) => x.provisional).map((x) => x.n));
   const c = judge(lines, runInput.spec, facts, prov, runInput.scope);
   l.lines = l.lines.map((x) => ({ ...x, provisional: prov.has(x.n) }));
   l.contract = { ...l.contract, state: c.verdict, heading: c.heading, counts: c.counts, failed: c.failed, lines: l.lines.map((x) => ({ n: x.n, status: x.status, source: x.source, provisional: x.provisional })) };
   l.postTitle = facts.postTitle;
   writeFileSync(lf, JSON.stringify(l, null, 1) + "\n");
-  emit({ k: "emu", op: "run", via: "runner-final", error: facts.run.error, titleSeen: facts.titleSeen, postTitle: facts.postTitle, why: "an accepted patch was never RUN before the run ended" });
+  emit({ k: "emu", op: "run", via: "runner-final", error: facts.run.error, titleSeen: facts.titleSeen, postTitle: facts.postTitle, frames: facts.run.frames, maxFrames: 3000, stoppedOn: facts.run.stoppedOn, why: "an accepted patch was never RUN before the run ended" });
 }
 
 function finalResult() {
