@@ -74,12 +74,17 @@ export function confusableReadings(printed: number): number[] {
   return [...out].sort((x, y) => x - y);
 }
 
-type CheckResult = { status: Exclude<LineStatus, "eye-verified" | "forced">; computed: number | null; reading?: number } | { status: "mismatch"; computed: number };
+type CheckResult = { status: Exclude<LineStatus, "eye-verified" | "forced">; computed: number | null; reading?: number } | { status: "mismatch"; computed: number; untypeable?: string };
 
 /** R4.13 / R4.14 / R4.18 for one final line. */
 export function checkLine(n: number, body: string, printed: number | null): CheckResult {
   if (printed === null) return { status: "unverified", computed: null };
   const computed = computeChecksum(n, body);
+  // The printed checksum is the sum of what the typist TYPED. A character no C64 key produces (an OCR glyph such as
+  // U+2122 "™": 8482 mod 256 = 34, the code of a quote) is dropped by the loader, so a matching sum would certify a
+  // line the C64 never stores. Such a line is never verified and never digit-misread (a2a arch-01).
+  const dropped = parseBody(body).dropped;
+  if (dropped.length) return { status: "mismatch", computed, untypeable: dropped.map((d) => d.char).join("") };
   if (computed === printed) return { status: "verified", computed };
   if (confusableReadings(printed).includes(computed)) return { status: "digit-misread", computed, reading: computed };
   return { status: "mismatch", computed };
@@ -142,7 +147,9 @@ export function applyPatch(listing: CanonicalListing, patch: readonly PatchOp[],
     if (!finalNumber.has(g.orig)) continue;
     const c = checkLine(g.n, g.body, g.printed);
     if (c.status !== "verified" && c.status !== "digit-misread") {
-      return refuse(`REFUSED (R4.9): renumbering line ${g.orig} to ${g.n} does not produce a checksum-valid line (printed ${g.printed ?? "unreadable"}, computed ${computeChecksum(g.n, g.body)}).`);
+      return refuse(c.status === "mismatch" && c.untypeable
+        ? `REFUSED (R4.9): line ${g.orig} contains ${JSON.stringify(c.untypeable)}, which no C64 key types, so it cannot be renumbered to ${g.n} as a checksum-valid line.`
+        : `REFUSED (R4.9): renumbering line ${g.orig} to ${g.n} does not produce a checksum-valid line (printed ${g.printed ?? "unreadable"}, computed ${computeChecksum(g.n, g.body)}).`);
     }
   }
   // R4.10: unique numbers across the whole resulting listing
@@ -168,6 +175,7 @@ export function applyPatch(listing: CanonicalListing, patch: readonly PatchOp[],
         continue;
       }
       if (options.force_unverified) return refuse(`REFUSED (R4.17): force_unverified needs at least 2 earlier refusals of line ${g.n}; it has ${count}. Line ${g.n}: printed checksum ${g.printed}, computed ${c.computed}.`, [{ line: g.n, printed: g.printed, computed: c.computed, ok: false, why: "checksum mismatch" }]);
+      if (c.untypeable) return refuse(`REFUSED (R4.15): line ${g.n} contains ${JSON.stringify(c.untypeable)}, which no C64 key types. The magazine's checksum is the sum of what the typist typed, so this cannot be the printed line; write the character the page shows (Gazette notation for control keys).`, [{ line: g.n, printed: g.printed, computed: c.computed, ok: false, why: "untypeable characters" }]);
       return refuse(`REFUSED (R4.15): line ${g.n} checksum mismatch — printed :rem ${g.printed}, computed ${c.computed}. The magazine's checksum says this is not the printed line.`, [{ line: g.n, printed: g.printed, computed: c.computed, ok: false, why: "checksum mismatch" }]);
     }
     status.set(g.orig, c.status);

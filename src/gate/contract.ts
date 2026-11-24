@@ -9,6 +9,8 @@
  *    ("1 line typed"); the number of in-scope lines present is `counts.present` (R5.5 amended).
  */
 import { tokenizeProgram } from "../basic/tokenizer.ts";
+import { parseBody } from "../basic/notation.ts";
+import { checkLine } from "./checksum-gate.ts";
 import type { CanonicalListing } from "../basic/types.ts";
 
 export interface ContractInput {
@@ -43,6 +45,18 @@ export function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {
 
 const GOOD = new Set(["verified", "digit-misread", "eye-verified"]);
 
+/**
+ * Clause 4 recomputes each line's checksum from its body and printed sum instead of trusting the stored label
+ * (a2a arch-01): a "verified" written by an earlier stage can never outlive its evidence. An eye-verified line is a
+ * person's reading of the page; it still needs a body the C64 can type.
+ */
+function isGood(l: CanonicalListing[number]): boolean {
+  if (!GOOD.has(l.status)) return false;
+  if (l.status === "eye-verified") return parseBody(l.body).dropped.length === 0;
+  const c = checkLine(l.n, l.body, l.printed);
+  return c.status === "verified" || c.status === "digit-misread";
+}
+
 export function evaluate(input: ContractInput): ContractResult {
   const expected = new Set(input.expectedLines);
   const inScope = input.listing.filter((l) => expected.has(l.n));
@@ -65,7 +79,7 @@ export function evaluate(input: ContractInput): ContractResult {
   if (!input.titleSeen) failed.push({ clause: 1, lines: [] });
   if (input.postTitle !== "pass") failed.push({ clause: 2, lines: [] });
   if (missing.length || duplicated.length) failed.push({ clause: 3, lines: [...missing, ...duplicated].sort((a, b) => a - b) });
-  const notGood = inScope.filter((l) => !GOOD.has(l.status) || input.provisional.has(l.n)).map((l) => l.n);
+  const notGood = inScope.filter((l) => !isGood(l) || input.provisional.has(l.n)).map((l) => l.n);
   if (notGood.length) failed.push({ clause: 4, lines: [...new Set(notGood)].sort((a, b) => a - b) });
   const forced = inScope.filter((l) => l.status === "forced").map((l) => l.n);
   if (forced.length) failed.push({ clause: 5, lines: forced.sort((a, b) => a - b) });
@@ -73,7 +87,7 @@ export function evaluate(input: ContractInput): ContractResult {
   if (!bytesEqual(input.residentBytes, image)) failed.push({ clause: 6, lines: [] });
 
   const verdict: Verdict = !input.titleSeen ? "NOT-RESURRECTED" : failed.length === 0 ? "RESURRECTED" : "BOOTED-PARTIAL";
-  const k = inScope.filter((l) => GOOD.has(l.status)).length;
+  const k = inScope.filter(isGood).length;
   const state = verdict === "RESURRECTED" ? "RESURRECTED" : verdict === "BOOTED-PARTIAL" ? "BOOTED — PARTIAL" : "NOT RESURRECTED";
   const prefix = !input.titleSeen ? "NO-TITLE " : (input.scope ?? "title-path") === "title-path" ? "TITLE-PATH " : "";
   const heading = `${prefix}${state} · ${k}/${input.expectedLines.length} checksum-consistent`;

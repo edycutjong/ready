@@ -76,12 +76,13 @@ export function patchResult(v: { verdict: "accepted" | "forced"; reason: string;
 }
 
 /** R9.2: `checksum_line` result. */
-export function checksumResult(v: { lineno: number; computed: number; exists: boolean; printed?: number | null; status?: string; matches?: boolean; reading?: number }): ToolResult {
+export function checksumResult(v: { lineno: number; computed: number; exists: boolean; printed?: number | null; status?: string; matches?: boolean; reading?: number; untypeable?: string }): ToolResult {
   const rows = [`line ${v.lineno}: computed ${v.computed}`];
   if (!v.exists) rows.push("exists: false (no such line in the listing)");
   else {
     rows.push(`printed ${v.printed === null ? "unreadable" : v.printed}`, `status: ${v.status}`, `matches: ${v.matches}`);
     if (v.reading !== undefined) rows.push(`reading: ${v.reading}`);
+    if (v.untypeable) rows.push(`untypeable: ${JSON.stringify(v.untypeable)} (no C64 key types it, so the line cannot match the printed one)`);
   }
   return ok(rows.join("\n"), { ...v });
 }

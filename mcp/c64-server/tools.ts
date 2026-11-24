@@ -266,7 +266,8 @@ export class C64Tools {
     const c = checkLine(a.lineno, a.body, line.printed);
     const matches = c.status === "verified" || c.status === "digit-misread";
     const reading = c.status === "digit-misread" ? c.reading : undefined;
-    return checksumResult({ lineno: a.lineno, computed, exists: true, printed: line.printed, status: c.status, matches, ...(reading === undefined ? {} : { reading }) });
+    const untypeable = c.status === "mismatch" ? c.untypeable : undefined;
+    return checksumResult({ lineno: a.lineno, computed, exists: true, printed: line.printed, status: c.status, matches, ...(reading === undefined ? {} : { reading }), ...(untypeable ? { untypeable } : {}) });
   }
 
   /**
