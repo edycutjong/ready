@@ -36,11 +36,17 @@ export function untypeableLines(listing: CanonicalListing): Untypeable[] {
   return out;
 }
 
-/** NEW + type every typeable canonical line in number order. Returns the lines it refused to type. */
-export function loadCanonical(core: C64Core, listing: CanonicalListing): Untypeable[] {
-  const skip = untypeableLines(listing);
+/**
+ * NEW + type every typeable canonical line in number order. Returns the lines it refused to type.
+ * With `expectedLines` (every verdict path passes it), a line outside the page's inventory (an orphan) is never typed:
+ * clause 6 compares memory with the image of the in-scope lines only, and the agent has no delete op, so a typed
+ * orphan would make RESURRECTED unreachable (a2a arch-01; make-run-input already excludes orphans by the same rule).
+ */
+export function loadCanonical(core: C64Core, listing: CanonicalListing, expectedLines?: readonly number[]): Untypeable[] {
+  const inScope = expectedLines ? listing.filter((l) => expectedLines.includes(l.n)) : listing;
+  const skip = untypeableLines(inScope);
   const bad = new Set(skip.map((s) => s.n));
-  loadProgram(core, [...listing].filter((l) => !bad.has(l.n)).sort((a, b) => a.n - b.n).map((l) => typedLine(l.n, l.body).codes));
+  loadProgram(core, [...inScope].filter((l) => !bad.has(l.n)).sort((a, b) => a.n - b.n).map((l) => typedLine(l.n, l.body).codes));
   return skip;
 }
 
@@ -55,7 +61,7 @@ export type MachineFacts = {
 
 /** Load, RUN, (press title keys), detect the title, press the post-title keys, collect the facts. */
 export function runListing(core: C64Core, listing: CanonicalListing, spec: ListingSpec, maxFrames = 3000): MachineFacts {
-  const untypeable = loadCanonical(core, listing);
+  const untypeable = loadCanonical(core, listing, spec.expectedLines);
   const resident = dumpBasic(core);
   const title = (s: string) => afterLastRun(s).includes(spec.titlePredicate.screenContains);
   // Stop when the title shows, or — if the title needs a key first — when the program is waiting for input:

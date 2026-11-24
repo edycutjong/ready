@@ -39,3 +39,20 @@ describe("post-title clause needs fresh evidence (a2a arch-01)", () => {
     expect(f.postTitle).toBe("pass");
   });
 });
+
+describe("orphan lines are never typed (a2a arch-01)", () => {
+  it("a typeable line outside the inventory stays out of memory, so clause 6 can pass and the orphan is counted", async () => {
+    const { judge } = await import("../../src/emu/session.ts");
+    const inScope = listing([[10, 'PRINT "HELLO"'], [20, 'GET A$:IF A$="" THEN 20'], [30, 'PRINT "SEEDS"']]);
+    const orphan = listing([[25, 'PRINT "ORPHAN"']]);
+    const all = [...inScope, ...orphan];
+    const s = spec(inScope, "SEEDS"); // expectedLines = 10, 20, 30
+    const f = runListing(core, all, s, 1500);
+    expect(f.postTitle).toBe("pass");
+    expect(f.screens.postTitle).not.toContain("ORPHAN"); // line 25 never ran
+    const c = judge(all, s, f, new Set(), "title-path");
+    expect(c.counts.orphansExcluded).toBe(1);
+    expect(c.failed).toEqual([]);
+    expect(c.verdict).toBe("RESURRECTED");
+  });
+});

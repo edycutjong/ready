@@ -140,7 +140,7 @@ export class C64Tools {
         let untypeable: Untypeable[];
         try {
           await this.core.boot();
-          untypeable = loadCanonical(this.core, this.plain());
+          untypeable = loadCanonical(this.core, this.plain(), this.spec.expectedLines);
         } catch {
           this.crashes++;
           this.fatal("emulator crashed twice");
@@ -161,7 +161,7 @@ export class C64Tools {
   startUp(): void {
     let untypeable: Untypeable[];
     try {
-      untypeable = loadCanonical(this.core, this.plain());
+      untypeable = loadCanonical(this.core, this.plain(), this.spec.expectedLines);
     } catch (e) {
       throw new Error(`emulator failed while typing the listing at start-up: ${e instanceof Error ? e.message : String(e)}`);
     }
@@ -239,7 +239,7 @@ export class C64Tools {
 
   /** R5: type the canonical listing again; no file is written. */
   private async reload(): Promise<ToolResult> {
-    const untypeable = await this.withEmu(() => loadCanonical(this.core, this.plain()));
+    const untypeable = await this.withEmu(() => loadCanonical(this.core, this.plain(), this.spec.expectedLines));
     const hash = this.hash();
     appendEvent(this.dir, { k: "emu", op: "load", hash, untypeable });
     return reloadResult(hash, untypeable);
@@ -347,7 +347,7 @@ export class C64Tools {
     this.postTitle = "not-reached"; // R3.7
     this.contract = this.beforeRunContract(); // R3.5
     this.writeListing(); // R10.6: persisted before typing
-    const untypeable = await this.withEmu(() => loadCanonical(this.core, this.plain()));
+    const untypeable = await this.withEmu(() => loadCanonical(this.core, this.plain(), this.spec.expectedLines));
     appendEvent(this.dir, { k: "emu", op: "load", hash, untypeable });
     return patchResult({ verdict: verdict.verdict, reason: verdict.reason, perOp: verdict.perOp, hash, iteration: this.iteration, untypeable });
   }

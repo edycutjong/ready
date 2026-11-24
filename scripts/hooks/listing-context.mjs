@@ -35,7 +35,7 @@ const text = [
   `Title: the screen shows "${spec.titlePredicate.screenContains}"${spec.titlePredicate.keys?.length ? ` (the program waits for a key first; c64_press accepts only: ${spec.titlePredicate.keys.map(keyName).join(", ")})` : ""}. After the title the SERVER presses ${spec.postTitle.keys.map(keyName).join(", ")} and checks for "${spec.postTitle.screenContains}" — you never press it.`,
   "Success is computed by code, never declared: title + post-title + every expected line present once + every line's checksum consistent + nothing forced + the C64's memory equal to the gated listing.",
   "Current canonical listing (Gazette notation; :rem = the checksum PRINTED in the magazine; status from the gate):",
-  ...lines.map((l) => `${l.n} ${l.body} :rem ${l.printed ?? "??"}   ${mark(l)}${l.provisional ? " (recovered, provisional)" : ""}${expected.includes(l.n) ? "" : "   [not in the page inventory]"}`),
+  ...lines.map((l) => `${l.n} ${l.body} :rem ${l.printed ?? "??"}   ${mark(l)}${l.provisional ? " (recovered, provisional)" : ""}${expected.includes(l.n) ? "" : "   [not in the page inventory: never typed, excluded from the verdict]"}`),
 ].join("\n");
 process.stdout.write(text + "\n");
 appendFileSync(join(runDir, "events.jsonl"), JSON.stringify({ t: new Date().toISOString(), k: "hook", hook: "listing-context", via: process.env.READY_HOOK_VIA ?? "kiro-session-start", exit: 0, lines: lines.length, missing }) + "\n");
