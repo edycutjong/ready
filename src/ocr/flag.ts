@@ -33,7 +33,11 @@ export function assistedHeading(s: AssistedSummary): string {
 
 /** `.bas`-style export: only lines whose checksum matches are emitted as verified; the rest are listed as comments. */
 export function basExport(lines: readonly FlaggedLine[]): string {
-  const out: string[] = ["REM ASSISTED export — lines below verified against the magazine checksum; others are NOT verified"];
+  // a2a arch-01: a digit-misread line stays a program line (clause 4 counts it, and commenting it out would break the
+  // program), but the header no longer calls it verified: it matches a confusable reading of the printed digits only.
+  const misread = lines.filter((l) => l.state === "digit-misread").map((l) => l.n);
+  const out: string[] = ["REM ASSISTED export — numbered lines match the magazine checksum as printed; REM UNVERIFIED lines do NOT"];
+  if (misread.length) out.push(`REM DIGIT-MISREAD (sum matches a misread of the printed checksum digits, not the digits as read): ${misread.join(", ")}`);
   for (const l of lines) out.push(l.state === "ok" || l.state === "digit-misread" ? `${l.n} ${l.body}` : `REM UNVERIFIED (${l.state}) ${l.n} ${l.body}`);
   return out.join("\n") + "\n";
 }
