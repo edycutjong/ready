@@ -2,7 +2,7 @@ import { render } from "preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 import { createC64ReadyCore, type C64Core } from "../emu/core.ts";
 import { cheat, replay, type ReplayResult, type RunEvent } from "../replay/replay.ts";
-import { certificateHeading, errata, errataText, prgBytes, provenance, type RecoveryEvent } from "../replay/certificate.ts";
+import { certificateHeading, errata, errataText, lineOrigins, prgBytes, provenance, type RecoveryEvent } from "../replay/certificate.ts";
 import type { CanonicalLine } from "../basic/types.ts";
 import { screenOf } from "../replay/screens.ts";
 import { Nav } from "./nav.tsx";
@@ -120,7 +120,9 @@ function Desk() {
   const attemptNo = new Map<number, number>();
   (result?.steps ?? []).forEach((s, i) => { if (s.kind === "attempt") attemptNo.set(i, attemptNo.size + 1); });
   const inputFull = result?.input as (ReplayResult["input"] & { recovery?: RecoveryEvent[]; origin?: { recovered?: string; note?: string } }) | undefined;
-  const prov = result && inputFull ? provenance(inputFull, result.final) : null;
+  const applied = (result?.steps ?? []).flatMap((s) => (s.kind === "attempt" && s.recomputed.verdict !== "refused" ? [s.ops] : []));
+  const origins = lineOrigins(applied);
+  const prov = result && inputFull ? provenance(inputFull, result.final, origins) : null;
   const reasons = new Map<number, string>();
   for (const s of result?.steps ?? []) if (s.kind === "attempt" && s.recomputed.verdict !== "refused" && s.reason) for (const o of s.ops) reasons.set(Number(o.lineno), s.reason);
   const stamp = stampFor(result?.contract?.verdict ?? (result?.recordedEnd?.result as string | undefined));
@@ -128,7 +130,7 @@ function Desk() {
   const nRef = accAttempts.filter((x) => x.kind === "attempt" && x.recomputed.verdict === "refused").length;
   const nForced = accAttempts.filter((x) => x.kind === "attempt" && x.recomputed.verdict === "forced").length;
   const nAcc = accAttempts.length - nRef - nForced;
-  const errataRows = result ? errata(result.input.lines, result.final, reasons) : [];
+  const errataRows = result ? errata(result.input.lines, result.final, reasons, origins) : [];
   const endCounts = (result?.recordedEnd?.counts ?? {}) as { sourceExact?: number; sourceTotal?: number };
   const note = (result?.input as { certificateNote?: string } | undefined)?.certificateNote ?? undefined;
   return (

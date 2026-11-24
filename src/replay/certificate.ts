@@ -29,16 +29,39 @@ export type Provenance = {
   origin: string | null;
 };
 
+/** One accepted or forced patch's ops, in run order (the shape REPLAY records). */
+export type AppliedOps = readonly { op?: unknown; type?: unknown; lineno?: unknown; new_lineno?: unknown; new_body?: unknown }[];
+
+/**
+ * Final line number → the input line it started as, carried through every applied renumber (a2a arch-01). A batch
+ * renumbers atomically and the gate keeps numbers unique (R4.10), so identity is exact; a number never renumbered
+ * maps to itself. Without this a renumbered line read as "added during the run" and dropped out of the errata.
+ */
+export function lineOrigins(batches: readonly AppliedOps[]): Map<number, number> {
+  let cur = new Map<number, number>();
+  for (const ops of batches) {
+    const moves = ops.filter((o) => (o.op ?? o.type) === "renumber").map((o) => [Number(o.lineno), Number(o.new_lineno)] as const);
+    if (!moves.length) continue;
+    const next = new Map<number, number>();
+    const moved = new Set(moves.map(([from]) => from));
+    for (const [from, to] of moves) next.set(to, cur.get(from) ?? from);
+    for (const [n, o] of cur) if (!moved.has(n) && !next.has(n)) next.set(n, o);
+    cur = next;
+  }
+  return cur;
+}
+
 /** Where every final line came from (spec F10, agents.md §4 "certificate"): computed from the run input and the final listing. */
-export function provenance(input: { lines: readonly CanonicalLine[]; recovery?: readonly RecoveryEvent[]; origin?: { recovered?: string; note?: string } | null }, final: CanonicalListing): Provenance {
+export function provenance(input: { lines: readonly CanonicalLine[]; recovery?: readonly RecoveryEvent[]; origin?: { recovered?: string; note?: string } | null }, final: CanonicalListing, origins: ReadonlyMap<number, number> = new Map()): Provenance {
   const start = new Map(input.lines.map((l) => [l.n, l]));
   const perLine = new Map<number, "OCR" | "re-OCR" | "TYPED" | "patched">();
   const counts = { ocr: 0, reOcr: 0, typed: 0, patched: 0 };
   const addedDuringRun: number[] = [];
   for (const l of final) {
-    const s = start.get(l.n);
+    const from = origins.get(l.n) ?? l.n;
+    const s = start.get(from);
     if (!s) { addedDuringRun.push(l.n); continue; }
-    const tag = s.body !== l.body ? "patched" : s.source === "re-ocr" ? "re-OCR" : s.source === "typed" ? "TYPED" : "OCR";
+    const tag = s.body !== l.body || from !== l.n ? "patched" : s.source === "re-ocr" ? "re-OCR" : s.source === "typed" ? "TYPED" : "OCR";
     perLine.set(l.n, tag);
     counts[tag === "patched" ? "patched" : tag === "re-OCR" ? "reOcr" : tag === "TYPED" ? "typed" : "ocr"]++;
   }
@@ -47,18 +70,24 @@ export function provenance(input: { lines: readonly CanonicalLine[]; recovery?: 
   return { counts, perLine, recovery, orphansExcluded: recovery.filter((r) => r.outcome === "orphan-excluded").length, addedDuringRun, origin };
 }
 
-export type Erratum = { n: number; printed: number | null; ocr: string; final: string; reason: string };
+export type Erratum = { n: number; printed: number | null; ocr: string; final: string; reason: string; renumberedFrom: number | null; forced: boolean };
 
-/** The errata sheet: every line whose final text differs from what OCR read, with the reason the agent gave and the gate accepted. */
-export function errata(inputLines: readonly CanonicalLine[], final: CanonicalListing, reasons: ReadonlyMap<number, string> = new Map()): Erratum[] {
+/** The errata sheet: every line whose final text or number differs from what OCR read, with the reason the agent gave. */
+export function errata(inputLines: readonly CanonicalLine[], final: CanonicalListing, reasons: ReadonlyMap<number, string> = new Map(), origins: ReadonlyMap<number, number> = new Map()): Erratum[] {
   const start = new Map(inputLines.map((l) => [l.n, l]));
-  return final.filter((l) => start.has(l.n) && start.get(l.n)!.body !== l.body).sort((a, b) => a.n - b.n)
-    .map((l) => ({ n: l.n, printed: l.printed, ocr: start.get(l.n)!.body, final: l.body, reason: reasons.get(l.n) ?? "" }));
+  const from = (n: number) => origins.get(n) ?? n;
+  return final.filter((l) => start.has(from(l.n)) && (start.get(from(l.n))!.body !== l.body || from(l.n) !== l.n)).sort((a, b) => a.n - b.n)
+    .map((l) => ({
+      n: l.n, printed: l.printed, ocr: start.get(from(l.n))!.body, final: l.body, reason: reasons.get(l.n) ?? reasons.get(from(l.n)) ?? "",
+      renumberedFrom: from(l.n) !== l.n ? from(l.n) : null, forced: l.status === "forced",
+    }));
 }
 
 export function errataText(title: string, heading: string, rows: readonly Erratum[]): string {
-  const out = [`ERRATA — ${title}`, heading, `${rows.length} line(s) changed from the OCR read; every change passed the checksum gate (:rem printed on the page).`, ""];
-  for (const r of rows) out.push(`${r.n}  :rem ${r.printed ?? "??"}`, `   OCR read : ${r.ocr}`, `   resurrected: ${r.final}`, ...(r.reason ? [`   why      : ${r.reason}`] : []), "");
+  const forced = rows.filter((r) => r.forced).length;
+  const out = [`ERRATA — ${title}`, heading,
+    `${rows.length} line(s) changed from the OCR read. ${forced === 0 ? "Every change passed the checksum gate (:rem printed on the page)." : `${rows.length - forced} passed the checksum gate (:rem printed on the page); ${forced} FORCED after repeated refusals and never checksum-verified.`}`, ""];
+  for (const r of rows) out.push(`${r.n}  :rem ${r.printed ?? "??"}${r.renumberedFrom !== null ? `   (was line ${r.renumberedFrom})` : ""}${r.forced ? "   FORCED — never verified" : ""}`, `   OCR read : ${r.ocr}`, `   resurrected: ${r.final}`, ...(r.reason ? [`   why      : ${r.reason}`] : []), "");
   return out.join("\n");
 }
 

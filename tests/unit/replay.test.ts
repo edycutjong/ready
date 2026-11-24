@@ -75,8 +75,9 @@ describe("replay", () => {
     expect(p.orphansExcluded).toBe(1);
     expect(p.origin).toBe("inventory from the page (recovered listing x.json)");
     const e = errata(r.input.lines, r.final, new Map([[10, "1 misread as I"]]));
-    expect(e).toEqual([{ n: 10, printed: computeChecksum(10, 'PRINT"{CLR}IT LIVES"'), ocr: 'PR1NT"{CLR}IT LIVES"', final: 'PRINT"{CLR}IT LIVES"', reason: "1 misread as I" }]);
+    expect(e).toEqual([{ n: 10, printed: computeChecksum(10, 'PRINT"{CLR}IT LIVES"'), ocr: 'PR1NT"{CLR}IT LIVES"', final: 'PRINT"{CLR}IT LIVES"', reason: "1 misread as I", renumberedFrom: null, forced: false }]);
     expect(errataText("t", "h", e)).toMatch(/OCR read : PR1NT/);
+    expect(errataText("t", "h", e)).toMatch(/Every change passed the checksum gate/);
     const prg = prgBytes(r.final);
     expect([prg[0], prg[1]]).toEqual([0x01, 0x08]);
     expect(Array.from(prg.slice(2))).toEqual(Array.from(tokenizeProgram(r.final)));
@@ -86,5 +87,36 @@ describe("replay", () => {
     expect(c.line).toBe(10);
     expect(c.verdict.verdict).toBe("refused");
     expect(cheat(lines, spec.expectedLines, null).line).toBe(10); // no line number → first ✗ line
+  });
+});
+
+describe("renumber identity and forced lines on the certificate (a2a arch-01)", () => {
+  it("a renumbered line is a patched line, never 'added during the run', and stays on the errata", async () => {
+    const { lineOrigins } = await import("../../src/replay/certificate.ts");
+    const input = { lines: [
+      { n: 10, body: "PRINT 1", printed: 1, status: "verified" as const, source: "ocr" as const },
+      { n: 20, body: "PRINT 2", printed: 2, status: "verified" as const, source: "ocr" as const },
+    ] };
+    // batch 1: 20 → 25 with a repair of its body; batch 2: 25 → 30
+    const origins = lineOrigins([[{ op: "renumber", lineno: 20, new_lineno: 25 }, { op: "replace", lineno: 20, new_body: "PRINT 3" }], [{ op: "renumber", lineno: 25, new_lineno: 30 }]]);
+    expect([...origins]).toEqual([[30, 20]]);
+    const final = [input.lines[0]!, { n: 30, body: "PRINT 3", printed: 2, status: "verified" as const, source: "ocr" as const }];
+    const p = provenance(input, final, origins);
+    expect(p.addedDuringRun).toEqual([]);
+    expect(p.perLine.get(30)).toBe("patched");
+    const e = errata(input.lines, final, new Map(), origins);
+    expect(e).toEqual([{ n: 30, printed: 2, ocr: "PRINT 2", final: "PRINT 3", reason: "", renumberedFrom: 20, forced: false }]);
+    expect(errataText("t", "h", e)).toMatch(/30  :rem 2   \(was line 20\)/);
+    expect(provenance(input, final).addedDuringRun).toEqual([30]); // the old inference, without origins
+  });
+  it("the errata never says a FORCED change passed the checksum gate", () => {
+    const input = [{ n: 10, body: "PRINT 1", printed: 1, status: "unverified" as const, source: "ocr" as const }];
+    const final = [{ n: 10, body: "PRINT 9", printed: 1, status: "forced" as const, source: "ocr" as const }];
+    const e = errata(input, final);
+    expect(e[0]!.forced).toBe(true);
+    const t = errataText("t", "h", e);
+    expect(t).not.toMatch(/Every change passed/);
+    expect(t).toMatch(/1 FORCED after repeated refusals and never checksum-verified/);
+    expect(t).toMatch(/FORCED — never verified/);
   });
 });
