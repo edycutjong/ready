@@ -1,32 +1,68 @@
 {
- "t": "2026-11-24T19:22:47.843Z",
- "run": "spike G attempt 2 (local tier-C run)",
+ "t": "2026-11-24T19:52:14.922Z",
+ "run": "local-randnum-G-2026-11-24T19-21-11Z",
  "pass": true,
  "checks": [
   {
    "name": "mode is REPLAY (in-browser C64 re-executes)",
-   "pass": true
+   "pass": true,
+   "detail": "replay"
   },
   {
    "name": "replay agrees with the record",
-   "pass": true
+   "pass": true,
+   "detail": []
   },
   {
    "name": "recomputed contract = recorded end result",
-   "pass": true
+   "pass": true,
+   "detail": {
+    "recomputed": "RESURRECTED",
+    "recorded": "RESURRECTED",
+    "heading": "TITLE-PATH RESURRECTED · 28/28 checksum-consistent"
+   }
   },
   {
    "name": "screen RAM text shows \"RANDOM SEEDS.\"",
-   "pass": true
+   "pass": true,
+   "detail": [
+    "PRESSF1TO TEST",
+    " RANDOM SEEDS.",
+    "PRESSF3TO TEST",
+    "BASICRNDCOMMAND."
+   ]
+  },
+  {
+   "name": "REPLAY not refused (same emulator id + WASM sha256 as the recording)",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "name": "certificate states where every line came from + no line added during the run",
+   "pass": true,
+   "detail": "where every final line came from · page OCR 9 · re-OCR of a gap 1 · TYPED by a person 0 · changed by a gate-accepted Kiro patch 18No line was added during the run: the gate refuses inserts, so every missing line can only be re-OCR'd or TYPED before the run, never written by the model.line inventory:"
+  },
+  {
+   "name": ".PRG download = load address $0801 + the contract's tokenized image",
+   "pass": true,
+   "detail": {
+    "name": "randnum-resurrected.prg",
+    "bytes": 730
+   }
   },
   {
    "name": "Cheat refused by the gate",
-   "pass": true
+   "pass": true,
+   "detail": "Cheat: empty line 1 → REFUSED — REFUSED (R4.4): replacing line 1 with an empty body deletes it. Deletion is a hard refusal; no flag or other operation can override it."
   },
   {
-   "name": "/kiro lists \u2265 1 real hook firing",
-   "pass": true
+   "name": "/kiro lists ≥ 1 real hook firing",
+   "pass": true,
+   "detail": [
+    "local tier-C run randnum-smoke-2026-11-24T19-41-57Z.jsonl19:41:57hook listing-context (runner-context) exit 0",
+    "local tier-C run randnum-smoke-2026-11-24T19-41-57Z.jsonl19:42:00hook listing-context (kiro-session-start) exit 0",
+    "local tier-C run randnum-smoke-2026-11-24T19-41-57Z.jsonl19:42:42hook checksum-gate (kiro-pre-tool-use) exit 0 · acceptedACCEPTED: 1: checksum 163 = printed 163; 2: checksum 135 = printed 135; 5: checksum 167 = printed 167; 10: checksum 215 = printed 215"
+   ]
   }
- ],
- "how": "node scripts/e2e-replay.mjs (vite dev + Playwright Chromium; the in-browser c64-ready core re-executes every accepted patch)"
+ ]
 }

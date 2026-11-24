@@ -2,7 +2,7 @@ import { render } from "preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 import { createC64ReadyCore, type C64Core } from "../emu/core.ts";
 import { cheat, replay, type ReplayResult, type RunEvent } from "../replay/replay.ts";
-import { certificateHeading } from "../replay/certificate.ts";
+import { certificateHeading, errata, errataText, prgBytes, provenance, type RecoveryEvent } from "../replay/certificate.ts";
 import type { CanonicalLine } from "../basic/types.ts";
 import "./desk.css";
 
@@ -17,14 +17,26 @@ type Mode = "loading" | "booting" | "replay" | "recorded" | "error";
 
 declare global { interface Window { __ready?: Record<string, unknown> } }
 
-async function bootCore(): Promise<C64Core | null> {
+type Booted = { core: C64Core | null; wasmSha256?: string };
+async function bootCore(): Promise<Booted> {
   try {
     const head = await fetch("/c64.wasm", { method: "HEAD" });
-    if (!head.ok || !/wasm/.test(head.headers.get("content-type") ?? "")) return null;
-    const core = createC64ReadyCore("/c64.wasm");
+    if (!head.ok || !/wasm/.test(head.headers.get("content-type") ?? "")) return { core: null };
+    const bytes = new Uint8Array(await (await fetch("/c64.wasm")).arrayBuffer());
+    // REPLAY refuses a different emulator build (spec F9): hash the exact bytes this browser boots
+    const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
+    const wasmSha256 = Array.from(digest, (b) => b.toString(16).padStart(2, "0")).join("");
+    const core = createC64ReadyCore(bytes);
     await core.boot();
-    return core;
-  } catch { return null; }
+    return { core, wasmSha256 };
+  } catch { return { core: null }; }
+}
+
+function download(name: string, data: Uint8Array | string, type: string) {
+  const url = URL.createObjectURL(new Blob([typeof data === "string" ? data : new Uint8Array(data)], { type }));
+  const a = document.createElement("a");
+  a.href = url; a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 const parseJsonl = (text: string): RunEvent[] => text.split("\n").filter(Boolean).flatMap((l) => { try { return [JSON.parse(l) as RunEvent]; } catch { return []; } });
@@ -45,27 +57,27 @@ function Desk() {
   const [runs, setRuns] = useState<RunRef[]>([]);
   const [sel, setSel] = useState<string | null>(new URLSearchParams(location.search).get("run"));
   const [events, setEvents] = useState<RunEvent[] | null>(null);
-  const [core, setCore] = useState<C64Core | null | undefined>(undefined);
+  const [booted, setBooted] = useState<Booted | undefined>(undefined);
   const [mode, setMode] = useState<Mode>("loading");
-  const [result, setResult] = useState<ReplayResult | null>(null);
+  const [result, setResult] = useState<(ReplayResult & { refused: string | null }) | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const [cheatOut, setCheatOut] = useState<string | null>(null);
 
   useEffect(() => { fetch("/runs/index.json").then((r) => r.json()).then((j) => { setRuns(j.runs ?? []); if (!sel && j.runs?.[0]) setSel(j.runs[0].id); }).catch(() => setErr("no recorded runs index")); }, []);
-  useEffect(() => { setMode("booting"); bootCore().then(setCore); }, []);
+  useEffect(() => { setMode("booting"); bootCore().then(setBooted); }, []);
   useEffect(() => {
     const ref = runs.find((r) => r.id === sel);
     if (!ref) return;
     fetch(ref.file).then((r) => r.text()).then((t) => setEvents(parseJsonl(t))).catch(() => setErr(`run ${ref.id} unavailable`));
   }, [sel, runs]);
   useEffect(() => {
-    if (!events || core === undefined) return;
+    if (!events || booted === undefined) return;
     try {
-      const r = replay(events, core);
-      setResult(r); setStep(r.steps.length); setMode(core ? "replay" : "recorded");
+      const r = replay(events, booted.core, { wasmSha256: booted.wasmSha256 });
+      setResult(r); setStep(r.steps.length); setMode(booted.core && !r.refused ? "replay" : "recorded");
     } catch (e) { setErr(String((e as Error).message)); setMode("error"); }
-  }, [events, core]);
+  }, [events, booted]);
 
   const screens = useMemo(() => (events ? recordedScreens(events) : []), [events]);
   const view = useMemo(() => {
@@ -81,7 +93,7 @@ function Desk() {
   }, [result, step, screens]);
 
   useEffect(() => {
-    window.__ready = { mode, mismatches: result?.mismatches ?? null, contract: result?.contract ?? null, recordedEnd: result?.recordedEnd ?? null, screen: view?.screen ?? null, steps: result?.steps.length ?? 0, step };
+    window.__ready = { mode, refused: result?.refused ?? null, final: result?.final ?? null, mismatches: result?.mismatches ?? null, contract: result?.contract ?? null, recordedEnd: result?.recordedEnd ?? null, screen: view?.screen ?? null, steps: result?.steps.length ?? 0, step };
   }, [mode, result, view, step]);
 
   const ocr = new Map((result?.input.lines ?? []).map((l) => [l.n, l.body]));
@@ -90,7 +102,16 @@ function Desk() {
   const firstErr = result?.steps.find((s) => s.kind === "run" && (s.facts?.run.error ?? s.recorded.error));
   const errObj = firstErr && firstErr.kind === "run" ? ((firstErr.facts?.run.error ?? firstErr.recorded.error) as { kind: string; line: number | null }) : null;
   const errText = errObj ? `?${errObj.kind}  ERROR${errObj.line != null ? ` IN ${errObj.line}` : ""}` : "";
-  const runLabel = start ? `recorded ${String(start.t ?? "").slice(0, 16).replace("T", " ")} UTC · ${String(start.model ?? "")} · ${credits?.metered === false || credits?.total === null ? "credits: unmetered" : `${Number(credits?.total ?? 0).toFixed(2)} credits`}` : "";
+  const creditText = !credits ? "credits: unknown" : credits.metered === false || credits.total === null ? "credits: unmetered" : `${credits.lowerBound ? "≥ " : ""}${Number(credits.total).toFixed(2)} credits`;
+  const runLabel = start ? `recorded ${String(start.t ?? "").slice(0, 16).replace("T", " ")} UTC · ${String(start.model ?? "")} · ${creditText}` : "";
+  const capIter = Number((start?.runner as { caps?: { iterations?: number } } | undefined)?.caps?.iterations ?? 15);
+  const attemptNo = new Map<number, number>();
+  (result?.steps ?? []).forEach((s, i) => { if (s.kind === "attempt") attemptNo.set(i, attemptNo.size + 1); });
+  const inputFull = result?.input as (ReplayResult["input"] & { recovery?: RecoveryEvent[]; origin?: { recovered?: string; note?: string } }) | undefined;
+  const prov = result && inputFull ? provenance(inputFull, result.final) : null;
+  const reasons = new Map<number, string>();
+  for (const s of result?.steps ?? []) if (s.kind === "attempt" && s.recomputed.verdict !== "refused" && s.reason) for (const o of s.ops) reasons.set(Number(o.lineno), s.reason);
+  const errataRows = result ? errata(result.input.lines, result.final, reasons) : [];
   const endCounts = (result?.recordedEnd?.counts ?? {}) as { sourceExact?: number; sourceTotal?: number };
   const note = (result?.input as { certificateNote?: string } | undefined)?.certificateNote ?? undefined;
   return (
@@ -116,6 +137,8 @@ function Desk() {
             <ol>
               {result.steps.map((s, i) => (
                 <li class={`${i < step ? "done" : ""} ${s.kind === "attempt" ? s.recomputed.verdict : "run"}`} onClick={() => setStep(i + 1)}>
+                  {s.kind === "attempt" && <span class="iter">attempt {attemptNo.get(i)}/{capIter} · </span>}
+                  {s.kind === "attempt" && s.reason && s.source === "server" && <span class="why">agent: “{s.reason}” → </span>}
                   {s.kind === "attempt" ? `${s.recomputed.verdict.toUpperCase()}${s.source === "hook" ? " by the Kiro Pre Tool Use hook" : ""}: ${s.recomputed.reason}` : `RUN → ${s.facts ? (s.facts.run.error ? `?${s.facts.run.error.kind} ERROR${s.facts.run.error.line != null ? ` IN ${s.facts.run.error.line}` : ""}` : s.facts.titleSeen ? `title · post-title ${s.facts.postTitle}` : "no title") : `(recorded) ${s.recorded.error ? JSON.stringify(s.recorded.error) : s.recorded.titleSeen ? "title" : "no title"}`}${s.match === false ? " ≠ RECORD" : ""}`}
                 </li>
               ))}
@@ -134,6 +157,7 @@ function Desk() {
                         <td class="body">{was !== undefined && was !== l.body ? <><del>{was}</del><br /><ins>{l.body}</ins></> : l.body}</td>
                         <td class="rem">:rem {l.printed ?? "??"}</td>
                         <td class="mk">{m.sym}</td>
+                        <td class="src">{prov?.perLine.get(l.n) ?? ""}</td>
                       </tr>
                     );
                   })}
@@ -152,6 +176,21 @@ function Desk() {
               ? <><h2>{certificateHeading(result.contract, result.input.scope, result.input.spec.expectedLines.length, { sourceExact: endCounts.sourceExact, sourceTotal: endCounts.sourceTotal, note })}</h2>
                 {result.recordedEnd?.sourceReference ? <p class="note" data-testid="source-ref">source-exact is measured against a reference transcript ({String(result.recordedEnd.sourceReference)}); it is never given to the agent, and "source-exact" means "matches that reference", not "matches the magazine".</p> : null}<p>recomputed now from the final listing and this browser's C64 · verified {result.contract.counts.verified} · digit-misread {result.contract.counts.digitMisread} · forced {result.contract.counts.forced} · unverified {result.contract.counts.unverified} · missing {result.contract.counts.missing} · typed {result.contract.counts.typed}</p></>
               : <><h2>{String(result.recordedEnd?.result ?? "no end event").toUpperCase()} (recorded)</h2><p>the recorded certificate; the contract is recomputed only where a C64 can run</p></>}
+            {prov && (
+              <div data-testid="provenance">
+                <p>where every final line came from · page OCR {prov.counts.ocr} · re-OCR of a gap {prov.counts.reOcr} · TYPED by a person {prov.counts.typed} · changed by a gate-accepted Kiro patch {prov.counts.patched}</p>
+                <p>{prov.addedDuringRun.length === 0
+                  ? "No line was added during the run: the gate refuses inserts, so every missing line can only be re-OCR'd or TYPED before the run, never written by the model."
+                  : `Lines added during the run: ${prov.addedDuringRun.join(", ")}`}</p>
+                {prov.recovery.length > 0 && <p>lost-line recovery before the run: {prov.recovery.map((r) => `${r.line ?? r.ocrNumber ?? "?"} ${r.op} → ${r.outcome}`).join(" · ")}{prov.orphansExcluded ? ` (${prov.orphansExcluded} orphan line${prov.orphansExcluded > 1 ? "s" : ""} excluded, never typed)` : ""}</p>}
+                {prov.origin && <p class="note">line inventory: {prov.origin}</p>}
+              </div>
+            )}
+            <p class="downloads">
+              <button data-testid="dl-prg" onClick={() => download(`${result.input.listingId}-${(result.contract?.verdict ?? "recorded").toLowerCase()}.prg`, prgBytes(result.final), "application/octet-stream")}>download .PRG (loads at $0801)</button>
+              <button data-testid="dl-errata" disabled={errataRows.length === 0} onClick={() => download(`${result.input.listingId}-errata.txt`, errataText(result.input.listingId, result.contract?.heading ?? String(result.recordedEnd?.result ?? "recorded"), errataRows), "text/plain")}>download errata ({errataRows.length} line{errataRows.length === 1 ? "" : "s"})</button>
+            </p>
+            {result.refused && <p class="refused" data-testid="replay-refused">{result.refused} — showing recorded screens; the gate still re-judges every patch.</p>}
             {result.mismatches.length > 0 && <p class="refused" data-testid="mismatches">Replay disagrees with the record: {result.mismatches.join(" · ")}</p>}
           </section>
         </>

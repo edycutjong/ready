@@ -9,7 +9,8 @@
  *   node scripts/e2e-replay.mjs --run <id> [--expect-screen "RANDOM SEEDS."] [--out evidence/e2e/<file>.json]
  */
 import { spawn } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { tokenizeProgram } from "../src/basic/tokenizer.ts";
 import { dirname } from "node:path";
 import { chromium } from "playwright";
 
@@ -32,6 +33,13 @@ try {
   const screen = await page.textContent("[data-testid=screen]");
   if (st.contract?.verdict === "RESURRECTED") check(`screen RAM text shows "${a["expect-screen"]}"`, a["expect-screen"] ? screen.includes(a["expect-screen"]) : true, screen.split("\n").filter(Boolean).slice(-6));
   else check("honest PARTIAL/NOT state shown on the certificate", /PARTIAL|NOT RESURRECTED/.test(await page.textContent("[data-testid=certificate]")), st.contract?.heading);
+  check("REPLAY not refused (same emulator id + WASM sha256 as the recording)", st.refused === null, st.refused);
+  const prov = await page.textContent("[data-testid=provenance]").catch(() => "");
+  check("certificate states where every line came from + no line added during the run", /page OCR \d+/.test(prov) && /No line was added during the run/.test(prov), prov.slice(0, 300));
+  const [dl] = await Promise.all([page.waitForEvent("download"), page.click("[data-testid=dl-prg]")]);
+  const prg = readFileSync(await dl.path());
+  const image = tokenizeProgram(st.final ?? []);
+  check(".PRG download = load address $0801 + the contract's tokenized image", prg[0] === 0x01 && prg[1] === 0x08 && Buffer.compare(prg.subarray(2), Buffer.from(image)) === 0, { name: dl.suggestedFilename(), bytes: prg.length });
   await page.click("[data-testid=cheat]");
   const cheat = await page.textContent("[data-testid=cheat-out]");
   check("Cheat refused by the gate", /REFUSED/.test(cheat), cheat);

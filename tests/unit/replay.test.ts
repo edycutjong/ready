@@ -7,7 +7,9 @@ import { computeChecksum } from "../../src/basic/checksum.ts";
 import type { C64Core } from "../../src/emu/core.ts";
 import type { CanonicalListing } from "../../src/basic/types.ts";
 import { bootNodeCore } from "../../src/emu/node.ts";
-import { cheat, replay, type RunEvent } from "../../src/replay/replay.ts";
+import { cheat, emulatorRefusal, replay, type RunEvent } from "../../src/replay/replay.ts";
+import { errata, errataText, prgBytes, provenance } from "../../src/replay/certificate.ts";
+import { tokenizeProgram } from "../../src/basic/tokenizer.ts";
 
 const truth: [number, string][] = [[10, 'PRINT"{CLR}IT LIVES"'], [20, 'GETA$:IFA$=""THEN20'], [30, 'PRINT"RISEN."'], [40, "END"]];
 const spec = { expectedLines: [10, 20, 30, 40], titlePredicate: { screenContains: "IT LIVES" }, postTitle: { keys: [13], screenContains: "RISEN." } };
@@ -49,6 +51,35 @@ describe("replay", () => {
     expect(r.contract).toBeNull();
     expect(r.steps.filter((s) => s.kind === "run").every((s) => s.kind === "run" && s.match === null)).toBe(true);
     expect(r.final.find((l) => l.n === 10)?.status).toBe("verified");
+  });
+  it("refuses re-execution on a different emulator: another c64-ready version or other WASM bytes (spec F9, QA P1b r3)", () => {
+    const ev = recorded();
+    (ev[0] as RunEvent).emulator = { id: "c64-ready@9.9.9", wasmSha256: "a".repeat(64) };
+    const r = replay(ev, core);
+    expect(r.refused).toMatch(/REPLAY refused: recorded on c64-ready@9\.9\.9/);
+    expect(r.contract).toBeNull(); // nothing re-ran on the C64
+    expect(r.steps.filter((s) => s.kind === "run").every((s) => s.kind === "run" && s.facts === null)).toBe(true);
+    expect(r.mismatches[0]).toBe(r.refused);
+    (ev[0] as RunEvent).emulator = { id: core.id, wasmSha256: "a".repeat(64) };
+    expect(emulatorRefusal(ev[0], core, "b".repeat(64))).toMatch(/WASM sha256 aaaaaaaaaaaa…, this browser has bbbbbbbbbbbb…/);
+    expect(emulatorRefusal(ev[0], core, "a".repeat(64))).toBeNull();
+    expect(emulatorRefusal(ev[0], core)).toBeNull(); // the hash is compared only when both sides know it
+    expect(replay(recorded(), core).refused).toBeNull(); // no emulator recorded: replays (older recordings)
+  });
+  it("certificate provenance, errata and .PRG are computed from the run input and the final listing (spec F10)", () => {
+    const r = replay(recorded(), core);
+    const p = provenance({ ...r.input, recovery: [{ op: "orphan", ocrNumber: 89, outcome: "orphan-excluded" }], origin: { recovered: "x.json", note: "inventory from the page" } }, r.final);
+    expect(p.counts).toEqual({ ocr: 3, reOcr: 0, typed: 0, patched: 1 });
+    expect(p.perLine.get(10)).toBe("patched");
+    expect(p.addedDuringRun).toEqual([]);
+    expect(p.orphansExcluded).toBe(1);
+    expect(p.origin).toBe("inventory from the page (recovered listing x.json)");
+    const e = errata(r.input.lines, r.final, new Map([[10, "1 misread as I"]]));
+    expect(e).toEqual([{ n: 10, printed: computeChecksum(10, 'PRINT"{CLR}IT LIVES"'), ocr: 'PR1NT"{CLR}IT LIVES"', final: 'PRINT"{CLR}IT LIVES"', reason: "1 misread as I" }]);
+    expect(errataText("t", "h", e)).toMatch(/OCR read : PR1NT/);
+    const prg = prgBytes(r.final);
+    expect([prg[0], prg[1]]).toEqual([0x01, 0x08]);
+    expect(Array.from(prg.slice(2))).toEqual(Array.from(tokenizeProgram(r.final)));
   });
   it("Cheat empties the error line and is refused by the same gate", () => {
     const c = cheat(lines, spec.expectedLines, 10);

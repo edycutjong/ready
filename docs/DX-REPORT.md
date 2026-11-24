@@ -62,7 +62,9 @@ only untypeable characters passed the deletion check) and is now refused. All fo
 ### Who wrote what (so nothing claude-direct reads as Kiro's)
 Kiro (kiro-cli sessions, prompts kept with the build log): the `checksum-oracle` spec, `src/basic/{types,keywords,
 tokenizer,notation,checksum}.ts` and their tests. **claude-direct** (Claude Code, not Kiro): the steering files and
-hook definitions, `src/emu/*`, the recorder (`runner/`, `scripts/record-run.mjs`), the day-1 probe MCP server, the
+hook definitions (commit `fbfac9f`, titled "Kiro steering …", means steering files *for* Kiro: they were written
+claude-direct before Kiro's first session, whose prompt tells it to read `.kiro/steering/*.md` first),
+`src/emu/*`, the recorder (`runner/`, `scripts/record-run.mjs`), the day-1 probe MCP server, the
 gate and contract (`src/gate/*`, tasks 7–12), the property tests for tasks 9–12, the trailing-blank and
 `controlOutsideQuotes` additions to `src/basic`, CI/deploy config and this report. Commit `18aaa84` says "production
 deploy of main via GitHub Actions": the workflow exists, but Actions cannot run on this account yet (billing), so
@@ -117,7 +119,28 @@ the recorder fixes; `scripts/{make-run-input,typeset-authored,e0-search,source-c
 - The stop rule keeps the agent working when every line is checksum-consistent but the C64 still fails.
 - A run that ends with an accepted patch never RUN gets a final judge by the runner on a fresh headless C64.
 
+### Tightened after QA round 3 (P1b, claude-direct)
+- The contract heading names the listing's scope: `TITLE-PATH …` only on a title-path listing; a whole-listing scope
+  (the authored line-20 page) gets no prefix.
+- REPLAY refuses re-execution on a different emulator — another c64-ready version, or WASM bytes whose sha256 differs
+  from the one the recorder logged — and falls back to recorded playback with the refusal shown (spec F9).
+- The certificate says where every final line came from (page OCR / re-OCR of a gap / TYPED / gate-accepted Kiro
+  patch), lists the lost-line recovery events and excluded orphans, names the line inventory's origin, and states —
+  computed, not assumed — that no line was added during the run.
+- The desk offers the errata sheet (every line changed from the OCR read, with the agent's reason) and a `.PRG`
+  (load address $0801 + the same tokenized image contract clause 6 compares with C64 memory); the browser E2E checks
+  the downloaded bytes.
+- The run strip shows each attempt's number against the iteration cap and the agent's own reason; the run label says
+  "credits: unknown" or "≥ n" instead of a silent 0.00.
+
 ### Open (spec tasks not done yet, stated so nothing reads as finished)
+Product, scheduled for P1c (build-plan Day 3–4): the listing picker (today the desk lists recorded runs; no page
+image, no `powerbasic` control), the in-browser tesseract.js worker with the live "lines checksum-valid after OCR"
+rate (OCR + recovery run in Node today: `scripts/recover-listing.mjs`, `src/ocr/recover.ts`), and the design pass.
+No recorded agent run contains a gate refusal yet — the refusal-then-revised-patch moment exists through Cheat and the
+K1 probe only; the evals and the hero re-record are where a real one is captured. Nothing sets `eye-verified` yet
+(the gate and contract accept it; the "a person marks it against the crop" step is P3).
+
 `c64-mcp-server` task 8 (property tests P4/P5/P7/P8/P9 + timing measurements). `resurrect-loop` T2–T6 are partly
 covered by the P1b fixes above and the harness tests; the `suspect` flag (a checksum-matching patch that makes the run
 worse) and `apply_patch` returning a re-run screen are not implemented — the agent calls `c64_run` after each patch, and
