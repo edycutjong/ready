@@ -1,0 +1,51 @@
+{
+ "randnum": {
+  "title": "Random Number Test (Gazette, June 1984)",
+  "scope": "title-path",
+  "note": "line inventory read from the page before the run (vision transcript; 11/28 confirmed by a second OCR engine) \u2014 numbers and screen predicates only; no listing text (tier C)",
+  "spec": {
+   "expectedLines": [
+    1,
+    2,
+    3,
+    5,
+    7,
+    10,
+    20,
+    25,
+    26,
+    30,
+    35,
+    40,
+    50,
+    51,
+    60,
+    61,
+    70,
+    80,
+    90,
+    100,
+    885,
+    893,
+    901,
+    909,
+    917,
+    925,
+    933,
+    941
+   ],
+   "titlePredicate": {
+    "screenContains": "VIC OR 64?",
+    "keys": [
+     32
+    ]
+   },
+   "postTitle": {
+    "keys": [
+     13
+    ],
+    "screenContains": "RANDOM SEEDS."
+   }
+  }
+ }
+}

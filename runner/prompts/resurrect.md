@@ -1,0 +1,3 @@
+Resurrect the listing in this run. The c64 MCP server has already typed the canonical listing (the OCR text after lost-line recovery by code) into a real Commodore 64; the Session Start context lists every line with the checksum PRINTED in the magazine and its status.
+
+Start with c64_run and read the screen. Then fix the lines that fail their printed checksum with apply_patch (up to 4 ops per call — batch the lines you are sure of; every call counts toward a 15-call cap) and run again. A refusal from the gate is information: it tells you the printed and the computed sum — change a different character. You cannot add or delete lines, and you never press the post-title key. You do not decide when the run is done: a hook checks the contract after you stop.
