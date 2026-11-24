@@ -46,9 +46,22 @@ function dedupAndSort(lines: readonly { n: number; body: string }[]): { n: numbe
   return [...byNumber.entries()].sort((a, b) => a[0] - b[0]).map(([n, body]) => ({ n, body }));
 }
 
-/** Gazette notation -> typed text (char code = byte): what the keyboard buffer would have delivered. */
+/**
+ * Gazette notation -> typed text (char code = byte): what the screen editor hands to CRUNCH on RETURN.
+ * The editor ignores trailing blanks of the logical line, even inside an unclosed quote (measured on the real
+ * core by tests/prop/kernal-equality.prop.ts: an OCR'd lost closing quote left trailing spaces the C64 dropped).
+ * [claude-direct P1a fix, found by the P3 property]
+ */
 function typedText(body: string): string {
-  return parseBody(body).codes.map((c) => String.fromCharCode(c)).join("");
+  const codes = trimTrailingSpaces(parseBody(body).codes);
+  return codes.map((c) => String.fromCharCode(c)).join("");
+}
+
+/** Drop trailing space codes (32): the C64 screen editor never stores them. */
+export function trimTrailingSpaces(codes: readonly number[]): number[] {
+  let end = codes.length;
+  while (end > 0 && codes[end - 1] === 32) end--;
+  return codes.slice(0, end);
 }
 
 /**

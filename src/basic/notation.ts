@@ -212,7 +212,10 @@ function rightmostAbbreviable(body: readonly number[]): { start: number; length:
 export function typedLine(lineNo: number, body: string): TypedLineResult {
   const digits = [...String(lineNo)].map((d) => d.charCodeAt(0)); // R1.9
   const { codes, dropped } = parseBody(body);
-  const typed = [...codes];
+  // the screen editor ignores trailing blanks, so they are never typed (claude-direct P1a fix, see tokenizer.ts)
+  let end = codes.length;
+  while (end > 0 && codes[end - 1] === 32) end--;
+  const typed = codes.slice(0, end);
   while (digits.length + typed.length > MAX_TYPED) { // R1.11
     const hit = rightmostAbbreviable(typed);
     if (!hit) break;
@@ -222,4 +225,20 @@ export function typedLine(lineNo: number, body: string): TypedLineResult {
   }
   const full = [...digits, ...typed];
   return { codes: full, dropped, tooLong: full.length > MAX_TYPED }; // R1.10, R1.12, R1.13
+}
+
+/**
+ * Positions of control codes that would be typed OUTSIDE quote mode: the C64 screen editor executes them
+ * instead of storing them ({CLR} wipes the line being typed, {UP}/{HOME} move the cursor so later keys overwrite
+ * other lines). On a Gazette page every control token sits inside quotes, so a hit means OCR lost or added a quote.
+ * Such a line is not faithfully typeable; the loader must not type it (claude-direct P1a, found by the P3 property).
+ */
+export function controlOutsideQuotes(codes: readonly number[]): number[] {
+  const hits: number[] = [];
+  let quoted = false;
+  codes.forEach((c, i) => {
+    if (c === 34) { quoted = !quoted; return; }
+    if (!quoted && c !== 13 && (c < 32 || (c >= 128 && c < 160))) hits.push(i);
+  });
+  return hits;
 }
