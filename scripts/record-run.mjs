@@ -43,6 +43,7 @@ let stop = { stop: false, reason: "", result: "not-resurrected" };
 emit({ k: "start", model, mode: "live", listing, runner: { kiroCli: kiroVersion(), agent: args.agent ?? null, trustTools: trust.split(","), caps: CAPS } });
 
 let prompt = prompt0;
+let liveCheck = () => {};
 let capReason = null;
 while (true) {
   cycles++;
@@ -54,7 +55,7 @@ while (true) {
   const r = await runKiro(cli, remaining);
   emit({ k: "cycle", n: cycles, exit: r.code, killed: r.killed, sessionId });
   mergeServerEvents();
-  if (r.killed) { capReason = "wall"; break; }
+  if (r.killed) { capReason = r.killed; break; }
   capReason = capHit(state);
   if (capReason) break;
   stop = stopCheck();
@@ -74,8 +75,12 @@ function runKiro(cliArgs, timeoutMs) {
     const child = spawn("kiro-cli", cliArgs, { cwd: workspace, env: { ...process.env, RUN_DIR: runDir } });
     let buf = "";
     let killed = false;
-    const timer = setTimeout(() => { killed = true; child.kill("SIGTERM"); }, Math.max(1000, timeoutMs));
+    const stop = (why) => { if (killed) return; killed = why; child.kill("SIGTERM"); setTimeout(() => child.kill("SIGKILL"), 5000).unref(); };
+    const timer = setTimeout(() => stop("wall"), Math.max(1000, timeoutMs));
     const calls = new Map();
+    // live caps: iterations are counted from the stream as they happen; credits arrive once per process (K3), so
+    // the credit cap can only be checked between cycles — a cycle may overshoot it by its own spend (logged).
+    liveCheck = () => { if (state.iterations >= CAPS.iterations) stop("iterations"); };
     child.stdout.on("data", (d) => {
       buf += d.toString();
       let i;
@@ -95,13 +100,13 @@ function onEvent(ev, calls) {
   if (ev.k === "tool_load") { emit({ k: "kiro", op: "tool_load", id: ev.id }); return; }
   if (ev.k === "tool_call") {
     calls.set(ev.toolCallId, ev);
-    if (/apply_patch/.test(ev.title)) state.iterations++;
+    if (/apply_patch/.test(ev.title)) { state.iterations++; liveCheck(); }
     emit({ k: "kiro", op: "tool_call", title: ev.title, server: ev.server, input: ev.input });
     return;
   }
   if (ev.k === "tool_result") {
     const call = calls.get(ev.toolCallId);
-    if (ev.hookRefusal) state.iterations++; // a refused fix attempt is an iteration too (the hook stops it before the server)
+    if (ev.hookRefusal) { state.iterations++; liveCheck(); } // a refused fix attempt is an iteration too (the hook stops it before the server)
     if (ev.hookRefusal) emit({ k: "hook", hook: "checksum-gate", exit: 2, stderr: hookText(ev.text), tool: call?.title });
     else emit({ k: "kiro", op: "tool_result", title: call?.title, status: ev.status, permissionDenied: ev.permissionDenied, text: ev.text.slice(0, 4000) });
     return;
@@ -126,7 +131,7 @@ function mergeServerEvents() {
 }
 
 function stopCheck() {
-  if (!args["stop-check"]) return { stop: true, reason: "", result: "error" };
+  if (!args["stop-check"]) throw new Error("--stop-check is required: the model never decides when to stop");
   const [cmd, ...rest] = args["stop-check"].split(" ");
   const r = spawnSync(cmd, rest, { cwd: workspace, env: { ...process.env, RUN_DIR: runDir }, encoding: "utf8" });
   try { return JSON.parse(r.stdout); } catch { return { stop: true, reason: `stop check failed: ${r.stderr}`, result: "error" }; }

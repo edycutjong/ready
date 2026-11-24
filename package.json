@@ -6,7 +6,7 @@
   "license": "MIT",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.18"
   },
   "scripts": {
     "dev": "vite",
@@ -14,7 +14,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:prop": "vitest run tests/prop",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "check:no-rom": "node scripts/check-no-rom.mjs",
+    "deploy:prod": "vercel build --prod && node scripts/check-no-rom.mjs .vercel/output && vercel deploy --prebuilt --prod"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.2",
