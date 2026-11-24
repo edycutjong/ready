@@ -1,0 +1,78 @@
+{
+ "experiment": "E0 \u2014 checksum-constrained confusable search + emulator re-run, no model (kiro-plan.md \u00a73; comparison arm only, never shipped)",
+ "date": "2026-11-25",
+ "script": "scripts/e0-search.mjs",
+ "note": "randnum = the June 1984 Gazette title path (28 lines), input = spike G0's recovered tesseract.js @1600 px listing, the same input spike G gives the agent; counts only (tier C: no Gazette text in the repo)",
+ "runs": [
+  {
+   "listing": "line20",
+   "credits": 0,
+   "wallMs": 5425,
+   "start": {
+    "error": {
+     "kind": "SYNTAX",
+     "line": 20
+    },
+    "titleSeen": false,
+    "unverified": 1
+   },
+   "fixed": 1,
+   "attempted": 1,
+   "outcomes": {
+    "emulator": 1
+   },
+   "end": {
+    "error": null,
+    "titleSeen": true,
+    "postTitle": "pass",
+    "verdict": "RESURRECTED",
+    "heading": "TITLE-PATH RESURRECTED \u00b7 12/12 checksum-consistent",
+    "counts": {
+     "verified": 12,
+     "digitMisread": 0,
+     "eyeVerified": 0,
+     "forced": 0,
+     "unverified": 0,
+     "present": 12,
+     "typed": 0,
+     "missing": 0,
+     "orphansExcluded": 0
+    }
+   }
+  },
+  {
+   "listing": "randnum",
+   "credits": 0,
+   "wallMs": 288464,
+   "start": {
+    "error": null,
+    "titleSeen": false,
+    "unverified": 18
+   },
+   "fixed": 3,
+   "attempted": 18,
+   "outcomes": {
+    "ambiguous": 15,
+    "unique": 3
+   },
+   "end": {
+    "error": null,
+    "titleSeen": false,
+    "postTitle": "not-reached",
+    "verdict": "NOT-RESURRECTED",
+    "heading": "NO-TITLE NOT RESURRECTED \u00b7 13/28 checksum-consistent",
+    "counts": {
+     "verified": 13,
+     "digitMisread": 0,
+     "eyeVerified": 0,
+     "forced": 0,
+     "unverified": 15,
+     "present": 28,
+     "typed": 0,
+     "missing": 0,
+     "orphansExcluded": 0
+    }
+   }
+  }
+ ]
+}
