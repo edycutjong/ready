@@ -77,7 +77,7 @@ export function ScanView() {
       </section>
       {lines && sum && meta && (
         <section class="assisted" data-testid="assisted">
-          <h2><span class="badge">ASSISTED</span> {assistedHeading(sum)}</h2>
+          <h2 data-testid="assisted-heading">{assistedHeading(sum)}</h2>
           <p class="note" data-testid="ocr-meta">{meta.engine} · {meta.rows} rows · source {meta.source} · read at {meta.width} px wide in {(meta.ms / 1000).toFixed(1)} s in this tab. Not automatically resurrected: nothing was run, and the page's full line inventory is unknown, so a missing line cannot be flagged.</p>
           <div class="galley">
             <p class="paper-note">Edit any flagged line; its checksum is rechecked on every keystroke. A line is verified only by a match, never by looking right.</p>

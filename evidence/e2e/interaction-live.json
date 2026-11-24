@@ -1,43 +1,15 @@
 {
  "base": "https://ready.edycu.dev",
- "date": "2026-11-24T20:10:28.120Z",
+ "date": "2026-11-24T20:11:17.121Z",
  "checked": 21,
- "failing": 3,
- "fails": [
-  {
-   "route": "/",
-   "label": "Raise a listing",
-   "tag": "a",
-   "hoverChanged": false,
-   "focusRing": true,
-   "nativeHover": false,
-   "linkStatus": 200
-  },
-  {
-   "route": "/scan",
-   "label": "Check a page (assisted)",
-   "tag": "a",
-   "hoverChanged": false,
-   "focusRing": true,
-   "nativeHover": false,
-   "linkStatus": 200
-  },
-  {
-   "route": "/kiro",
-   "label": "/kiro hooks",
-   "tag": "a",
-   "hoverChanged": false,
-   "focusRing": true,
-   "nativeHover": false,
-   "linkStatus": 200
-  }
- ],
+ "failing": 0,
+ "fails": [],
  "all": [
   {
    "route": "/",
    "label": "Raise a listing",
    "tag": "a",
-   "hoverChanged": false,
+   "hoverChanged": true,
    "focusRing": true,
    "nativeHover": false,
    "linkStatus": 200
@@ -136,7 +108,7 @@
    "route": "/scan",
    "label": "Check a page (assisted)",
    "tag": "a",
-   "hoverChanged": false,
+   "hoverChanged": true,
    "focusRing": true,
    "nativeHover": false,
    "linkStatus": 200
@@ -217,7 +189,7 @@
    "route": "/kiro",
    "label": "/kiro hooks",
    "tag": "a",
-   "hoverChanged": false,
+   "hoverChanged": true,
    "focusRing": true,
    "nativeHover": false,
    "linkStatus": 200

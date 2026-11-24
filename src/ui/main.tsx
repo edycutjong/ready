@@ -4,6 +4,7 @@ import { createC64ReadyCore, type C64Core } from "../emu/core.ts";
 import { cheat, replay, type ReplayResult, type RunEvent } from "../replay/replay.ts";
 import { certificateHeading, errata, errataText, prgBytes, provenance, type RecoveryEvent } from "../replay/certificate.ts";
 import type { CanonicalLine } from "../basic/types.ts";
+import { screenOf } from "../replay/screens.ts";
 import { Nav } from "./nav.tsx";
 import { ScanView } from "./scan.tsx";
 import { Stamp, stampFor } from "./stamp.tsx";
@@ -45,8 +46,9 @@ function download(name: string, data: Uint8Array | string, type: string) {
 const parseJsonl = (text: string): RunEvent[] => text.split("\n").filter(Boolean).flatMap((l) => { try { return [JSON.parse(l) as RunEvent]; } catch { return []; } });
 
 function recordedScreens(events: RunEvent[]): string[] {
-  return events.filter((e) => e.k === "kiro" && e.op === "tool_result" && /c64_run/.test(String(e.title ?? ""))).map((e) => String(e.text ?? ""));
+  return events.filter((e) => e.k === "kiro" && e.op === "tool_result" && /c64_run/.test(String(e.title ?? ""))).map((e) => screenOf(String(e.text ?? "")));
 }
+const recordedErr = (e: unknown): string => { const x = e as { kind?: string; line?: number | null } | null; return x && x.kind ? `?${x.kind}  ERROR${x.line != null ? ` IN ${x.line}` : ""}` : JSON.stringify(e); };
 
 function mark(l: CanonicalLine): { sym: string; cls: string } {
   if (l.status === "verified") return { sym: "✓", cls: "ok" };
@@ -169,7 +171,7 @@ function Desk() {
                 <li class={`${i < step ? "done" : ""} ${s.kind === "attempt" ? s.recomputed.verdict : "run"}`} onClick={() => setStep(i + 1)}>
                   {s.kind === "attempt" && <span class="iter">attempt {attemptNo.get(i)}/{capIter} · </span>}
                   {s.kind === "attempt" && s.reason && s.source === "server" && <span class="why">agent: “{s.reason}” → </span>}
-                  {s.kind === "attempt" && s.recomputed.verdict === "refused" && i < step && <Stamp kind="refusal" small />}{" "}{s.kind === "attempt" ? `${s.recomputed.verdict.toUpperCase()}${s.source === "hook" ? " by the Kiro Pre Tool Use hook" : ""}: ${s.recomputed.reason}` : `RUN → ${s.facts ? (s.facts.run.error ? `?${s.facts.run.error.kind} ERROR${s.facts.run.error.line != null ? ` IN ${s.facts.run.error.line}` : ""}` : s.facts.titleSeen ? `title · post-title ${s.facts.postTitle}` : "no title") : `(recorded) ${s.recorded.error ? JSON.stringify(s.recorded.error) : s.recorded.titleSeen ? "title" : "no title"}`}${s.match === false ? " ≠ RECORD" : ""}`}
+                  {s.kind === "attempt" && s.recomputed.verdict === "refused" && i < step && <Stamp kind="refusal" small />}{" "}{s.kind === "attempt" ? `${s.recomputed.verdict.toUpperCase()}${s.source === "hook" ? " by the Kiro Pre Tool Use hook" : ""}: ${s.recomputed.reason}` : `RUN → ${s.facts ? (s.facts.run.error ? `?${s.facts.run.error.kind} ERROR${s.facts.run.error.line != null ? ` IN ${s.facts.run.error.line}` : ""}` : s.facts.titleSeen ? `title · post-title ${s.facts.postTitle}` : "no title") : `(recorded) ${s.recorded.error ? recordedErr(s.recorded.error) : s.recorded.titleSeen ? "title" : "no title"}`}${s.match === false ? " ≠ RECORD" : ""}`}
                 </li>
               ))}
             </ol>
@@ -210,7 +212,7 @@ function Desk() {
                   ? <h2>{certificateHeading(result.contract, result.input.scope, result.input.spec.expectedLines.length, { sourceExact: endCounts.sourceExact, sourceTotal: endCounts.sourceTotal, note })}</h2>
                   : <h2>{String(result.recordedEnd?.result ?? "no end event").toUpperCase()} (recorded)</h2>}
               </div>
-              {step >= result.steps.length && stamp && <Stamp kind={stamp} />}
+              {step >= result.steps.length && stamp && <div><Stamp kind={stamp} />{!result.contract && <p class="note" data-testid="stamp-caption">as recorded — not re-run on a C64 here</p>}</div>}
             </div>
             <dl data-testid="cert-fields">
               <dt>cause of death</dt><dd>{errText || "no C64 error recorded"} <span class="note">(the run's own first error, verbatim)</span></dd>
