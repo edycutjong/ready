@@ -1,7 +1,9 @@
 # Developer-experience report — building with Kiro
 
-A running log of what Kiro did on this project, what it cost and what we learned. Every number comes from a
-kiro-cli stream (`credits.usage`) or a file in `evidence/`.
+A running log of what Kiro did on this project, what it cost and what we learned. Credits come from kiro-cli streams
+(`credits.usage`). Numbers measured on the 1984 magazine page (OCR rates, checksum matches, byte counts) come from
+local runs whose raw output contains magazine text and therefore stays out of this repository (rights); they are
+reported here and in `evidence/spikes/` as counts only.
 
 ## Build day 1 — Wed 25 Nov 2026 (WIB)
 

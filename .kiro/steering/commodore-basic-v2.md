@@ -16,12 +16,12 @@ Measured on the real core (`tests/unit/core-typing-edges.test.ts`, `tests/unit/t
 - A body whose first character is a digit merges into the line number (`10` + `0RINT` becomes line 100).
 - A line number with nothing after it deletes that line.
 
-## What an error means and where its fault usually is
+## What an error means and where its fault usually is (heuristic, from the kill test — not a measured rule)
 | Error | Usual OCR cause |
 |---|---|
 | `?SYNTAX  ERROR IN n` (two spaces on a real C64) | a misread keyword or symbol in line n: `PR1NT`, `$`→`S`, `(`→`{`, a lost quote |
 | `?UNDEF'D STATEMENT  ERROR IN n` | a GOTO/GOSUB/THEN target misread (`THEN3@`), or a misnumbered target line |
-| `?OUT OF DATA  ERROR IN n` | DATA lines lost or misnumbered, or the READ loop bound misread (kill test: `C=932` for `947`) |
+| `?OUT OF DATA  ERROR IN n` | DATA lines lost or misnumbered, or the READ loop bound misread |
 | `?ILLEGAL QUANTITY  ERROR IN n` | a misread number in POKE/CHR$/a DATA value (`0`→`8`, `5`→`S`) |
 | no error, but the expected title never appears | a misnumbered line (OCR read `20` as `26`), or a lost line on the title path |
 
