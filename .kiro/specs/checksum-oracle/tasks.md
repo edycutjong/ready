@@ -80,25 +80,25 @@ task's exports exist and are tested. `npm test` (Vitest) must pass after every n
     `computeChecksum` is unchanged (`numRuns: 100`).
   - _Requirements: R2.1, R2.2, R2.3, R2.4, R2.5, R2.6, R2.7, R2.8, R2.9, R2.10_
 
-- [ ] 7. `src/gate/checksum-gate.ts` — hard refusals
-  - [ ] 7.1 Implement `applyPatch`'s op-count check (R4.2), empty-body check (R4.4, evaluated first and
+- [x] 7. `src/gate/checksum-gate.ts` — hard refusals  _(tasks 7–12: claude-direct, P1a 2026-11-25 — the Kiro credit cap for this spec line was reached after tasks 1–6; see docs/DX-REPORT.md)_
+  - [x] 7.1 Implement `applyPatch`'s op-count check (R4.2), empty-body check (R4.4, evaluated first and
     un-overridable per R4.22), unknown-line check (R4.5), bad-op-type check (R4.6), and the fixed
     short-circuit evaluation order (R4.11, steps 1–4 of this task before any later task's checks run).
-  - [ ] 7.2 Unit tests in `tests/unit/checksum-gate.test.ts`: `patch.length === 0` and `patch.length === 5`
+  - [x] 7.2 Unit tests in `tests/unit/checksum-gate.test.ts`: `patch.length === 0` and `patch.length === 5`
     both refuse; `replace { new_body: "" }` refuses even when combined with a passing `renumber` elsewhere in
     the same patch and `force_unverified: true`; an op on a `lineno` absent from `listing` refuses; an
     `{ type: "insert", ... }` op refuses with an "insert is recovery-only" reason.
   - _Requirements: R4.1, R4.2, R4.4, R4.5, R4.6, R4.11, R4.22_
 
-- [ ] 8. `src/gate/checksum-gate.ts` — edit distance, renumber rules, composition
-  - [ ] 8.1 Implement the spaces-removed Levenshtein ratio check for `replace` ops (R4.7).
-  - [ ] 8.2 Implement R4.3's single-pass composition (`finalByLine` built once against the original listing,
+- [x] 8. `src/gate/checksum-gate.ts` — edit distance, renumber rules, composition
+  - [x] 8.1 Implement the spaces-removed Levenshtein ratio check for `replace` ops (R4.7).
+  - [x] 8.2 Implement R4.3's single-pass composition (`finalByLine` built once against the original listing,
     never mutated op by op) so a same-patch renumber+replace on one original line, and a same-patch two-line
     renumber swap, both resolve correctly.
-  - [ ] 8.3 Implement the renumber-target-in-`expectedLines` check (R4.8), the renumber-must-produce-a-valid-
+  - [x] 8.3 Implement the renumber-target-in-`expectedLines` check (R4.8), the renumber-must-produce-a-valid-
     checksum check (R4.9, calling into task 9's checksum-rule logic for just that one line), and the global
     final-line-number-uniqueness check (R4.10).
-  - [ ] 8.4 Unit tests: a `replace` changing 41% of a line's spaces-removed characters refuses; a `replace`
+  - [x] 8.4 Unit tests: a `replace` changing 41% of a line's spaces-removed characters refuses; a `replace`
     changing exactly 40% accepts (assuming its checksum also validates); a renumber to a number not in
     `expectedLines` refuses; a renumber to a valid slot whose resulting body's checksum does not validate
     refuses; a renumber swapping two lines' numbers in one patch accepts when both resulting lines validate;
@@ -106,37 +106,37 @@ task's exports exist and are tested. `npm test` (Vitest) must pass after every n
     (verified by inspecting the returned `listing`).
   - _Requirements: R4.3, R4.7, R4.8, R4.9, R4.10_
 
-- [ ] 9. `src/gate/checksum-gate.ts` — checksum rule, force path, output shapes
-  - [ ] 9.1 Implement the per-group-line checksum rule (R4.12–R4.15): `verified` on exact match, `digit-
+- [x] 9. `src/gate/checksum-gate.ts` — checksum rule, force path, output shapes
+  - [x] 9.1 Implement the per-group-line checksum rule (R4.12–R4.15): `verified` on exact match, `digit-
     misread` on a match against one of the ≤64 bounded digit-substitution readings (R4.14's exact alternative
     sets per digit value), `unverified` when `printed` is `null`, refuse otherwise.
-  - [ ] 9.2 Implement the force path (R4.16–R4.17): `force_unverified: true` with a per-line refusal count
+  - [x] 9.2 Implement the force path (R4.16–R4.17): `force_unverified: true` with a per-line refusal count
     ≥ 2 marks `forced` instead of refusing; a count < 2 still refuses.
-  - [ ] 9.3 Implement the three output shapes (R4.19–R4.21): `accepted`, `forced`, `refused`, with `perOp`
+  - [x] 9.3 Implement the three output shapes (R4.19–R4.21): `accepted`, `forced`, `refused`, with `perOp`
     entries and a `reason` string stating printed vs. computed for a checksum-triggered refusal.
-  - [ ] 9.4 Unit tests: an exact checksum match marks `verified`; a printed `"28"` with actual computed `20`
+  - [x] 9.4 Unit tests: an exact checksum match marks `verified`; a printed `"28"` with actual computed `20`
     marks `digit-misread` (0↔8 pair) with the matching reading surfaced; a printed `"23"` with no computed
     match (3 has no confusable) refuses; `printed: null` marks `unverified` and does not refuse by itself;
     `force_unverified: true` with `refusalCounts: { 20: 2 }` accepts as `forced`; the same with
     `refusalCounts: { 20: 1 }` still refuses; a refused patch's `reason` string contains both the printed and
     computed numbers.
-  - [ ] 9.5 Property test `tests/prop/gate-no-empty-no-insert.prop.ts` for **P4**: generate listings and
+  - [x] 9.5 Property test `tests/prop/gate-no-empty-no-insert.prop.ts` for **P4**: generate listings and
     patches containing at least one empty-body `replace` or non-replace/renumber op, mixed with arbitrary other
     ops, force flags, and refusal counts; assert `verdict` is always `"refused"` (`numRuns: 100`).
-  - [ ] 9.6 Property test `tests/prop/gate-accepted-checksum-valid.prop.ts` for **P5**: generate listings and
+  - [x] 9.6 Property test `tests/prop/gate-accepted-checksum-valid.prop.ts` for **P5**: generate listings and
     patches, keep only the cases where `applyPatch(...).verdict === "accepted"`, assert every resulting
     in-scope line with non-null `printed` is `verified` or `digit-misread` per task 9.1's rule (`numRuns: 100`,
     with a generator biased enough toward checksum-consistent bodies that acceptances aren't vanishingly rare).
-  - [ ] 9.7 Property test `tests/prop/gate-determinism.prop.ts` for **P7** (single-patch slice): calling
+  - [x] 9.7 Property test `tests/prop/gate-determinism.prop.ts` for **P7** (single-patch slice): calling
     `applyPatch` twice with deep-equal arguments returns a deep-equal verdict (`numRuns: 100`).
   - _Requirements: R4.12, R4.13, R4.14, R4.15, R4.16, R4.17, R4.18, R4.19, R4.20, R4.21, R4.23_
 
-- [ ] 10. `src/gate/contract.ts`
-  - [ ] 10.1 Implement `evaluate(input)` per `design.md`'s algorithm: in-scope/orphan split, missing/duplicate
+- [x] 10. `src/gate/contract.ts`
+  - [x] 10.1 Implement `evaluate(input)` per `design.md`'s algorithm: in-scope/orphan split, missing/duplicate
     detection, the five status counts plus `typed`/`missing`/`orphansExcluded`, clauses 1–6, the three
     verdicts, `failed`, and the heading string (R5.8's exact format, including the em dash in `"BOOTED —
     PARTIAL"`).
-  - [ ] 10.2 Unit tests in `tests/unit/contract.test.ts`: `titleSeen: false` is always `NOT-RESURRECTED`
+  - [x] 10.2 Unit tests in `tests/unit/contract.test.ts`: `titleSeen: false` is always `NOT-RESURRECTED`
     regardless of every other field; a listing satisfying all six clauses is `RESURRECTED` with an empty
     `failed`; one `forced` in-scope line alone flips an otherwise-passing input to `BOOTED-PARTIAL` with a
     clause-5 `failed` entry naming that line; one `unverified` in-scope line (unparseable `printed`) alone
@@ -146,13 +146,13 @@ task's exports exist and are tested. `npm test` (Vitest) must pass after every n
     heading string matches R5.8's format for all three verdicts; an orphan line (number outside
     `expectedLines`) is excluded from every clause and counted in `orphansExcluded`, never blocking
     RESURRECTED by itself.
-  - [ ] 10.3 Property test `tests/prop/contract-resurrected-implies-clean.prop.ts` for **P6**: generate
+  - [x] 10.3 Property test `tests/prop/contract-resurrected-implies-clean.prop.ts` for **P6**: generate
     `ContractInput`s, keep only the cases where `evaluate(input).verdict === "RESURRECTED"`, assert zero
     in-scope lines have status `"forced"` or `"unverified"` (`numRuns: 100`).
   - _Requirements: R5.1, R5.2, R5.3, R5.4, R5.5, R5.6, R5.7, R5.8, R5.9_
 
-- [ ] 11. Cross-module property tests
-  - [ ] 11.1 Property test `tests/prop/replay-determinism.prop.ts` for **P7** (full sequence): generate a
+- [x] 11. Cross-module property tests
+  - [x] 11.1 Property test `tests/prop/replay-determinism.prop.ts` for **P7** (full sequence): generate a
     listing and a sequence of 1–5 patches, keep only sequences where every patch gate-accepts in order from
     that starting listing; replay the same sequence from the same starting listing a second time; assert the
     final listings are deep-equal and that hashing each final listing's `(n, body, status)` tuples in order
@@ -160,18 +160,18 @@ task's exports exist and are tested. `npm test` (Vitest) must pass after every n
     (`numRuns: 100`).
   - _Requirements: R4.23, R6.2_
 
-- [ ] 12. KERNAL equality property test (slow; real emulator)
-  - [ ] 12.1 Property test `tests/prop/kernal-equality.prop.ts` for **P3**: using `bootNodeCore()` from
+- [x] 12. KERNAL equality property test (slow; real emulator)
+  - [x] 12.1 Property test `tests/prop/kernal-equality.prop.ts` for **P3**: using `bootNodeCore()` from
     `src/emu/node.ts`, boot exactly one `C64Core` and reuse it across every generated case (never re-boot per
     case, since boot is expensive); for each generated small single-line program body (drawn from a generator
     restricted to keyword text, digits, basic operators, and one quoted string, per `design.md`'s P3
     definition): type `NEW` via `loadProgram`, type the generated line via `typedLine`, `step` enough frames to
     settle, `dumpBasic(core)`, and assert the result equals `tokenizeProgram([{ n: lineNo, body }])` byte for
     byte.
-  - [ ] 12.2 Mark this spec file's test with a longer Vitest timeout (emulator boot + per-case settle time) and
+  - [x] 12.2 Mark this spec file's test with a longer Vitest timeout (emulator boot + per-case settle time) and
     confirm `numRuns` is tuned (start at 100 per R6.4; lower only if a measured run shows it cannot complete in
     CI time, recorded as a comment with the measured duration — never lowered silently).
-  - [ ] 12.3 Run `npm test` once with this file included and once excluded, and record both measured durations
+  - [x] 12.3 Run `npm test` once with this file included and once excluded, and record both measured durations
     as a comment at the top of the test file, so the cost of the one emulator-touching property is visible and
     never assumed.
   - _Requirements: R3.1–R3.13, R1.9–R1.13, R6.4_

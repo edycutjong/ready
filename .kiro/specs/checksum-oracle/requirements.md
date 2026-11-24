@@ -485,3 +485,17 @@ it (this document is the fixed text, not a list of pending fixes).
 14. **Case folding asymmetry between `notation.ts` (folds to type) and `checksum.ts` (counts raw, unfolded).**
     Called out explicitly in R2.5's parenthetical so an implementer does not assume `checksum.ts` can reuse
     `notation.ts`'s folding step.
+
+## Amendments after implementation (P1a, 2026-11-25 — found by tests on the real C64, claude-direct)
+
+- **R4.4 tightened.** "Nothing left to type" now means: the body's typeable codes are empty or all blanks, even if
+  it contained untypeable characters (`dropped`). Such a body reaches the C64 as a bare line number, which deletes
+  the line. Found by the P3 KERNAL-equality property (Power BASIC fixture); pinned in `core-typing-edges.test.ts`.
+- **R5.5 amended.** `counts.typed` counts in-scope lines whose `source` is `"typed"` (typed by a person from the
+  page crop), because the certificate and the video captions say "N lines typed". The count of in-scope lines
+  present is the new `counts.present`.
+- **R5.6 kept over design.md.** NOT-RESURRECTED returns a clause-1 entry in `failed` (design.md step 5 returned `[]`).
+- **R1/R3 typing scope.** Three inputs cannot be stored as typed by a real C64 and are outside P3's equality
+  claim: a body whose first typed character is a digit (merges into the line number), a control code outside quote
+  mode (`controlOutsideQuotes()`: the screen editor executes it), and trailing blanks (the editor drops them; the
+  tokenizer and `typedLine` now trim them too). The loader must not type a line flagged by `controlOutsideQuotes()`.
