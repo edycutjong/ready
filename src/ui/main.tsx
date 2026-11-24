@@ -89,14 +89,14 @@ function Desk() {
   const credits = [...(events ?? [])].reverse().find((e) => e.k === "credits" && e.total !== undefined);
   const firstErr = result?.steps.find((s) => s.kind === "run" && (s.facts?.run.error ?? s.recorded.error));
   const errObj = firstErr && firstErr.kind === "run" ? ((firstErr.facts?.run.error ?? firstErr.recorded.error) as { kind: string; line: number | null }) : null;
-  const errText = errObj ? `?${errObj.kind}  ERROR${errObj.line != null ? ` IN ${errObj.line}` : ""}` : "?SYNTAX  ERROR IN 20";
+  const errText = errObj ? `?${errObj.kind}  ERROR${errObj.line != null ? ` IN ${errObj.line}` : ""}` : "";
   const runLabel = start ? `recorded ${String(start.t ?? "").slice(0, 16).replace("T", " ")} UTC · ${String(start.model ?? "")} · ${credits?.metered === false || credits?.total === null ? "credits: unmetered" : `${Number(credits?.total ?? 0).toFixed(2)} credits`}` : "";
   const endCounts = (result?.recordedEnd?.counts ?? {}) as { sourceExact?: number; sourceTotal?: number };
   const note = (result?.input as { certificateNote?: string } | undefined)?.certificateNote ?? undefined;
   return (
     <main class="desk">
       <header>
-        <p class="err" data-testid="first-error">{errText}</p>
+        {errText && <p class="err" data-testid="first-error">{errText}</p>}
         <h1>Resurrecting 1984 type-in programs</h1>
         <p class="mode" data-testid="mode">
           {mode === "replay" && "REPLAY — a recorded real Kiro run, re-executed now: the gate re-judges every patch and this browser's C64 re-runs the program (replaying recorded OCR input)."}
@@ -149,7 +149,8 @@ function Desk() {
           </div>
           <section class="cert" data-testid="certificate" aria-label="certificate">
             {result.contract
-              ? <><h2>{certificateHeading(result.contract, result.input.scope, result.input.spec.expectedLines.length, { sourceExact: endCounts.sourceExact, sourceTotal: endCounts.sourceTotal, note })}</h2><p>recomputed now from the final listing and this browser's C64 · verified {result.contract.counts.verified} · digit-misread {result.contract.counts.digitMisread} · forced {result.contract.counts.forced} · unverified {result.contract.counts.unverified} · missing {result.contract.counts.missing} · typed {result.contract.counts.typed}</p></>
+              ? <><h2>{certificateHeading(result.contract, result.input.scope, result.input.spec.expectedLines.length, { sourceExact: endCounts.sourceExact, sourceTotal: endCounts.sourceTotal, note })}</h2>
+                {result.recordedEnd?.sourceReference ? <p class="note" data-testid="source-ref">source-exact is measured against a reference transcript ({String(result.recordedEnd.sourceReference)}); it is never given to the agent, and "source-exact" means "matches that reference", not "matches the magazine".</p> : null}<p>recomputed now from the final listing and this browser's C64 · verified {result.contract.counts.verified} · digit-misread {result.contract.counts.digitMisread} · forced {result.contract.counts.forced} · unverified {result.contract.counts.unverified} · missing {result.contract.counts.missing} · typed {result.contract.counts.typed}</p></>
               : <><h2>{String(result.recordedEnd?.result ?? "no end event").toUpperCase()} (recorded)</h2><p>the recorded certificate; the contract is recomputed only where a C64 can run</p></>}
             {result.mismatches.length > 0 && <p class="refused" data-testid="mismatches">Replay disagrees with the record: {result.mismatches.join(" · ")}</p>}
           </section>

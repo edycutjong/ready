@@ -191,7 +191,8 @@ async function finalJudgeIfStale() {
   const facts = runListing(await bootNodeCore(), lines, runInput.spec);
   const prov = new Set(facts.postTitle === "pass" ? [] : l.lines.filter((x) => x.provisional).map((x) => x.n));
   const c = judge(lines, runInput.spec, facts, prov);
-  l.contract = { ...l.contract, state: c.verdict, heading: c.heading, counts: c.counts, failed: c.failed };
+  l.lines = l.lines.map((x) => ({ ...x, provisional: prov.has(x.n) }));
+  l.contract = { ...l.contract, state: c.verdict, heading: c.heading, counts: c.counts, failed: c.failed, lines: l.lines.map((x) => ({ n: x.n, status: x.status, source: x.source, provisional: x.provisional })) };
   l.postTitle = facts.postTitle;
   writeFileSync(lf, JSON.stringify(l, null, 1) + "\n");
   emit({ k: "emu", op: "run", via: "runner-final", error: facts.run.error, titleSeen: facts.titleSeen, postTitle: facts.postTitle, why: "an accepted patch was never RUN before the run ended" });

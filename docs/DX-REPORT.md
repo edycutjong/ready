@@ -98,13 +98,15 @@ day-1 production deploys were made with `npm run deploy:prod` (`vercel build`, `
 - Search without a model (E0) made 3 of the 18 failing title-path lines checksum-consistent; the agent made all 18
   checksum-consistent and the title path RESURRECTED (`evidence/experiments/e0.json`, `docs/EXPERIMENTS.md`).
 - Checksum-consistent is not source-exact: 19/28 of the resurrected title path equal the reference transcript.
+- Both G recordings ran with the first profile (built-in `read` trusted, 0 read calls made); the shipped profile is the
+  tightened one, re-smoked before the hero recording.
 
 ### Who wrote what (P1b)
 Kiro: the `c64-mcp-server` and `resurrect-loop` specs, `mcp/c64-server/{schemas,rundir,render,tools}.ts` and their
-tests (tasks 1–5), `.kiro/agents/resurrector.json`, `.kiro/steering/resurrector.md`, `.kiro/skills/petscii-notation/`.
+tests (tasks 1–5), `.kiro/agents/resurrector.json` as first written (QA r1 tightened it claude-direct: no `read` tool, `fs_read` denied), `.kiro/steering/resurrector.md`, `.kiro/skills/petscii-notation/`.
 **claude-direct:** the `c64-mcp-server` credit line hit 68.71 of 70 after task 5, so tasks 6–7 (crash recovery,
 `server.ts`, stdio + crash tests) are claude-direct and labelled in `tasks.md` and the commits; `.kiro/settings/mcp.json`;
-the hook commands `scripts/hooks/{checksum-gate,until-title,listing-context}.mjs`; the REPLAY engine and desk UI;
+the hook commands `scripts/hooks/{checksum-gate,until-title,listing-context}.mjs`; the REPLAY engine (`src/replay/{replay,certificate}.ts`) and desk UI; OCR + lost-line recovery (`src/ocr/recover.ts`, `scripts/recover-listing.mjs`);
 the recorder fixes; `scripts/{make-run-input,typeset-authored,e0-search,source-check,e2e-replay}.mjs`.
 
 ### Tightened after QA round 1 (P1b)
