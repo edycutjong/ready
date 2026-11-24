@@ -1,0 +1,22 @@
+# secrets / local
+.env
+.env.*
+.vercel
+.DS_Store
+# deps / build output
+node_modules/
+dist/
+coverage/
+__pycache__/
+.next/
+# recorder state (local only, never deployed)
+work/
+ledger/
+# Gazette-derived material stays local until rights are cleared (spec rights matrix, tier C default)
+fixtures/gazette/
+runs/gazette/
+# kitchen never enters the repo
+kiro-prompts/
+graphify-out/
+PRODUCT.md
+*.traineddata

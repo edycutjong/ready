@@ -1,0 +1,35 @@
+{
+  "name": "ready",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SYNTAX ERROR IN 20 — resurrects 1984 type-in listings: OCR, checksum oracle, a real C64, and a Kiro agent behind a deterministic gate.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:prop": "vitest run tests/prop",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "c64-ready": "3.4.0",
+    "preact": "11.2.0",
+    "tesseract.js": "7.0.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "2.10.6",
+    "@types/node": "26.6.6",
+    "fast-check": "4.11.0",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vite": "8.3.8",
+    "vitest": "5.1.1"
+  }
+}
