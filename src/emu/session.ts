@@ -80,8 +80,13 @@ export function runListing(core: C64Core, listing: CanonicalListing, spec: Listi
   let postScreen: string | undefined;
   if (titleSeen && titleScreen === undefined) titleScreen = readScreenText(core); // capture the title BEFORE the post-title press (P1b smoke test)
   if (titleSeen) {
+    // Clause 2 is evidence the press PRODUCED the text (a2a arch-01): read only the program's own output (below the last
+    // RUN, never the typed listing above it, which usually contains the very PRINT), and fail closed when the text was
+    // already on the screen before the press.
+    const want = spec.postTitle.screenContains;
+    const before = afterLastRun(titleScreen ?? "").includes(want);
     postScreen = pressKeys(core, spec.postTitle.keys, 300);
-    postTitle = postScreen.includes(spec.postTitle.screenContains) ? "pass" : "fail";
+    postTitle = !before && afterLastRun(postScreen).includes(want) ? "pass" : "fail";
   }
   return { resident, untypeable, run, titleSeen, postTitle, screens: { afterRun: run.screen, title: titleScreen, postTitle: postScreen } };
 }
