@@ -28,6 +28,7 @@ const runDir = resolve(args["run-dir"] ?? `work/${listing}-${iso}`);
 const model = args.model ?? "claude-sonnet-5.5";
 const trust = args["trust-tools"] ?? "@c64/c64_reload,@c64/c64_run,@c64/c64_read_screen,@c64/c64_press,@c64/checksum_line,@c64/apply_patch,read_file";
 if (/trust-all/.test(trust)) throw new Error("never --trust-all-tools");
+if (!args["stop-check"]) throw new Error("--stop-check is required: the model never decides when to stop"); // validated before any credit is spent
 const prompt0 = readFileSync(args["prompt-file"], "utf8");
 mkdirSync(dirname(out), { recursive: true });
 mkdirSync(runDir, { recursive: true });
@@ -64,7 +65,8 @@ while (true) {
   if (!sessionId) { emit({ k: "error", why: "no session id in stream; cannot resume" }); break; }
   prompt = stop.reason;
 }
-emit({ k: "credits", metered, delta: null, total: metered ? state.credits : null });
+// a killed cycle never reports its credits (they arrive at process end, K3): the total is then a lower bound
+emit({ k: "credits", metered, delta: null, total: metered ? state.credits : null, lowerBound: Boolean(capReason && capReason !== "credits") });
 const final = finalResult();
 emit({ k: "end", result: final.result, iterations: state.iterations, wallMs: Date.now() - state.startedAt, cap: capReason, cycles, ...final.extra });
 const ledger = addToLedger(resolve(args.ledger ?? "ledger"), metered ? state.credits : null);
@@ -139,10 +141,11 @@ function stopCheck() {
 
 function finalResult() {
   const f = join(runDir, "listing.json");
-  if (existsSync(f)) {
+  try {
+    if (!existsSync(f)) throw new Error("no listing.json");
     const l = JSON.parse(readFileSync(f, "utf8"));
     if (l.contract) return { result: l.contract.state, extra: { scope: l.contract.scope, postTitle: l.postTitle ?? "not-reached", counts: l.contract.counts, lines: l.contract.lines } };
-  }
+  } catch (e) { emit({ k: "error", why: `listing.json unreadable: ${e.message}` }); } // the end event is always written
   return { result: stop.result ?? "not-resurrected", extra: {} };
 }
 
