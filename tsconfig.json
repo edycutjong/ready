@@ -15,5 +15,5 @@
     "jsxImportSource": "preact",
     "resolveJsonModule": true
   },
-  "include": ["src", "tests", "runner", "scripts/**/*.ts"]
+  "include": ["src", "tests", "runner", "scripts/**/*.ts", "mcp"]
 }
