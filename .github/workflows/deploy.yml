@@ -1,0 +1,31 @@
+name: deploy
+# Production deploy of main to the Vercel project `ready` (ready.edycu.dev) after the tests pass.
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+permissions: { contents: read }
+concurrency: { group: deploy-production, cancel-in-progress: false }
+jobs:
+  deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.event.workflow_run.head_sha || github.sha }}" }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm i -g vercel@latest
+      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: The ROM-bearing emulator WASM never ships until the rights line is signed
+        run: |
+          # c64-ready@3.4.0 public/c64.wasm (embeds Commodore ROMs) — blocked by content hash, whatever its filename
+          if find .vercel/output -type f -exec shasum -a 256 {} + | grep -q dad5965346c0e72e82611e87ecf8358d11fa068977958ef854f74289f87e0f46; then
+            echo "ROM-bearing c64.wasm found in the deploy output"; exit 1; fi
+      - run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
