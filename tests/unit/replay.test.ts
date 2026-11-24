@@ -69,13 +69,13 @@ describe("replay", () => {
   it("certificate provenance, errata and .PRG are computed from the run input and the final listing (spec F10)", () => {
     const r = replay(recorded(), core);
     const p = provenance({ ...r.input, recovery: [{ op: "orphan", ocrNumber: 89, outcome: "orphan-excluded" }], origin: { recovered: "x.json", note: "inventory from the page" } }, r.final);
-    expect(p.counts).toEqual({ ocr: 3, reOcr: 0, typed: 0, patched: 1 });
+    expect(p.counts).toEqual({ ocr: 3, reOcr: 0, typed: 0, patched: 1, forced: 0 });
     expect(p.perLine.get(10)).toBe("patched");
     expect(p.addedDuringRun).toEqual([]);
     expect(p.orphansExcluded).toBe(1);
     expect(p.origin).toBe("inventory from the page (recovered listing x.json)");
     const e = errata(r.input.lines, r.final, new Map([[10, "1 misread as I"]]));
-    expect(e).toEqual([{ n: 10, printed: computeChecksum(10, 'PRINT"{CLR}IT LIVES"'), ocr: 'PR1NT"{CLR}IT LIVES"', final: 'PRINT"{CLR}IT LIVES"', reason: "1 misread as I", renumberedFrom: null, forced: false }]);
+    expect(e).toEqual([{ n: 10, printed: computeChecksum(10, 'PRINT"{CLR}IT LIVES"'), ocr: 'PR1NT"{CLR}IT LIVES"', final: 'PRINT"{CLR}IT LIVES"', reason: "1 misread as I", renumberedFrom: null, forced: false, status: "verified" }]);
     expect(errataText("t", "h", e)).toMatch(/OCR read : PR1NT/);
     expect(errataText("t", "h", e)).toMatch(/Every change passed the checksum gate/);
     const prg = prgBytes(r.final);
@@ -105,7 +105,7 @@ describe("renumber identity and forced lines on the certificate (a2a arch-01)", 
     expect(p.addedDuringRun).toEqual([]);
     expect(p.perLine.get(30)).toBe("patched");
     const e = errata(input.lines, final, new Map(), origins);
-    expect(e).toEqual([{ n: 30, printed: 2, ocr: "PRINT 2", final: "PRINT 3", reason: "", renumberedFrom: 20, forced: false }]);
+    expect(e).toEqual([{ n: 30, printed: 2, ocr: "PRINT 2", final: "PRINT 3", reason: "", renumberedFrom: 20, forced: false, status: "verified" }]);
     expect(errataText("t", "h", e)).toMatch(/30  :rem 2   \(was line 20\)/);
     expect(provenance(input, final).addedDuringRun).toEqual([30]); // the old inference, without origins
   });
@@ -116,7 +116,18 @@ describe("renumber identity and forced lines on the certificate (a2a arch-01)", 
     expect(e[0]!.forced).toBe(true);
     const t = errataText("t", "h", e);
     expect(t).not.toMatch(/Every change passed/);
-    expect(t).toMatch(/1 FORCED after repeated refusals and never checksum-verified/);
+    expect(t).toMatch(/1 were FORCED after repeated refusals and never checksum-verified/);
     expect(t).toMatch(/FORCED — never verified/);
+    const p = provenance({ lines: input }, final);
+    expect(p.counts).toMatchObject({ patched: 0, forced: 1 }); // never counted as "changed by a gate-accepted patch"
+    expect(p.perLine.get(10)).toBe("FORCED");
+  });
+  it("an accepted change with no readable printed checksum is not said to match the page (a2a arch-01 QA)", () => {
+    const input = [{ n: 10, body: "PRINT 1", printed: null, status: "unverified" as const, source: "ocr" as const }];
+    const final = [{ n: 10, body: "PRINT 2", printed: null, status: "unverified" as const, source: "ocr" as const }];
+    const t = errataText("t", "h", errata(input, final));
+    expect(t).not.toMatch(/passed the checksum gate/);
+    expect(t).toMatch(/1 were accepted with no readable printed checksum \(unverified\)/);
+    expect(t).toMatch(/10  :rem \?\?   UNVERIFIED/);
   });
 });

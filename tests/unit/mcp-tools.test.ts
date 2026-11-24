@@ -562,6 +562,9 @@ describe("c64_run (R6)", () => {
     expect(replayBudget({ k: "emu", op: "run", frames: 4200, stoppedOn: "predicate" })).toBe(4200);
     expect(replayBudget({ k: "emu", op: "run", frames: 900, stoppedOn: "error" })).toBe(3000);
     expect(replayBudget({ k: "emu", op: "run" })).toBe(3000);
+    // a corrupt recording never asks for more than the tool's own range
+    expect(replayBudget({ k: "emu", op: "run", maxFrames: 1e9 })).toBe(3000);
+    expect(replayBudget({ k: "emu", op: "run", maxFrames: 12.5, frames: 150, stoppedOn: "frames" })).toBe(150);
   });
 
   it("with no typeable line it still runs and reports what the machine did, inventing nothing (R6.7)", async () => {

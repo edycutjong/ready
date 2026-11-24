@@ -58,8 +58,11 @@ const plain = (l: CanonicalListing): CanonicalListing => l.map(({ n, body, print
  * used exactly its elapsed frames (runProgram steps in whole checks, so the count is reproduced exactly).
  */
 export function replayBudget(e: RunEvent): number {
-  if (typeof e.maxFrames === "number" && e.maxFrames > 0) return e.maxFrames;
-  const elapsed = typeof e.frames === "number" && e.frames > 0 ? e.frames : 0;
+  // the c64_run schema's own range (1..20000): a corrupt recording can never ask this tab for an unbounded run
+  if (Number.isInteger(e.maxFrames) && (e.maxFrames as number) >= 1 && (e.maxFrames as number) <= 20000) return e.maxFrames as number;
+  const elapsed = Number.isInteger(e.frames) && (e.frames as number) > 0 ? Math.min(e.frames as number, 20000) : 0;
+  // Legacy edge: runListing reports "error" when the title-key press after an out-of-budget run raised one; a budget
+  // under 3000 is then replayed as 3000, and any difference shows as a REPLAY mismatch, never as a silent verdict.
   return e.stoppedOn === "frames" && elapsed > 0 ? elapsed : Math.max(3000, elapsed);
 }
 

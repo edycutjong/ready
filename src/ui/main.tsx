@@ -241,7 +241,7 @@ function Desk() {
               : <p class="note">the recorded certificate; the contract is recomputed only where a C64 can run</p>}
             {prov && (
               <div data-testid="provenance">
-                <p>where every final line came from · page OCR {prov.counts.ocr} · re-OCR of a gap {prov.counts.reOcr} · TYPED by a person {prov.counts.typed} · changed by a gate-accepted Kiro patch {prov.counts.patched}</p>
+                <p>where every final line came from · page OCR {prov.counts.ocr} · re-OCR of a gap {prov.counts.reOcr} · TYPED by a person {prov.counts.typed} · changed by a gate-accepted Kiro patch {prov.counts.patched}{prov.counts.forced ? ` · FORCED by the agent after refusals, never verified ${prov.counts.forced}` : ""}</p>
                 <p>{prov.addedDuringRun.length === 0
                   ? "No line was added during the run: the gate refuses inserts, so every missing line can only be re-OCR'd or TYPED before the run, never written by the model."
                   : `Lines added during the run: ${prov.addedDuringRun.join(", ")}`}</p>

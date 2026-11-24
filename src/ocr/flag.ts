@@ -8,13 +8,14 @@ import { checkLine } from "../gate/checksum-gate.ts";
 import type { Logical } from "./recover.ts";
 
 export type FlagState = "ok" | "digit-misread" | "mismatch" | "no-checksum";
-export type FlaggedLine = { n: number; body: string; printed: number | null; computed: number | null; state: FlagState; edited: boolean };
+export type FlaggedLine = { n: number; body: string; printed: number | null; computed: number | null; state: FlagState; edited: boolean; untypeable?: string };
 
 export function flagLine(n: number, body: string, printed: number | null, edited = false): FlaggedLine {
   if (printed === null) return { n, body, printed, computed: null, state: "no-checksum", edited };
   const r = checkLine(n, body, printed);
   const computed = computeChecksum(n, body);
-  return { n, body, printed, computed, state: r.status === "verified" ? "ok" : r.status === "digit-misread" ? "digit-misread" : "mismatch", edited };
+  const untypeable = r.status === "mismatch" ? r.untypeable : undefined;
+  return { n, body, printed, computed, state: r.status === "verified" ? "ok" : r.status === "digit-misread" ? "digit-misread" : "mismatch", edited, ...(untypeable ? { untypeable } : {}) };
 }
 
 export const flagAll = (logical: readonly Logical[]): FlaggedLine[] => logical.map((l) => flagLine(l.n, l.body, l.printed));
@@ -36,7 +37,7 @@ export function basExport(lines: readonly FlaggedLine[]): string {
   // a2a arch-01: a digit-misread line stays a program line (clause 4 counts it, and commenting it out would break the
   // program), but the header no longer calls it verified: it matches a confusable reading of the printed digits only.
   const misread = lines.filter((l) => l.state === "digit-misread").map((l) => l.n);
-  const out: string[] = ["REM ASSISTED export — numbered lines match the magazine checksum as printed; REM UNVERIFIED lines do NOT"];
+  const out: string[] = [`REM ASSISTED export — numbered lines match the magazine checksum as printed${misread.length ? ", except the DIGIT-MISREAD lines named below" : ""}; REM UNVERIFIED lines do NOT`];
   if (misread.length) out.push(`REM DIGIT-MISREAD (sum matches a misread of the printed checksum digits, not the digits as read): ${misread.join(", ")}`);
   for (const l of lines) out.push(l.state === "ok" || l.state === "digit-misread" ? `${l.n} ${l.body}` : `REM UNVERIFIED (${l.state}) ${l.n} ${l.body}`);
   return out.join("\n") + "\n";
@@ -45,7 +46,9 @@ export function basExport(lines: readonly FlaggedLine[]): string {
 export function errataSheet(lines: readonly FlaggedLine[]): string {
   const bad = lines.filter((l) => l.state === "mismatch");
   if (!bad.length) return "No checksum mismatches.\n";
-  return bad.map((l) => `line ${l.n}: printed :rem ${l.printed}, computed ${l.computed} — check this line against the page character by character`).join("\n") + "\n";
+  return bad.map((l) => (l.untypeable
+    ? `line ${l.n}: contains ${JSON.stringify(l.untypeable)}, which no C64 key types — the OCR misread a character; check this line against the page`
+    : `line ${l.n}: printed :rem ${l.printed}, computed ${l.computed} — check this line against the page character by character`)).join("\n") + "\n";
 }
 
 /**

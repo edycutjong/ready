@@ -20,8 +20,8 @@ export function certificateHeading(c: Pick<ContractResult, "verdict" | "counts">
 export type RecoveryEvent = { k?: string; op: string; line?: number; ocrNumber?: number; outcome: string };
 export type Provenance = {
   /** final lines by where their text came from: page OCR, a re-OCR of a gap, TYPED by a person, or a gate-accepted Kiro patch */
-  counts: { ocr: number; reOcr: number; typed: number; patched: number };
-  perLine: Map<number, "OCR" | "re-OCR" | "TYPED" | "patched">;
+  counts: { ocr: number; reOcr: number; typed: number; patched: number; forced: number };
+  perLine: Map<number, "OCR" | "re-OCR" | "TYPED" | "patched" | "FORCED">;
   recovery: RecoveryEvent[];
   orphansExcluded: number;
   /** final lines that did not exist in the run's input: the gate refuses inserts, so this is computed, not assumed */
@@ -40,7 +40,8 @@ export type AppliedOps = readonly { op?: unknown; type?: unknown; lineno?: unkno
 export function lineOrigins(batches: readonly AppliedOps[]): Map<number, number> {
   let cur = new Map<number, number>();
   for (const ops of batches) {
-    const moves = ops.filter((o) => (o.op ?? o.type) === "renumber").map((o) => [Number(o.lineno), Number(o.new_lineno)] as const);
+    // the gate keeps the LAST renumber of a line within one batch (finalNumber), so keep the last op per source line
+    const moves = [...new Map(ops.filter((o) => (o.op ?? o.type) === "renumber").map((o) => [Number(o.lineno), Number(o.new_lineno)] as const)).entries()];
     if (!moves.length) continue;
     const next = new Map<number, number>();
     const moved = new Set(moves.map(([from]) => from));
@@ -54,23 +55,25 @@ export function lineOrigins(batches: readonly AppliedOps[]): Map<number, number>
 /** Where every final line came from (spec F10, agents.md §4 "certificate"): computed from the run input and the final listing. */
 export function provenance(input: { lines: readonly CanonicalLine[]; recovery?: readonly RecoveryEvent[]; origin?: { recovered?: string; note?: string } | null }, final: CanonicalListing, origins: ReadonlyMap<number, number> = new Map()): Provenance {
   const start = new Map(input.lines.map((l) => [l.n, l]));
-  const perLine = new Map<number, "OCR" | "re-OCR" | "TYPED" | "patched">();
-  const counts = { ocr: 0, reOcr: 0, typed: 0, patched: 0 };
+  const perLine = new Map<number, "OCR" | "re-OCR" | "TYPED" | "patched" | "FORCED">();
+  // a FORCED line was changed by the agent after repeated refusals and never verified: never counted as gate-accepted
+  const counts = { ocr: 0, reOcr: 0, typed: 0, patched: 0, forced: 0 };
   const addedDuringRun: number[] = [];
   for (const l of final) {
     const from = origins.get(l.n) ?? l.n;
     const s = start.get(from);
     if (!s) { addedDuringRun.push(l.n); continue; }
-    const tag = s.body !== l.body || from !== l.n ? "patched" : s.source === "re-ocr" ? "re-OCR" : s.source === "typed" ? "TYPED" : "OCR";
+    const changed = s.body !== l.body || from !== l.n;
+    const tag = changed ? (l.status === "forced" ? "FORCED" : "patched") : s.source === "re-ocr" ? "re-OCR" : s.source === "typed" ? "TYPED" : "OCR";
     perLine.set(l.n, tag);
-    counts[tag === "patched" ? "patched" : tag === "re-OCR" ? "reOcr" : tag === "TYPED" ? "typed" : "ocr"]++;
+    counts[tag === "FORCED" ? "forced" : tag === "patched" ? "patched" : tag === "re-OCR" ? "reOcr" : tag === "TYPED" ? "typed" : "ocr"]++;
   }
   const recovery = [...(input.recovery ?? [])];
   const origin = input.origin ? [input.origin.note, input.origin.recovered ? `(recovered listing ${input.origin.recovered})` : ""].filter(Boolean).join(" ") || null : null;
   return { counts, perLine, recovery, orphansExcluded: recovery.filter((r) => r.outcome === "orphan-excluded").length, addedDuringRun, origin };
 }
 
-export type Erratum = { n: number; printed: number | null; ocr: string; final: string; reason: string; renumberedFrom: number | null; forced: boolean };
+export type Erratum = { n: number; printed: number | null; ocr: string; final: string; reason: string; renumberedFrom: number | null; forced: boolean; status: CanonicalLine["status"] };
 
 /** The errata sheet: every line whose final text or number differs from what OCR read, with the reason the agent gave. */
 export function errata(inputLines: readonly CanonicalLine[], final: CanonicalListing, reasons: ReadonlyMap<number, string> = new Map(), origins: ReadonlyMap<number, number> = new Map()): Erratum[] {
@@ -79,15 +82,26 @@ export function errata(inputLines: readonly CanonicalLine[], final: CanonicalLis
   return final.filter((l) => start.has(from(l.n)) && (start.get(from(l.n))!.body !== l.body || from(l.n) !== l.n)).sort((a, b) => a.n - b.n)
     .map((l) => ({
       n: l.n, printed: l.printed, ocr: start.get(from(l.n))!.body, final: l.body, reason: reasons.get(l.n) ?? reasons.get(from(l.n)) ?? "",
-      renumberedFrom: from(l.n) !== l.n ? from(l.n) : null, forced: l.status === "forced",
+      renumberedFrom: from(l.n) !== l.n ? from(l.n) : null, forced: l.status === "forced", status: l.status,
     }));
 }
 
 export function errataText(title: string, heading: string, rows: readonly Erratum[]): string {
-  const forced = rows.filter((r) => r.forced).length;
-  const out = [`ERRATA — ${title}`, heading,
-    `${rows.length} line(s) changed from the OCR read. ${forced === 0 ? "Every change passed the checksum gate (:rem printed on the page)." : `${rows.length - forced} passed the checksum gate (:rem printed on the page); ${forced} FORCED after repeated refusals and never checksum-verified.`}`, ""];
-  for (const r of rows) out.push(`${r.n}  :rem ${r.printed ?? "??"}${r.renumberedFrom !== null ? `   (was line ${r.renumberedFrom})` : ""}${r.forced ? "   FORCED — never verified" : ""}`, `   OCR read : ${r.ocr}`, `   resurrected: ${r.final}`, ...(r.reason ? [`   why      : ${r.reason}`] : []), "");
+  // Say what each change rests on (a2a arch-01 QA): only a "verified" row matched the :rem printed on the page.
+  const by = (s: Erratum["status"]) => rows.filter((r) => r.status === s).length;
+  const parts: [number, string][] = [
+    [by("verified"), "matched the checksum printed on the page"],
+    [by("digit-misread"), "matched a misread of the printed checksum digits (digit-misread)"],
+    [by("eye-verified"), "were verified by a person's reading of the page"],
+    [by("unverified"), "were accepted with no readable printed checksum (unverified)"],
+    [by("forced"), "were FORCED after repeated refusals and never checksum-verified"],
+  ];
+  const summary = rows.length > 0 && by("verified") === rows.length
+    ? "Every change passed the checksum gate (:rem printed on the page)."
+    : parts.filter(([n]) => n > 0).map(([n, t]) => `${n} ${t}`).join("; ") + ".";
+  const out = [`ERRATA — ${title}`, heading, `${rows.length} line(s) changed from the OCR read. ${rows.length ? summary : ""}`.trim(), ""];
+  const mark = (r: Erratum) => (r.forced ? "   FORCED — never verified" : r.status === "verified" ? "" : `   ${r.status.toUpperCase()}`);
+  for (const r of rows) out.push(`${r.n}  :rem ${r.printed ?? "??"}${r.renumberedFrom !== null ? `   (was line ${r.renumberedFrom})` : ""}${mark(r)}`, `   OCR read : ${r.ocr}`, `   resurrected: ${r.final}`, ...(r.reason ? [`   why      : ${r.reason}`] : []), "");
   return out.join("\n");
 }
 

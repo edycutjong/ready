@@ -35,6 +35,13 @@ describe("ASSISTED flags (browser OCR → checksum)", () => {
     expect(bas).toMatch(/^REM ASSISTED export — numbered lines match the magazine checksum as printed/);
     expect(bas).toContain("REM DIGIT-MISREAD (sum matches a misread of the printed checksum digits, not the digits as read): 20");
     expect(bas).not.toMatch(/verified against the magazine checksum/);
+    expect(bas).toMatch(/as printed, except the DIGIT-MISREAD lines named below/);
+  });
+  it("/scan names an untypeable character instead of 'printed X, computed X' (a2a arch-01 QA)", () => {
+    const good = 'PRINT "HI"';
+    const l = flagLine(10, 'PRINT \u2122HI"', flagLine(10, good, 0).computed);
+    expect(l).toMatchObject({ state: "mismatch", untypeable: "\u2122" });
+    expect(errataSheet([l])).toMatch(/contains "\u2122", which no C64 key types/);
   });
   it("an edit that fixes the line flips it to ok (per-keystroke recheck)", () => {
     expect(flagLine(20, "PRIMT\"HELLO\"", good).state).toBe("mismatch");
