@@ -1,0 +1,27 @@
+# Prompt/steering/gate freeze — before the P1c recordings (2026-11-24T19:56:44Z)
+git HEAD: 94fe31e0532138679756b0f990c4b99590bcc5e4
+
+sha256 of the files the agent and the gate run on:
+b8f0b37eb5d65f10b5cc7a561b97a563f5b78edc32fee8a98c3399d6fd0af726  .kiro/agents/resurrector.json
+4d01b7865b335296d3f573e31acf3df84a1f2b7f6800507f581180cb912458a5  .kiro/steering/basic-modules.md
+413341152c372b10df2f9176db040936bf697fe1af2e6ccb1fe1d3eec7dc5bc8  .kiro/steering/commodore-basic-v2.md
+ff0f0ff7e0a1a6645ee3a0f06a7646a5b2ea2f38be757d9bb5eeef74e8c75ed9  .kiro/steering/gazette-notation.md
+0962b42f80ad597593322b06102850f34efd1289f4e324fff48a2ad7a7b77d78  .kiro/steering/product.md
+4e1e434a68bcbe8cfe1c73b5391013f8fa2beda4652f747c3b8a48cb84dba10b  .kiro/steering/resurrector.md
+a423358bfe523849c132c1c7d3b9ade65e1a82327f4ce5e261273d23bb9c128c  .kiro/steering/structure.md
+816337542b78b022193358ff3fe36fdd58bd7219e83e07c46eb5a9bf910d68b1  .kiro/steering/tech.md
+52b9105bf86ea8cdd8596c9ff93127be9aa6345d1a666aa86c18598f7ff404ce  .kiro/skills/petscii-notation/SKILL.md
+6e450ffa88d16ac19589e502462d63fb7a3fb98d165fddcb348350d89859f49c  src/gate/checksum-gate.ts
+d7f67c4264ac62804ebce0bf9bb6f47f0652be15fb39430f43161d52ee903963  src/gate/contract.ts
+919a7cc6b11a702660434a11730667b64e246013373e4577ed7b120b02e6c34c  src/basic/checksum.ts
+45d4e281d323daac97aedfb345dd0822428a14ebdfeef112722b01984e7cf9cb  scripts/hooks/checksum-gate.mjs
+e8afe9c0d91188fba9c8bfe286ea047e2e162583f91f3a9a0dcac17990948652  scripts/hooks/listing-context.mjs
+ec67b38116ad50cffc606ba43ad7d09dfe077120a0eefd875da407715ef0a215  scripts/hooks/prop-tests-on-save.mjs
+e10636c28c396cb07e6ac398fe68705976931524ae820e51f9cb2e14f4e4fc99  scripts/hooks/until-title.mjs
+7eae8b1d6f1052296e7625214ec89e7535b7b26affba02bb2a1de7a0fff5d308  mcp/c64-server/render.ts
+278a236c2f10a2f0c6920cc50692f4bf856f99f858c03f400f491d9daf13cf01  mcp/c64-server/rundir.ts
+78c5385b72469680dbfe7a5deb8cc616736b0723996bdd4e2667231aedde6556  mcp/c64-server/schemas.ts
+50941d9ce273db3eed6dec8af88c46a2353ee5d7f9ac2bacf47a1729be1a8e6c  mcp/c64-server/server.ts
+af29aea3eb0e75529c561c8f05cd15d8581def65a74645ac41e8cb5e5ec624b8  mcp/c64-server/tools.ts
+
+prompt0 (run-prompt-resurrect.md) sha256: 2014ca8e246fbb9eb50a187ad092fb94c48dd8745863a185e3e859ef7e5398a1

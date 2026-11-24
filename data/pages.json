@@ -1,0 +1,6 @@
+{
+  "note": "Allow-list for /api/page: archive.org item ids whose page images the proxy may fetch (archive.org's own public page images; no Gazette text is stored here). n is a page index within the item.",
+  "items": {
+    "1984-06-computegazette": { "title": "COMPUTE!'s Gazette, June 1984", "maxPage": 300, "widths": [800, 1600] }
+  }
+}
