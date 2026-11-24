@@ -8,7 +8,7 @@ import { createHash } from "node:crypto";
 import { beforeAll, describe, expect, it } from "vitest";
 import { bootNodeCore } from "../../src/emu/node.ts";
 import { type C64Core, dumpBasic, readScreenText } from "../../src/emu/core.ts";
-import { runListing, judge, untypeableLines, type ListingSpec } from "../../src/emu/session.ts";
+import { loadCanonical, runListing, judge, untypeableLines, type ListingSpec } from "../../src/emu/session.ts";
 import { computeChecksum, splitLine } from "../../src/basic/checksum.ts";
 import { tokenizeProgram } from "../../src/basic/tokenizer.ts";
 import { applyPatch } from "../../src/gate/checksum-gate.ts";
@@ -99,12 +99,16 @@ describe("contract harness part 1 (real core)", () => {
     expect(v.verdict).toBe("refused");
   });
 
-  it("a spurious extra OCR line typed into the machine breaks clause 6 until code excludes it", () => {
-    const withOrphan = [...clone(truth), { n: 75, body: "REM", printed: null, status: "unverified" as const, source: "ocr" }];
-    const f = machineFacts(core, withOrphan);
-    const r = evaluate({ listing: truth, expectedLines: expected, titleSeen: f.titleSeen, postTitle: f.postTitle, residentBytes: f.resident, provisional: new Set() });
+  it("a spurious extra OCR line breaks clause 6 whenever it is typed, and the verdict path never types it (a2a arch-01)", () => {
+    const withOrphan = [...clone(truth), { n: 75, body: "REM", printed: null, status: "unverified" as const, source: "ocr" as const }];
+    loadCanonical(core, withOrphan); // no inventory: the orphan reaches memory
+    const r = evaluate({ listing: truth, expectedLines: expected, titleSeen: true, postTitle: "pass", residentBytes: dumpBasic(core), provisional: new Set() });
     expect(r.verdict).toBe("BOOTED-PARTIAL");
     expect(r.failed.map((x) => x.clause)).toContain(6);
+    const f = machineFacts(core, withOrphan); // runListing passes spec.expectedLines: line 75 is never typed
+    const r2 = evaluate({ listing: withOrphan, expectedLines: expected, titleSeen: f.titleSeen, postTitle: f.postTitle, residentBytes: f.resident, provisional: new Set() });
+    expect(r2.failed.map((x) => x.clause)).not.toContain(6);
+    expect(r2.counts.orphansExcluded).toBe(1);
   });
 
   it("an unparseable-checksum line that still prints the title leaves the run BOOTED-PARTIAL (clause 4)", () => {
