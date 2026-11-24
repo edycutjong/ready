@@ -1,5 +1,5 @@
 {
- "date": "2026-11-24T20:08:32.990Z",
+ "date": "2026-11-24T20:31:13.885Z",
  "machine": "darwin arm64 node v22.22.0",
  "emulator": "c64-ready@3.4.0 dad5965346c0…",
  "rows": [
@@ -8,45 +8,49 @@
    "n": 2000,
    "unit": "ms",
    "p50": 0.009,
-   "p95": 0.023,
+   "p95": 0.021,
    "min": 0.009,
-   "max": 0.596
+   "max": 0.611
   },
   {
    "name": "emulator boot (c64-ready WASM, node)",
    "n": 10,
    "unit": "ms",
-   "p50": 644.194,
-   "p95": 665.616,
-   "min": 634.851,
-   "max": 665.616
+   "p50": 640.844,
+   "p95": 667.293,
+   "p95Note": "p95 = max at this N",
+   "min": 634.16,
+   "max": 667.293
   },
   {
    "name": "type listing + RUN to the first screen (12 lines)",
    "n": 10,
    "unit": "ms",
-   "p50": 490.936,
-   "p95": 525.68,
-   "min": 487.172,
-   "max": 525.68
+   "p50": 483.437,
+   "p95": 514.736,
+   "p95Note": "p95 = max at this N",
+   "min": 480.843,
+   "max": 514.736
   },
   {
    "name": "REPLAY of the recorded run (gate re-judge + C64 re-run)",
    "n": 10,
    "unit": "ms",
-   "p50": 2349.905,
-   "p95": 3727.59,
-   "min": 2264.633,
-   "max": 3727.59
+   "p50": 2485.184,
+   "p95": 7656.472,
+   "p95Note": "p95 = max at this N",
+   "min": 2270.114,
+   "max": 7656.472
   },
   {
    "name": "OCR: tesseract.js 7 on the authored page image (node, warm worker)",
    "n": 5,
    "unit": "ms",
-   "p50": 865.017,
-   "p95": 890.755,
-   "min": 857.546,
-   "max": 890.755
+   "p50": 902.569,
+   "p95": 1443.831,
+   "p95Note": "p95 = max at this N",
+   "min": 844.719,
+   "max": 1443.831
   }
  ],
  "modelCallTimingsFromRecordedRuns": [

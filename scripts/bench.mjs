@@ -17,7 +17,7 @@ import { runListing } from "../src/emu/session.ts";
 import { replay } from "../src/replay/replay.ts";
 
 const pct = (xs, p) => { const s = [...xs].sort((a, b) => a - b); return s[Math.min(s.length - 1, Math.ceil((p / 100) * s.length) - 1)]; };
-const row = (name, n, xs, unit = "ms") => ({ name, n, unit, p50: Number(pct(xs, 50).toFixed(3)), p95: Number(pct(xs, 95).toFixed(3)), min: Number(Math.min(...xs).toFixed(3)), max: Number(Math.max(...xs).toFixed(3)) });
+const row = (name, n, xs, unit = "ms") => ({ name, n, unit, p50: Number(pct(xs, 50).toFixed(3)), p95: Number(pct(xs, 95).toFixed(3)), p95Note: xs.length < 20 ? "p95 = max at this N" : undefined, min: Number(Math.min(...xs).toFixed(3)), max: Number(Math.max(...xs).toFixed(3)) });
 const time = async (n, f) => { const xs = []; for (let i = 0; i < n; i++) { const t = performance.now(); await f(); xs.push(performance.now() - t); } return xs; };
 
 const input = JSON.parse(readFileSync("fixtures/authored/line20-input.json", "utf8"));
