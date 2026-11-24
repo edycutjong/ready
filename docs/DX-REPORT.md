@@ -17,7 +17,7 @@ reported here and in `evidence/spikes/` as counts only.
 | 6 | `scripts/record-run.mjs` on the probe | Recorder test: 2 cycles, session resumed | claude-haiku-5.5 | 0.13 | 30 s |
 | 7 | `--v3 --no-interactive --effort medium` | Tasks 1–6 of `checksum-oracle`: types, keyword table, tokenizer, notation, checksum + 223 tests | claude-sonnet-5.5 | 28.91 | 1171 s |
 | 8 | `--v3 --no-interactive --effort low` | One doc-comment edit to `checksum.ts`, to show the File Save hook passing | claude-haiku-5.5 | 0.07 | — |
-| | | **Day-1 total** | | **52.28** | |
+| | | **Day-1 total** (rows rounded) | | **52.28** | |
 
 ### What Kiro did that we would not have
 - **It checked the spec against the machine.** Before writing the tokenizer, Kiro wrote probe scripts that typed
@@ -134,11 +134,10 @@ the recorder fixes; `scripts/{make-run-input,typeset-authored,e0-search,source-c
   "credits: unknown" or "≥ n" instead of a silent 0.00.
 
 ### Open (spec tasks not done yet, stated so nothing reads as finished)
-Product, scheduled for P1c (build-plan Day 3–4): the listing picker (today the desk lists recorded runs; no page
-image, no `powerbasic` control), the in-browser tesseract.js worker with the live "lines checksum-valid after OCR"
-rate (OCR + recovery run in Node today: `scripts/recover-listing.mjs`, `src/ocr/recover.ts`), and the design pass.
-No recorded agent run contains a gate refusal yet — the refusal-then-revised-patch moment exists through Cheat and the
-K1 probe only; the evals and the hero re-record are where a real one is captured. Nothing sets `eye-verified` yet
+P1c shipped the listing picker (a recorded run plus `/scan` for the 1984 page or your own), the in-tab tesseract.js worker with
+the live checksum-flag rate and the design pass; there is still no `powerbasic` page. No recorded agent run contains a gate
+refusal: every gate event in all recorded runs is `accepted`. The refusal on screen is Cheat (and eval case 9 / the K1 probe).
+Nothing sets `eye-verified` yet
 (the gate and contract accept it; the "a person marks it against the crop" step is P3).
 
 `c64-mcp-server` task 8 (property tests P4/P5/P7/P8/P9 + timing measurements). `resurrect-loop` T2–T6 are partly
@@ -171,4 +170,10 @@ runs on, so they are listed here:
   (verified / digit-misread / unverified / FORCED).
 - **Freeze #2.** `evidence/freeze/freeze-2026-11-25-a2a-arch-01.txt` pins the gate/agent files for every later
   recording. All 9 earlier recordings re-judge with 0 mismatches under it.
-Tests 475 → 492.
+Tests: 492 at HEAD.
+
+## P2 (2026-11-25): README, DEMO, ARCHITECTURE — 0 Kiro credits
+
+No Kiro session ran in this phase; the README, `DEMO.md` and `ARCHITECTURE.md` were written `claude-direct` from the code and the
+evidence files, then fact-checked against them. Takeaway for the report: the `.kiro/` artefact table in the README is the
+quickest way to see what Kiro did, because every row points at a file that exists.

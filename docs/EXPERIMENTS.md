@@ -1,7 +1,7 @@
 # Experiments
 
 ## E0 — does a model add anything over search? (0 credits)
-**Protocol (written before the run, kiro-plan.md §3):** the same run input the agent gets (OCR → code recovery →
+**Protocol (also the header comment of `scripts/e0-search.mjs`):** the same run input the agent gets (OCR → code recovery →
 `input.json`). For every line failing its printed checksum, enumerate edits drawn from the OCR confusions measured on
 1984 scans (slashed zero ↔ 0/8/9/@/G/O, `$`↔`S`, `1`↔`l`/`I`, bracket/brace swaps, quotes read as `™`/curly quotes,
 plus `M`↔`N`, `5`↔`S`, `B`↔`8`, `Z`↔`2`, `:`↔`;`, `,`↔`.`): one or two substitutions, or one deletion / one inserted
