@@ -153,3 +153,22 @@ the stop rule refuses to stop on an unrun patch.
 | L20 | `scripts/record-run.mjs` → `--agent resurrector` | The shipped agent fixed the authored line-20 typo through the gated `apply_patch` (1 accepted patch, 27 s); that recording is the hero on the live URL | claude-sonnet-5.5 | 0.85 |
 | EV1 | `scripts/eval-agents.mjs --model` | Evals release 1: case 3 N=3 (2.61) + case 1 N=3 (8.34), all 6 RESURRECTED | claude-sonnet-5.5 | 10.95 |
 Everything else in P1c (the `/api/page` function, the design pass, the ASSISTED OCR view, the harness scripts) was written claude-direct; no Kiro IDE or spec session ran this phase. Friction: `vercel build` fails on a TypeScript function when the project uses TypeScript 7 (`@vercel/node` reads sources via `ts.sys`), so the function is plain JS.
+
+## P1d (2026-11-25): architecture review fixes — 0 Kiro credits
+No Kiro session ran in this phase. Every change below is claude-direct, made after an outside architecture review of the
+shipped code and checked against the repo, the real C64 core and the live URL. The changes touch the parts the Kiro agent
+runs on, so they are listed here:
+- **Clause 2 (post-title)** counts only text the server's own key press produced, below the last RUN. Before, the whole
+  screen counted, including the typed listing that holds the very `PRINT`.
+- **Clause 4** recomputes every checksum from body + printed sum instead of trusting a stored status. A character that no
+  C64 key types (an OCR glyph such as `™`, whose code is ≡ 34 mod 256, a quote) can no longer make a line "verified". The
+  gate, the `checksum_line` tool and `/scan` all name it.
+- **Clause 6 / the loader** never types a line outside the page inventory. It also never types into a still-running
+  program: it resets to READY. first. That second fix came from re-judging every recorded run, and it made REPLAY
+  independent of session history (eval case 1 run 3, see `docs/EVALS.md`).
+- **REPLAY** re-runs each `c64_run` with the frame budget the run event records (`maxFrames`).
+- **Certificate.** Provenance and errata follow line identity through renumbers, and say what each change rests on
+  (verified / digit-misread / unverified / FORCED).
+- **Freeze #2.** `evidence/freeze/freeze-2026-11-25-a2a-arch-01.txt` pins the gate/agent files for every later
+  recording. All 9 earlier recordings re-judge with 0 mismatches under it.
+Tests 475 → 492.
