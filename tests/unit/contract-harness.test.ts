@@ -174,4 +174,19 @@ describe("contract harness part 1 (real core)", () => {
     expect(judge(l, SPEC, f).failed).toContainEqual({ clause: 2, lines: [] });
     expect(readScreenText(core).length).toBeGreaterThan(0);
   });
+
+  it("a title behind a GET: the server presses the title key, reaches the title, and a post-key error is reported", () => {
+    const spec: ListingSpec = { ...SPEC, expectedLines: [5, ...expected], titlePredicate: { screenContains: "THE CRYPT KEEPER", keys: [32] } };
+    const body5 = 'PRINT"PRESS A KEY":GETK$:IFK$=""THEN5';
+    const l = [{ n: 5, body: body5, printed: null, status: "eye-verified" as const, source: "typed" }, ...clone(truth)];
+    const f = runListing(core, l, spec, 1500);
+    expect(f.run.error).toBeNull();
+    expect(f.titleSeen).toBe(true);
+    expect(f.postTitle).toBe("pass");
+    expect(judge(l, spec, f).verdict).toBe("RESURRECTED");
+    const broken = l.map((x) => (x.n === 10 ? { ...x, body: 'PR1NT"{CLR}{DOWN} THE CRYPT KEEPER"' } : x));
+    const g = runListing(core, broken, spec, 1500);
+    expect(g.titleSeen).toBe(false);
+    expect(g.run.error).toEqual({ kind: "SYNTAX", line: 10 });
+  });
 });

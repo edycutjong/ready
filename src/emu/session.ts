@@ -3,7 +3,7 @@
  * into the machine, RUN it, detect the title, press the post-title key (the server's press, never the agent's),
  * dump BASIC memory, and hand the facts to `contract.ts`. Isomorphic (no node: imports).
  */
-import { type C64Core, type RunResult, afterLastRun, dumpBasic, loadProgram, pressKeys, readScreenText, runProgram } from "./core.ts";
+import { type C64Core, type RunResult, afterLastRun, dumpBasic, loadProgram, parseError, pressKeys, readScreenText, runProgram } from "./core.ts";
 import { controlOutsideQuotes, parseBody, typedLine } from "../basic/notation.ts";
 import type { CanonicalListing } from "../basic/types.ts";
 import { evaluate, type ContractResult } from "../gate/contract.ts";
@@ -58,12 +58,23 @@ export function runListing(core: C64Core, listing: CanonicalListing, spec: Listi
   const untypeable = loadCanonical(core, listing);
   const resident = dumpBasic(core);
   const title = (s: string) => afterLastRun(s).includes(spec.titlePredicate.screenContains);
-  const run = runProgram(core, { maxFrames, until: (s) => title(s) || (spec.titlePredicate.keys ? s.length > 0 : false) });
+  // Stop when the title shows, or — if the title needs a key first — when the program is waiting for input:
+  // the screen has stopped changing for 3 consecutive checks (150 frames) after RUN produced output.
+  let last = "", stable = 0;
+  const waiting = (s: string) => {
+    if (!spec.titlePredicate.keys) return false;
+    stable = s === last && afterLastRun(s).trim().length > 0 ? stable + 1 : 0;
+    last = s;
+    return stable >= 3;
+  };
+  let run = runProgram(core, { maxFrames, until: (s) => title(s) || waiting(s) });
   let titleScreen: string | undefined;
   let titleSeen = !run.error && title(run.screen);
   if (!titleSeen && !run.error && spec.titlePredicate.keys) {
     titleScreen = pressKeys(core, spec.titlePredicate.keys, 300);
     titleSeen = title(titleScreen);
+    const err = parseError(titleScreen); // an error raised after the key press is still the run's diagnosis
+    if (err) run = { ...run, screen: titleScreen, error: err, stoppedOn: "error" };
   }
   let postTitle: MachineFacts["postTitle"] = "not-reached";
   let postScreen: string | undefined;
