@@ -42,3 +42,13 @@ export function errataSheet(lines: readonly FlaggedLine[]): string {
   if (!bad.length) return "No checksum mismatches.\n";
   return bad.map((l) => `line ${l.n}: printed :rem ${l.printed}, computed ${l.computed} — check this line against the page character by character`).join("\n") + "\n";
 }
+
+/**
+ * OCR quality gate (eval case 7): an unreadable scan stops BEFORE any further step, with 0 credits. Readable = at least
+ * 3 logical lines, of which at least one carries a printed `:rem` checksum (otherwise there is nothing to verify against).
+ */
+export function scanQuality(logical: readonly { n: number; printed: number | null }[]): { readable: boolean; reason: string } {
+  if (logical.length < 3) return { readable: false, reason: `only ${logical.length} numbered line${logical.length === 1 ? "" : "s"} found — the scan is too blurred, too small or not a listing page` };
+  if (!logical.some((l) => l.printed !== null)) return { readable: false, reason: "no printed :rem checksum could be read — nothing to verify against" };
+  return { readable: true, reason: `${logical.length} lines, ${logical.filter((l) => l.printed !== null).length} with a printed checksum` };
+}

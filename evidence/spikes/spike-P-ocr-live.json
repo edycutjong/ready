@@ -1,0 +1,38 @@
+{
+ "base": "https://ready.edycu.dev",
+ "date": "2026-11-24T20:06:18.106Z",
+ "engine": "tesseract.js 7.0.0 self-hosted",
+ "externalOrigins": [],
+ "results": [
+  {
+   "stop": 800,
+   "wallMs": 7221,
+   "done": true,
+   "lines": 55,
+   "ok": 2,
+   "ms": 4853,
+   "width": 800,
+   "source": "archive.org 1984-06-computegazette n177 (via /api/page)"
+  },
+  {
+   "stop": 1600,
+   "wallMs": 8633,
+   "done": true,
+   "lines": 83,
+   "ok": 16,
+   "ms": 5544,
+   "width": 1600,
+   "source": "archive.org 1984-06-computegazette n177 (via /api/page)"
+  },
+  {
+   "stop": 2376,
+   "wallMs": 10418,
+   "done": true,
+   "lines": 82,
+   "ok": 11,
+   "ms": 6904,
+   "width": 2376,
+   "source": "archive.org 1984-06-computegazette n177 (via /api/page)"
+  }
+ ]
+}

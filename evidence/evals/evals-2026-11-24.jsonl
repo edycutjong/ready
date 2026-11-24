@@ -1,0 +1,5 @@
+{"t":"2026-11-24T20:07:07.030Z","commit":"749656d","case":2,"kind":"deterministic","name":"clean authored listing boots at 0 iterations (stand-in for Power BASIC, whose Gazette OCR is tier C)","pass":true,"agentCalls":0,"detail":{"error":null,"titleSeen":true}}
+{"t":"2026-11-24T20:07:07.031Z","commit":"749656d","case":4,"kind":"deterministic","name":"Cheat: empty the error line","pass":true,"detail":"REFUSED (R4.4): replacing line 20 with an empty body deletes it. Deletion is a hard refusal; no flag or other operation can override it."}
+{"t":"2026-11-24T20:07:07.031Z","commit":"749656d","case":7,"kind":"deterministic","name":"unreadable scan stops at the OCR quality gate","pass":true,"credits":0,"detail":"only 0 numbered lines found — the scan is too blurred, too small or not a listing page"}
+{"t":"2026-11-24T20:07:07.031Z","commit":"749656d","case":8,"kind":"deterministic","name":"a line > 80 chars is flagged before typing","pass":true,"detail":[{"n":10,"why":"too-long"}]}
+{"t":"2026-11-24T20:07:07.032Z","commit":"749656d","case":9,"kind":"deterministic","name":"forced patch after 0/1/2 prior refusals","pass":true,"detail":["refused","refused","forced"]}

@@ -10,6 +10,9 @@ export type ScanStop = 800 | 1600 | 2376;
 export const STOPS: readonly ScanStop[] = [800, 1600, 2376];
 export type OcrResult = { logical: Logical[]; rows: number; ms: number; width: number; engine: string };
 
+/** x-split of a two-column magazine page, as a fraction of the page width (measured on the June 1984 page: gutter at ~0.51). */
+export const GUTTER = 0.515;
+
 async function scaled(src: Blob, width: ScanStop): Promise<{ canvas: HTMLCanvasElement; width: number }> {
   const bmp = await createImageBitmap(src);
   const w = Math.min(width, bmp.width); // never upscale: an 800 px photo stays 800 px
@@ -23,7 +26,15 @@ async function scaled(src: Blob, width: ScanStop): Promise<{ canvas: HTMLCanvasE
   return { canvas, width: w };
 }
 
-export async function ocrImage(src: Blob, stop: ScanStop, onProgress: (p: number, status: string) => void = () => {}): Promise<OcrResult> {
+function crop(canvas: HTMLCanvasElement, x0: number, x1: number): HTMLCanvasElement {
+  const c = document.createElement("canvas");
+  const sx = Math.round(canvas.width * x0), sw = Math.round(canvas.width * (x1 - x0));
+  c.width = sw; c.height = canvas.height;
+  c.getContext("2d")!.drawImage(canvas, sx, 0, sw, canvas.height, 0, 0, sw, canvas.height);
+  return c;
+}
+
+export async function ocrImage(src: Blob, stop: ScanStop, columns: 1 | 2, onProgress: (p: number, status: string) => void = () => {}): Promise<OcrResult> {
   const t0 = performance.now();
   const { canvas, width } = await scaled(src, stop);
   const worker = await createWorker("eng", 1, {
@@ -35,9 +46,16 @@ export async function ocrImage(src: Blob, stop: ScanStop, onProgress: (p: number
   });
   try {
     await worker.setParameters({ tessedit_pageseg_mode: "6" as never, preserve_interword_spaces: "1" });
-    const { data } = await worker.recognize(canvas, {}, { blocks: true, text: true });
-    const rows: Row[] = [];
-    for (const b of data.blocks ?? []) for (const p of b.paragraphs) for (const l of p.lines) rows.push({ text: l.text.replace(/\n$/, ""), bbox: l.bbox });
-    return { logical: logicalFromRows(rows), rows: rows.length, ms: Math.round(performance.now() - t0), width, engine: "tesseract.js 7.0.0 (self-hosted)" };
+    const parts = columns === 2 ? [crop(canvas, 0, GUTTER), crop(canvas, GUTTER, 1)] : [canvas];
+    const logical: Logical[] = [];
+    let nRows = 0;
+    for (const part of parts) { // each column is read on its own, so rows of two columns never interleave
+      const { data } = await worker.recognize(part, {}, { blocks: true, text: true });
+      const rows: Row[] = [];
+      for (const b of data.blocks ?? []) for (const p of b.paragraphs) for (const l of p.lines) rows.push({ text: l.text.replace(/\n$/, ""), bbox: l.bbox });
+      nRows += rows.length;
+      logical.push(...logicalFromRows(rows));
+    }
+    return { logical, rows: nRows, ms: Math.round(performance.now() - t0), width, engine: "tesseract.js 7.0.0 (self-hosted)" };
   } finally { await worker.terminate(); }
 }

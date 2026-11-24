@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
 import { ocrImage, STOPS, type ScanStop } from "../ocr/browser.ts";
 import { Nav } from "./nav.tsx";
-import { assistedHeading, basExport, errataSheet, flagAll, flagLine, summarize, type FlaggedLine } from "../ocr/flag.ts";
+import { assistedHeading, basExport, errataSheet, flagAll, flagLine, scanQuality, summarize, type FlaggedLine } from "../ocr/flag.ts";
 
 /**
  * ASSISTED mode (no Kiro call, no emulator, 0 credits): a real page from archive.org through /api/page, or the judge's
@@ -9,7 +9,7 @@ import { assistedHeading, basExport, errataSheet, flagAll, flagLine, summarize, 
  * recheck → .bas / errata export. Its certificate is never "resurrected" and says the missing lines are unknown.
  */
 const ITEM = "1984-06-computegazette";
-const PAGES = [{ n: 177, label: "n177 — the right-hand page of the 1984 spread" }, { n: 178, label: "n178" }];
+const PAGES = [{ n: 177, label: "n177 — printed page 174 (two columns)" }, { n: 178, label: "n178 — next page (two columns)" }];
 
 function download(name: string, text: string) {
   const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
@@ -22,6 +22,7 @@ declare global { interface Window { __scan?: Record<string, unknown> } }
 export function ScanView() {
   const [stop, setStop] = useState<ScanStop>(1600);
   const [page, setPage] = useState(177);
+  const [columns, setColumns] = useState<1 | 2>(2);
   const [busy, setBusy] = useState<string | null>(null);
   const [pct, setPct] = useState(0);
   const [msg, setMsg] = useState<string | null>(null);
@@ -34,7 +35,9 @@ export function ScanView() {
     if (img) URL.revokeObjectURL(img);
     setImg(URL.createObjectURL(blob));
     try {
-      const r = await ocrImage(blob, stop, (p, s) => { setPct(p); setBusy(s); });
+      const r = await ocrImage(blob, stop, columns, (p, s) => { setPct(p); setBusy(s); });
+      const q = scanQuality(r.logical);
+      if (!q.readable) { setMsg(`This scan is unreadable: ${q.reason}. Try a sharper image or a higher scan quality. Nothing else was run.`); window.__scan = { done: true, unreadable: true, reason: q.reason }; setBusy(null); return; }
       const flagged = flagAll(r.logical);
       setLines(flagged); setMeta({ ms: r.ms, width: r.width, rows: r.rows, engine: r.engine, source });
       window.__scan = { done: true, lines: flagged.length, ok: flagged.filter((l) => l.state === "ok").length, ms: r.ms, width: r.width, source };
@@ -63,6 +66,7 @@ export function ScanView() {
         <div class="controls">
           <label>Scan quality <select value={stop} onChange={(e) => setStop(Number((e.target as HTMLSelectElement).value) as ScanStop)} data-testid="stop">{STOPS.map((s) => <option value={s}>{s} px wide</option>)}</select></label>
           <label>Page <select value={page} onChange={(e) => setPage(Number((e.target as HTMLSelectElement).value))}>{PAGES.map((p) => <option value={p.n}>{p.label}</option>)}</select></label>
+          <label>Layout <select value={columns} onChange={(e) => setColumns(Number((e.target as HTMLSelectElement).value) as 1 | 2)} data-testid="columns"><option value={2}>two columns</option><option value={1}>one column</option></select></label>
           <button data-testid="read-archive" disabled={!!busy} onClick={fetchPage}>Read the real 1984 page</button>
           <label>or your own scan <input type="file" accept="image/*" data-testid="upload" disabled={!!busy} onChange={(e) => { const f = (e.target as HTMLInputElement).files?.[0]; if (f) run(f, `your upload (${f.name})`); }} /></label>
         </div>
