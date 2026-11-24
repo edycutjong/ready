@@ -68,3 +68,39 @@ gate and contract (`src/gate/*`, tasks 7–12), the property tests for tasks 9�
 deploy of main via GitHub Actions": the workflow exists, but Actions cannot run on this account yet (billing), so
 day-1 production deploys were made with `npm run deploy:prod` (`vercel build`, `scripts/check-no-rom.mjs`,
 `vercel deploy --prebuilt --prod`).
+
+## Build day 1, continued — P1b core flow (Wed 25 Nov 2026, WIB)
+
+### Kiro sessions
+| # | Surface | What | Model | Credits |
+|---|---|---|---|---|
+| 9 | `kiro-cli chat --v3 --no-interactive --effort medium` | Feature spec `c64-mcp-server`: EARS requirements + analyze-requirements pass, design with 11 correctness properties, 8 tasks | claude-sonnet-5.5 | 42.95 |
+| 10 | same, `--effort low` | Tasks 1–5 of `c64-mcp-server`: zod schemas, RUN_DIR file contract, `createTools` with the 6 tools, `apply_patch` behind the gate; 138 tests | claude-sonnet-5.5 | 25.76 |
+| 11 | same, `--effort medium` | Feature spec `resurrect-loop` (EARS + analyze pass, design, 6 tasks) + the `resurrector` V3 profile, steering `resurrector.md`, skill `petscii-notation` | claude-sonnet-5.5 | 12.69 |
+| G1 | `scripts/record-run.mjs` → `--v3 --no-interactive --agent resurrector` | Spike G attempt 1 on the June 1984 title path: TITLE-PATH RESURRECTED; the recorder (ours) crashed after the cycle | claude-sonnet-5.5 | 2.48 |
+| G2 | same | Spike G attempt 2 = the K3 cost session: TITLE-PATH RESURRECTED, 5 `apply_patch` calls, 67.6 s, 1 cycle | claude-sonnet-5.5 | 2.20 |
+
+### Measured headless (kiro-cli 3.5.0, `evidence/spikes/spike-G.json`)
+- The custom agent loads MCP tools on demand and works only through them: attempt 2 made 20 `checksum_line`, 5
+  `apply_patch` and 3 `c64_run` calls; every patch was accepted by the gate (no refusal happened, so the on-screen
+  refusal stays Cheat).
+- **All three inline hooks fire headless:** Session Start (`listing-context`) 2×, Pre Tool Use on `@c64/apply_patch`
+  (`checksum-gate`) 5× exit 0, Agent Stop (`until-title`) 1× — it allowed the stop because the contract computed by
+  the MCP server was RESURRECTED.
+- Kiro's own scope rule denied its write to `.kiro/settings/mcp.json`; Kiro reported it and gave the exact content,
+  which we wrote (claude-direct).
+- One Sonnet spec session cost 12.69–42.95 credits; reading less (a named file list, no exploring) cost less.
+
+### What the build found
+- tesseract.js 7 (psm 6) read a printed `PR1NT` as `PRINT`: its dictionary "fixed" the planted misprint, so it never
+  reached the C64. The authored page plants `PRIMT` instead; OCR also read its quote as `™` (`fixtures/authored/`).
+- Search without a model (E0) fixed 3 of the 18 failing title-path lines; the agent fixed all 18 (`evidence/experiments/e0.json`).
+- Checksum-consistent is not source-exact: 19/28 of the resurrected title path equal the reference transcript.
+
+### Who wrote what (P1b)
+Kiro: the `c64-mcp-server` and `resurrect-loop` specs, `mcp/c64-server/{schemas,rundir,render,tools}.ts` and their
+tests (tasks 1–5), `.kiro/agents/resurrector.json`, `.kiro/steering/resurrector.md`, `.kiro/skills/petscii-notation/`.
+**claude-direct:** the `c64-mcp-server` credit line hit 68.71 of 70 after task 5, so tasks 6–7 (crash recovery,
+`server.ts`, stdio + crash tests) are claude-direct and labelled in `tasks.md` and the commits; `.kiro/settings/mcp.json`;
+the hook commands `scripts/hooks/{checksum-gate,until-title,listing-context}.mjs`; the REPLAY engine and desk UI;
+the recorder fixes; `scripts/{make-run-input,typeset-authored,e0-search,source-check,e2e-replay}.mjs`.
