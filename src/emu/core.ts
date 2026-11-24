@@ -12,6 +12,8 @@ export interface C64Core {
   readonly id: string; // e.g. "c64-ready@3.4.0"
   /** Power-cycle to a fresh `READY.` prompt. */
   boot(): Promise<void>;
+  /** Hardware reset to a fresh `READY.` prompt, synchronously (the loaded emulator is kept; queued keys are dropped). */
+  reset(): void;
   /** Advance the machine by `frames` 20 ms ticks, feeding queued keys into the KERNAL buffer. */
   step(frames: number): void;
   /** Queue PETSCII key codes for the KERNAL keyboard buffer ($0277, count at $C6). */
@@ -96,7 +98,25 @@ export function asciiToPetscii(text: string): number[] {
  * `NEW`, then type every line (already PETSCII, line number included, no RETURN) followed by RETURN.
  * This is the one path a listing reaches the machine: `c64_reload` and an accepted `apply_patch` both use it.
  */
+/**
+ * A program is still running when BASIC is in program mode (MSGFLG $9D = $00; $80 in direct mode) and the screen does
+ * not end at `READY.` (a defensive second check). Measured on c64-ready@3.4.0: READY $80; GET wait $00; INPUT wait $00;
+ * after END $80; after an error $80 (a2a arch-01).
+ */
+export function programRunning(core: C64Core): boolean {
+  if (core.peek(0x9d) !== 0) return false;
+  const rows = readScreenText(core).split("\n").map((r) => r.trim()).filter(Boolean);
+  return rows.at(-1) !== "READY.";
+}
+
+/**
+ * NEW + type every line. If a program is still running (a GET or INPUT wait after a run), the typed keys would go to
+ * the program instead of the screen editor, so the machine is reset to READY. first. Without this a load right after
+ * a run that left the title's GET loop waiting depended on history: REPLAY of a recorded run typed once into the loop
+ * and stored the wrong program, where the live session had happened to type twice (a2a arch-01).
+ */
 export function loadProgram(core: C64Core, lines: readonly (readonly number[])[]): number {
+  if (programRunning(core)) core.reset();
   let frames = typeAndSettle(core, [...asciiToPetscii("NEW"), RETURN]);
   for (const l of lines) frames += typeAndSettle(core, [...l, RETURN], 2);
   return frames;
@@ -163,6 +183,7 @@ export function dumpBasic(core: C64Core): Uint8Array {
 
 type C64EmulatorLike = {
   start(): void;
+  reset(): void;
   tick(dTime?: number): void;
   cpuReadNS(addr: number): number;
   cpuWrite(addr: number, v: number): void;
@@ -201,6 +222,12 @@ export function createC64ReadyCore(wasm: string | Uint8Array): C64Core {
         }
         e.tick(20);
       }
+    },
+    reset() {
+      const e = need();
+      e.reset();
+      queue.length = 0;
+      for (let i = 0; i < 200; i++) e.tick(20); // reset to READY. (same settle as boot)
     },
     queueKeys(codes) { queue.push(...codes); },
     pendingKeys() { return queue.length + (emu ? emu.cpuReadNS(KEYBUF_COUNT) : 0); },

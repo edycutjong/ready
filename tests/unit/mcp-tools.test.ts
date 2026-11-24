@@ -400,9 +400,14 @@ describe("list() and serial calls (R1.2, R1.6)", () => {
     const b = call(t, "c64_read_screen").then((x) => { order.push("read"); return x; });
     await Promise.all([a, b]);
     expect(order).toEqual(["reload", "read"]);
-    // start-up wrote 1 event, the reload's own `emu load` is the 2nd: the read starts only after it
+    // start-up wrote 1 event, the reload's own `emu load` is the 2nd: the read starts only after it. The reload peeks
+    // too (loadProgram's running-program check, a2a arch-01), so: every peek is ordered, and the read's whole 40×25
+    // screen (1000 peeks) comes after the 2nd event exists.
     expect(spy.seen.at(-1)).toBe(2);
-    expect(spy.seen.filter((n) => n === 1)).toHaveLength(0);
+    const firstAfter = spy.seen.indexOf(2);
+    expect(spy.seen.slice(firstAfter).every((n) => n === 2)).toBe(true);
+    expect(spy.seen.length - firstAfter).toBeGreaterThanOrEqual(1000);
+    expect(spy.seen.slice(0, firstAfter).every((n) => n === 1)).toBe(true);
   });
 });
 

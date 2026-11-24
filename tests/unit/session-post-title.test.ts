@@ -56,3 +56,26 @@ describe("orphan lines are never typed (a2a arch-01)", () => {
     expect(c.verdict).toBe("RESURRECTED");
   });
 });
+
+describe("a load never types into a running program (a2a arch-01)", () => {
+  it("after a run leaves a GET loop waiting, the next load stores exactly the new program", async () => {
+    const { loadProgram, runProgram, dumpBasic, programRunning } = await import("../../src/emu/core.ts");
+    const { typedLine } = await import("../../src/basic/notation.ts");
+    const { tokenizeProgram } = await import("../../src/basic/tokenizer.ts");
+    const waiting: [number, string][] = [[10, 'PRINT "PRESS F1"'], [20, 'GET A$:IF A$="" THEN 20'], [30, "GOTO 20"]];
+    loadProgram(core, waiting.map(([n, b]) => typedLine(n, b).codes));
+    runProgram(core, { maxFrames: 300 });
+    expect(programRunning(core)).toBe(true); // the GET loop would eat every typed key
+    const next: [number, string][] = [[10, 'PRINT "NEW PROGRAM"'], [20, "END"]];
+    loadProgram(core, next.map(([n, b]) => typedLine(n, b).codes));
+    expect(Array.from(dumpBasic(core))).toEqual(Array.from(tokenizeProgram(next.map(([n, body]) => ({ n, body })))));
+    expect(programRunning(core)).toBe(false);
+  });
+  it("after an error BASIC is at READY. again: no reset is needed", async () => {
+    const { loadProgram, runProgram, programRunning } = await import("../../src/emu/core.ts");
+    const { typedLine } = await import("../../src/basic/notation.ts");
+    loadProgram(core, [typedLine(10, "PRINT 1/0").codes]);
+    runProgram(core, { maxFrames: 300 });
+    expect(programRunning(core)).toBe(false);
+  });
+});

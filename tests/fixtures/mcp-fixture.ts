@@ -155,6 +155,8 @@ export class StubCore implements C64Core {
   step(frames: number): void { this.steps += frames; this.queue = []; }
   queueKeys(codes: readonly number[]): void { this.queue.push(...codes); this.keysLog.push(...codes); }
   pendingKeys(): number { return this.queue.length; }
+  resets = 0;
+  reset(): void { this.resets++; this.queue = []; }
   peek(_addr: number): number { return 0; }
 }
 
@@ -187,6 +189,7 @@ export class ThrowingCore implements C64Core {
   }
   queueKeys(codes: readonly number[]): void { this.real.queueKeys(codes); }
   pendingKeys(): number { return this.real.pendingKeys(); }
+  reset(): void { this.real.reset(); }
   peek(addr: number): number { return this.real.peek(addr); }
 }
 
