@@ -39,10 +39,13 @@ export function toGateOp(o: OpIn): PatchOp {
   return { type: String(t) as "replace", lineno: Number(o.lineno), new_body: "" }; // unknown op: the gate refuses it (R4.6)
 }
 
-/** Lines a refusal is charged to (the Pre Tool Use hook's rule): the gate's per-op lines, else every op's line. */
-export function refusedLines(v: GateVerdict, patch: readonly PatchOp[]): number[] {
-  const fromGate = v.perOp?.length ? v.perOp.map((p) => p.line) : [];
-  return [...new Set(fromGate.length ? fromGate : patch.map((p) => p.lineno).filter(Number.isFinite))];
+/**
+ * Lines a refusal is charged to (the Pre Tool Use hook's rule, agents.md §4 "Forced lines"): only lines the gate
+ * refused on their CHECKSUM (perOp entries with ok false). A deletion, a 40% rewrite or an out-of-inventory renumber
+ * charges nothing, so it can never unlock `force_unverified` (QA P1b r1).
+ */
+export function refusedLines(v: GateVerdict, _patch: readonly PatchOp[]): number[] {
+  return [...new Set((v.perOp ?? []).filter((p) => !p.ok).map((p) => p.line))];
 }
 
 const plain = (l: CanonicalListing): CanonicalListing => l.map(({ n, body, printed, status, source }) => ({ n, body, printed, status, source }));
@@ -58,11 +61,14 @@ export function replay(events: readonly RunEvent[], core: C64Core | null): Repla
   const input = start?.input as RunInput | undefined;
   if (!input) throw new Error("recorded run has no start.input: it cannot be replayed (agents.md §6)");
   const expected = input.spec.expectedLines;
+  const recEmu = (start?.emulator as { id?: string } | undefined)?.id;
+  const emuMismatch = core && recEmu && core.id !== recEmu ? `emulator: recorded on ${recEmu}, replaying on ${core.id}` : null;
   let listing: CanonicalListing = plain(input.lines);
   const provisional = new Set<number>(input.provisional ?? input.lines.filter((l) => l.provisional).map((l) => l.n));
   const counts: Record<number, number> = {};
   const steps: ReplayStep[] = [];
   const mismatches: string[] = [];
+  if (emuMismatch) mismatches.push(emuMismatch);
   let lastFacts: MachineFacts | null = null;
   let pendingProposal: RunEvent | null = null;
 

@@ -38,5 +38,5 @@ const text = [
   ...lines.map((l) => `${l.n} ${l.body} :rem ${l.printed ?? "??"}   ${mark(l)}${l.provisional ? " (recovered, provisional)" : ""}${expected.includes(l.n) ? "" : "   [not in the page inventory]"}`),
 ].join("\n");
 process.stdout.write(text + "\n");
-appendFileSync(join(runDir, "events.jsonl"), JSON.stringify({ t: new Date().toISOString(), k: "hook", hook: "listing-context", via: "kiro-session-start", exit: 0, lines: lines.length, missing }) + "\n");
+appendFileSync(join(runDir, "events.jsonl"), JSON.stringify({ t: new Date().toISOString(), k: "hook", hook: "listing-context", via: process.env.READY_HOOK_VIA ?? "kiro-session-start", exit: 0, lines: lines.length, missing }) + "\n");
 process.exit(0);

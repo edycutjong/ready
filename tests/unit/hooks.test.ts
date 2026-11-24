@@ -33,7 +33,6 @@ describe("checksum-gate.mjs (Pre Tool Use, matcher @c64/apply_patch)", () => {
     const r = hook("checksum-gate", d, patch([{ op: "replace", lineno: 20, new_body: "" }]));
     expect(r.status).toBe(2);
     expect(r.stderr).toMatch(/REFUSED \(R4\.4\)/);
-    expect(JSON.parse(readFileSync(join(d, "refusals.json"), "utf8"))).toEqual({ 20: 1 });
     expect(events(d).at(-1)).toMatchObject({ k: "hook", hook: "checksum-gate", exit: 2, decision: "refused" });
   });
   it("refuses a checksum-breaking fix with printed vs computed, and allows the true fix (exit 0)", () => {
@@ -93,10 +92,25 @@ describe("until-title.mjs (Agent Stop hook + runner --check)", () => {
   });
   it("allows stop at the iteration cap, counting hook refusals the server never saw", () => {
     const d = runDir(undefined, { state: "NOT-RESURRECTED" }, { iteration: 10 });
-    writeFileSync(join(d, "refusals.json"), JSON.stringify({ 20: 5 }));
     ev(d, run);
+    for (let i = 0; i < 5; i++) ev(d, { k: "hook", hook: "checksum-gate", via: "kiro-pre-tool-use", exit: 2 }); // 5 refused CALLS
     const c = JSON.parse(hook("until-title", d, null, ["--check"]).stdout);
     expect(c).toMatchObject({ stop: true, cap: "iteration cap (15/15)" });
+  });
+});
+
+describe("until-title.mjs — consistent is not runs (QA P1b r1)", () => {
+  it("blocks when every line is checksum-consistent and present but the C64 shows no title", () => {
+    const d = runDir([L(10, 'A$="READY"', p10), L(20, good20, p20), L(30, "GOTO 30", p30)], { state: "NOT-RESURRECTED", failed: [{ clause: 1, lines: [] }, { clause: 2, lines: [] }] });
+    ev(d, { k: "emu", op: "run" });
+    const c = JSON.parse(hook("until-title", d, null, ["--check"]).stdout);
+    expect(c.stop).toBe(false);
+    expect(c.reason).toMatch(/necessary, not sufficient/);
+  });
+  it("a refused deletion charges no refusal count (it can never unlock force_unverified)", () => {
+    const d = runDir();
+    hook("checksum-gate", d, patch([{ op: "replace", lineno: 20, new_body: "" }]));
+    expect(JSON.parse(readFileSync(join(d, "refusals.json"), "utf8"))).toEqual({});
   });
 });
 

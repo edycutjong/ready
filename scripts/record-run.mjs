@@ -24,6 +24,8 @@ import { dirname, join, resolve } from "node:path";
 import { parseLine, sessionIdOf } from "../runner/stream.ts";
 import { CAPS, capHit, addToLedger } from "../runner/budget.ts";
 import { parseReference, sourceCheck } from "../runner/source-check.ts";
+import { bootNodeCore, c64ReadyWasmSha256 } from "../src/emu/node.ts";
+import { judge, runListing } from "../src/emu/session.ts";
 
 const args = Object.fromEntries(process.argv.slice(2).reduce((a, v, i, all) => (v.startsWith("--") ? [...a, [v.slice(2), all[i + 1]?.startsWith("--") ? "true" : all[i + 1] ?? "true"]] : a), []));
 const listing = args.listing ?? "probe";
@@ -32,7 +34,7 @@ const out = resolve(args.out ?? `runs/${listing}/${iso}.jsonl`);
 const workspace = resolve(args.workspace ?? ".");
 const runDir = resolve(args["run-dir"] ?? `work/${listing}-${iso}`);
 const model = args.model ?? "claude-sonnet-5.5";
-const trust = args["trust-tools"] ?? "@c64/c64_reload,@c64/c64_run,@c64/c64_read_screen,@c64/c64_press,@c64/checksum_line,@c64/apply_patch,read_file";
+const trust = args["trust-tools"] ?? "@c64/c64_reload,@c64/c64_run,@c64/c64_read_screen,@c64/c64_press,@c64/checksum_line,@c64/apply_patch";
 if (/trust-all/.test(trust)) throw new Error("never --trust-all-tools");
 if (!args["stop-check"]) throw new Error("--stop-check is required: the model never decides when to stop"); // validated before any credit is spent
 let prompt0 = readFileSync(args["prompt-file"], "utf8");
@@ -55,10 +57,10 @@ let mergedLines = 0; // declared before the loop (spike G attempt 1 crashed here
 // runs) into the FIRST prompt, so the run never depends on whether V3 headless injects a Session Start hook's STDOUT
 // (unmeasured); resumed cycles get the hook's refreshed context and the stop check's reason.
 if (args.context && runInput) {
-  const c = spawnSync(process.execPath, ["scripts/hooks/listing-context.mjs"], { cwd: workspace, env: { ...process.env, RUN_DIR: runDir }, encoding: "utf8" });
+  const c = spawnSync(process.execPath, ["scripts/hooks/listing-context.mjs"], { cwd: workspace, env: { ...process.env, RUN_DIR: runDir, READY_HOOK_VIA: "runner-context" }, encoding: "utf8" });
   prompt0 = `${prompt0}\n\n${c.stdout}`;
 }
-emit({ k: "start", model, mode: "live", listing, runDir: runDir.replace(workspace, "."), runner: { kiroCli: kiroVersion(), agent: args.agent ?? null, trustTools: trust.split(","), caps: CAPS }, input: runInput });
+emit({ k: "start", model, mode: "live", listing, emulator: { id: "c64-ready@3.4.0", wasmSha256: c64ReadyWasmSha256() }, runDir: runDir.replace(workspace, "."), runner: { kiroCli: kiroVersion(), agent: args.agent ?? null, trustTools: trust.split(","), caps: CAPS }, input: runInput });
 writeCredits();
 
 let prompt = prompt0;
@@ -85,6 +87,7 @@ while (true) {
 }
 // a killed cycle never reports its credits (they arrive at process end, K3): the total is then a lower bound
 emit({ k: "credits", metered, delta: null, total: metered ? state.credits : null, lowerBound: Boolean(capReason && capReason !== "credits") });
+await finalJudgeIfStale();
 const final = finalResult();
 // evaluation-only source check (agents.md §4): the reference is read only now, after the run, never by the agent
 if (args.reference && existsSync(join(runDir, "listing.json"))) {
@@ -169,6 +172,29 @@ function stopCheck() {
   const [cmd, ...rest] = args["stop-check"].split(" ");
   const r = spawnSync(cmd, rest, { cwd: workspace, env: { ...process.env, RUN_DIR: runDir }, encoding: "utf8" });
   try { return JSON.parse(r.stdout); } catch { return { stop: true, reason: `stop check failed: ${r.stderr}`, result: "error" }; }
+}
+
+/**
+ * R4.7 (resurrect-loop): a run that ends (cap, crash, agent stop) with an accepted patch never RUN has a stale
+ * contract. The runner then judges the final canonical listing itself on a fresh headless C64 — code, not the model —
+ * and records it as an `emu run` event `via: "runner-final"`, so the certificate always describes what the C64 ran.
+ */
+async function finalJudgeIfStale() {
+  const lf = join(runDir, "listing.json"), ef = join(runDir, "events.jsonl");
+  if (!existsSync(lf) || !existsSync(ef) || !runInput) return;
+  const ev = readFileSync(ef, "utf8").split("\n").filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return {}; } });
+  const lastRun = ev.findLastIndex((e) => e.k === "emu" && e.op === "run");
+  const lastChange = ev.findLastIndex((e) => e.k === "gate" && (e.verdict === "accepted" || e.verdict === "forced"));
+  if (lastChange <= lastRun) return;
+  const l = JSON.parse(readFileSync(lf, "utf8"));
+  const lines = l.lines.map(({ n, body, printed, status, source }) => ({ n, body, printed, status, source }));
+  const facts = runListing(await bootNodeCore(), lines, runInput.spec);
+  const prov = new Set(facts.postTitle === "pass" ? [] : l.lines.filter((x) => x.provisional).map((x) => x.n));
+  const c = judge(lines, runInput.spec, facts, prov);
+  l.contract = { ...l.contract, state: c.verdict, heading: c.heading, counts: c.counts, failed: c.failed };
+  l.postTitle = facts.postTitle;
+  writeFileSync(lf, JSON.stringify(l, null, 1) + "\n");
+  emit({ k: "emu", op: "run", via: "runner-final", error: facts.run.error, titleSeen: facts.titleSeen, postTitle: facts.postTitle, why: "an accepted patch was never RUN before the run ended" });
 }
 
 function finalResult() {

@@ -8,7 +8,7 @@
  * Stop is allowed when (a) the contract computed by the MCP server is RESURRECTED, or (b) every remaining non-verified
  * line is one the agent cannot fix (lost, unparseable printed checksum), or (c) a cap hits (15 iterations, 8 credits,
  * 600 s). The title alone is BOOTED, never success: the hook blocks with the list of fixable lines.
- * Reads $RUN_DIR/{listing,state}.json (MCP server), credits.json (runner), refusals.json + events.jsonl.
+ * Reads $RUN_DIR/{listing,state}.json (MCP server), credits.json (runner), events.jsonl (hook refusals).
  * A shell hook cannot call MCP and does not see the credit stream, hence the files.
  */
 import { appendFileSync, existsSync, readFileSync } from "node:fs";
@@ -43,12 +43,12 @@ function events() {
 function decide() {
   const listing = read("listing.json");
   const credits = read("credits.json") ?? {};
-  const refusals = read("refusals.json") ?? {};
   if (!listing) return { stop: true, reason: "the c64 server never wrote listing.json; the run cannot be judged", result: "error" };
   const result = String(listing.contract?.state ?? "NOT-RESURRECTED").toLowerCase();
 
-  // (c) caps — iterations = fix attempts: calls the server received + calls the hook refused before the server
-  const refused = Object.values(refusals).reduce((a, b) => a + Number(b), 0);
+  // (c) caps — iterations = fix attempts: calls the server received + CALLS the hook refused before the server
+  // (one refused call = one attempt, however many lines it named; QA P1b r1)
+  const refused = events().filter((e) => e.k === "hook" && e.hook === "checksum-gate" && e.exit === 2 && e.via === "kiro-pre-tool-use").length;
   const iterations = Math.max(Number(credits.iterations ?? 0), Number(listing.iteration ?? 0) + refused);
   const spent = credits.metered ? Number(credits.credits ?? 0) : null;
   const wall = credits.startedAt ? Date.now() - Number(credits.startedAt) : 0;
@@ -79,6 +79,12 @@ function decide() {
   const missing = [...expected].filter((n) => !present.has(n));
   const screen = read("state.json");
   const seen = screen?.titleSeen ? "The title appeared, but that alone is BOOTED — PARTIAL, not success." : `Last screen error: ${screen?.error ? `?${screen.error.kind} ERROR${screen.error.line != null ? ` IN ${screen.error.line}` : ""}` : "none (no title yet)"}.`;
+  // every present line is consistent, nothing is missing, yet the C64 still fails: a checksum collision or a misread
+  // the checksum cannot see — keep working until a cap (QA P1b r1: "consistent" is not "runs")
+  const failing = (listing.contract?.failed ?? []).some((f) => f.clause === 1 || f.clause === 2 || f.clause === 6);
+  if (fixable.length === 0 && missing.length === 0 && failing) {
+    return { stop: false, reason: `Every line matches its printed checksum, but the program still fails. ${seen} A checksum match is necessary, not sufficient (mod-256 collisions; spaces are not counted): look at the line the error names and at swapped or misnumbered lines, test candidates with checksum_line, then apply_patch and c64_run.`, result };
+  }
   if (fixable.length === 0) {
     const why = [missing.length ? `missing (recovery-only, never the model): ${missing.join(", ")}` : "", lines.some((l) => l.printed == null) ? "unparseable printed checksums stay unverified" : ""].filter(Boolean).join("; ");
     return { stop: true, reason: `no line the agent can fix remains${why ? ` — ${why}` : ""}; the run ends ${result.toUpperCase()}`, result };
