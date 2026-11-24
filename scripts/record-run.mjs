@@ -6,6 +6,7 @@
  *   node scripts/record-run.mjs --listing <id> --prompt-file <f> [--agent resurrector] [--model claude-sonnet-5.5]
  *        [--workspace .] [--trust-tools @c64/apply_patch,...] [--stop-check "node scripts/hooks/until-title.mjs --check"]
  *        [--out runs/<id>/<iso>.jsonl] [--ledger ledger] [--input <input.json>] [--kiro-bin kiro-cli]
+ *        [--reference <transcript> --reference-origin "two machine reads"]   (evaluation-only source check, after the run)
  *
  * --input: the run's $RUN_DIR/input.json (listingId, scope, spec, canonical lines after recovery, provisional) that
  * the c64 MCP server types in at start; copied into RUN_DIR and stored whole in the `start` event (replay fidelity,
@@ -22,6 +23,7 @@ import { appendFileSync, copyFileSync, existsSync, mkdirSync, readFileSync, writ
 import { dirname, join, resolve } from "node:path";
 import { parseLine, sessionIdOf } from "../runner/stream.ts";
 import { CAPS, capHit, addToLedger } from "../runner/budget.ts";
+import { parseReference, sourceCheck } from "../runner/source-check.ts";
 
 const args = Object.fromEntries(process.argv.slice(2).reduce((a, v, i, all) => (v.startsWith("--") ? [...a, [v.slice(2), all[i + 1]?.startsWith("--") ? "true" : all[i + 1] ?? "true"]] : a), []));
 const listing = args.listing ?? "probe";
@@ -76,6 +78,13 @@ while (true) {
 // a killed cycle never reports its credits (they arrive at process end, K3): the total is then a lower bound
 emit({ k: "credits", metered, delta: null, total: metered ? state.credits : null, lowerBound: Boolean(capReason && capReason !== "credits") });
 const final = finalResult();
+// evaluation-only source check (agents.md §4): the reference is read only now, after the run, never by the agent
+if (args.reference && existsSync(join(runDir, "listing.json"))) {
+  const l = JSON.parse(readFileSync(join(runDir, "listing.json"), "utf8"));
+  const sc = sourceCheck(l.lines, parseReference(readFileSync(resolve(args.reference), "utf8")), l.expectedLines, args["reference-origin"] ?? "unstated");
+  final.extra.counts = { ...(final.extra.counts ?? {}), sourceExact: sc.sourceExact, sourceTotal: sc.total };
+  final.extra.sourceReference = sc.origin;
+}
 emit({ k: "end", result: final.result, iterations: state.iterations, wallMs: Date.now() - state.startedAt, cap: capReason, cycles, ...final.extra });
 const ledger = addToLedger(resolve(args.ledger ?? "ledger"), metered ? state.credits : null);
 console.log(JSON.stringify({ out, runDir, cycles, iterations: state.iterations, credits: metered ? state.credits : "unmetered", cap: capReason, result: final.result, ledger }));
