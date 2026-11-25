@@ -1,7 +1,7 @@
 <div align="center">
   <img src="docs/icon.svg" alt="SYNTAX ERROR IN 20 icon" width="144">
   <h1>SYNTAX ERROR IN 20 🕯️</h1>
-  <p><em>Resurrect 1984 magazine type-in programs: OCR finds the misread lines, the magazine's own checksum proves them, a real C64 core judges the result, and a Kiro agent can only fix a line through a deterministic gate.</em></p>
+  <p><em>Resurrect 1984 magazine type-in programs: OCR finds the misread lines, a Kiro agent proposes fixes, and a deterministic gate accepts a line only when it is typeable on a C64, matches the checksum the magazine printed beside it, and a real C64 core then runs the program.</em></p>
   <img src="docs/readme-hero.png" alt="SYNTAX ERROR IN 20: a singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen" width="100%">
 
   <br/>
@@ -23,12 +23,21 @@
 
 ---
 
-> **Open https://ready.edycu.dev and press _Resurrect_.** The page plays back one real, recorded Kiro run: the C64 prints
-> `?SYNTAX  ERROR IN 20`, the agent proposes a patch, the gate refuses or accepts it, and every step is re-judged in
-> your browser. No C64 ROM is served, so nothing on the site runs on a C64 live; the recording is labelled as a recording.
+> **The problem.** A 1984 type-in listing read back from a scan dies on one wrong character (`?SYNTAX  ERROR IN 20`), and an
+> LLM asked to fix it will invent a line that runs and is wrong.
 >
-> **Why Kiro:** Kiro specs built the tokenizer/checksum oracle and the MCP tool layer; a Kiro Pre Tool Use hook and the agent's permission profile sit in
-> front of the deterministic gate (`src/gate`, claude-direct): the agent has no file, shell or web tools, only six C64 tools.
+> **What this is.** A Kiro agent that may only change a line through a gate: typeable on a C64 keyboard, checksum equal to the
+> one printed, and the C64 then runs the program. "True" here means exactly that contract: consistent with the magazine's
+> printed sums and the machine's own output, not proven identical to the 1984 text.
+>
+> **What you can open.** https://ready.edycu.dev plays back three recorded real Kiro runs on pages we typeset in the 1984 format
+> (one planted typo; two faults where one runs silently; an error the C64 blames on the wrong line), re-judging each patch in
+> your browser. Then type your own fix for the broken line and the same gate judges it, or press Cheat. No C64 ROM is served,
+> so nothing on the site runs on a C64 live; the recordings are labelled as recordings.
+>
+> **Why Kiro:** Kiro specs built the tokenizer/checksum oracle and the MCP tool layer, and Kiro found three places where our own
+> spec was wrong about the machine; a Kiro Pre Tool Use hook and the agent's permission profile sit in front of the deterministic
+> gate (`src/gate`, claude-direct): the agent has no file, shell or web tools, only six C64 tools.
 
 ## 📸 See it in Action
 
@@ -36,14 +45,14 @@ The 60-second judge path:
 
 | Seconds | Do | You see |
 |---|---|---|
-| 0–10 | Open [ready.edycu.dev](https://ready.edycu.dev) | A scanned 2026-typeset listing under candle light; the run starts itself once (`?still=1` keeps it still) |
-| 10–30 | Press **Resurrect** | The C64 pane reports `?SYNTAX  ERROR IN 20`; the agent's patch is struck in red, then re-inked in blue only once the gate accepts it |
-| 30–40 | Press **Cheat** (empties the error line) | The gate refuses it |
-| 40–50 | Read the certificate | The death certificate, then the **IT LIVES** stamp, captioned as recorded, not re-run |
+| 0–20 | Open [ready.edycu.dev](https://ready.edycu.dev) | A scanned 2026-typeset listing under candle light; the recorded run plays itself once (`?still=1` keeps it still): the C64 pane reports `?SYNTAX  ERROR IN 20`, the agent's patch is struck in red, then re-inked in blue only once the gate accepts it. **Resurrect** replays it |
+| 20–30 | Press **Cheat** (empties the error line), then edit the line in **fix it yourself** and press **Judge my line** | The gate refuses the deletion; your line is ACCEPTED only if its checksum equals the printed one (no C64 runs it) |
+| 30–40 | Pick **The Ossuary** or **The Ninth Knock** | Harder recorded runs: the C64 blames line 19 while the misprint sits in DATA line 890; a DATA misprint that runs silently is caught by its checksum alone |
+| 40–50 | Read the certificate | The certificate of resurrection, then the **IT LIVES** stamp, captioned as recorded, not re-run |
 | 50–60 | Open [`/kiro`](https://ready.edycu.dev/kiro) | The Kiro hook rows and tool calls of that run, grouped as they happened |
 
 Then try [`/scan`](https://ready.edycu.dev/scan): pick a page of the June 1984 Gazette on archive.org, or upload a scan. Tesseract.js
-(self-hosted, in your tab) reads it and each line's recomputed sum is checked against the printed one and the mismatches are flagged. The repair is withheld there (see Honest limits).
+(self-hosted, in your tab) reads it and each line's recomputed sum is checked against the printed one and the mismatches are flagged. Fix a flagged line by hand and its checksum is rechecked on every keystroke; export the result as `.bas` (unverified lines commented out) plus an errata sheet. The agent's repair is withheld there (see Honest limits).
 
 ## 💡 The Problem & Solution
 
@@ -54,7 +63,8 @@ any more. An LLM asked to "fix the listing" will happily invent a line that runs
 
 **Who it is for:** anyone typing a listing back in from a scan. [`/scan`](https://ready.edycu.dev/scan) already checks
 each line of a Gazette page or your own scan against its printed `:rem` and flags the mismatches (a sum that fits only a
-misread printed digit is marked "digits misread" instead), in the browser (no install, no ROM); the gated repair is proven on recorded
+misread printed digit is marked "digits misread" instead), in the browser (no install, no ROM); you fix a flagged line by hand,
+it is rechecked as you type, and you export the `.bas` and an errata sheet. The agent's gated repair is proven on recorded
 runs (Engineering Rigor) and withheld on live pages (Honest limits, 4).
 
 ### The Solution
@@ -129,7 +139,7 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 1. The live site is **recorded playback**; no C64 ROM is hosted (rights), so "IT LIVES" there is captioned "as recorded".
 2. The 1984 magazine page and its OCR output are not in this repository (rights); that run cannot be reproduced from a clone.
 3. On the real 1984 page the title-path result is `19/28` lines source-exact against a vision-read reference; the other lines are checksum-consistent, not proven identical.
-4. `/scan` flags checksum mismatches but withholds the repair on live pages.
+4. `/scan` flags checksum mismatches and lets you fix and export lines by hand, but withholds the agent's repair on live pages. On `/`, **fix it yourself** runs your line through the gate only (typeable, checksum, edit cap); no C64 runs it.
 5. Evals and experiments use small N on one machine (N=3 per eval case, N=2–3 per experiment arm): directions, not rates.
 6. The MEGA65 Open ROMs spike failed (5/5 syntax probes unimplemented), so the C64 core is the one `c64-ready` ships.
 7. Title detection reads the program's output below the last screen row that is exactly `RUN`; a program that itself prints a row `RUN` before its title is judged as never reaching the title (measured, probe b in `.kiro/specs/bugfix-boot-detect/bugfix.md`; kept as the 1 expected-fail test).
@@ -170,6 +180,8 @@ docs/             # DX report, evals, experiments
 ## 📽️ Demo Materials
 
 [`DEMO.md`](DEMO.md) has the exact commands behind every number. Live: https://ready.edycu.dev
+
+The demo video was cut on 2026-11-25 at evals release 1, so its receipts read 492 tests and 6 of 6 model runs; the figures in this README are from the later code (release 2 added eval cases 5 and 6).
 
 ## 📄 License
 

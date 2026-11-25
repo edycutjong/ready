@@ -8,9 +8,20 @@ Live: https://ready.edycu.dev · No account, no install, no key.
    play it again.
 2. Watch the C64 pane: the authored 2026 page has a planted misprint on line 20 and the C64 reports
    `?SYNTAX  ERROR IN 20`. The agent's patch is struck in red until the gate accepts it, then re-inked in blue.
-3. The death certificate and the **IT LIVES** stamp appear at the end. The stamp is captioned "as recorded, not re-run on a
+3. The certificate of resurrection and the **IT LIVES** stamp appear at the end. The stamp is captioned "as recorded, not re-run on a
    C64 here" because no ROM is hosted (rights). In `vite dev` on your machine the same page can re-run on the C64 core.
 4. Press **Cheat**: it empties the error line while the C64 shows one (line 20; after the run, line 10). The gate refuses it.
+   Below it, **fix it yourself** holds the line the C64 first blamed, as OCR read it (`20 PRIMT™   ** THE LAST SEANCE **"`).
+   Edit it and press **Judge my line**: the agent's gate (`judgePatch` → `applyPatch`) judges it against the page as read.
+   `20 PRINT"   ** THE LAST SEANCE **"` is ACCEPTED (checksum 159 = printed 159); `20 PRINT"   ** THE LOST SEANCE **"` is
+   REFUSED by the checksum and `20 PRINT"IT LIVES"` by the 40% edit cap. The line as read is REFUSED (`™` is untypeable). Only the
+   gate judges here: no C64 runs your line.
+4b. Pick **The Ossuary** (eval case 6): the C64 says `?OUT OF DATA  ERROR IN 19`, the agent patches DATA line 890 (the page
+   prints a period for a comma: our planted misprint). Judge line 19 as read: it already matches its printed checksum, so the line the C64 blames is not
+   the misprinted one. Pick
+   **The Ninth Knock** (eval case 5): OCR broke line 40, and a planted DATA misprint in line 80 would run silently and print
+   `IT NIVES`; the agent fixes both, two accepted patches. Both are byte copies of `evidence/evals/runs/eval-case5-1-*.jsonl`
+   and `eval-case6-1-*.jsonl` (`tests/unit/judge-patch.test.ts`).
 5. Open `/kiro`: the Pre Tool Use / Agent Stop / Session Start hook rows of the recorded run.
 6. Open `/scan`: pick an archive.org Gazette page (fetched through `/api/page`) or upload a scan. Self-hosted tesseract.js reads it in
    your tab; each line is checked against its printed checksum and the mismatches are flagged. No Kiro call, 0 credits, repair withheld.
