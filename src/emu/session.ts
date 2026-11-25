@@ -78,8 +78,9 @@ export function runListing(core: C64Core, listing: CanonicalListing, spec: Listi
   let titleSeen = !run.error && (title(run.screen) || run.latched !== undefined);
   if (!titleSeen && !run.error && spec.titlePredicate.keys) {
     titleScreen = pressKeys(core, spec.titlePredicate.keys, 300);
-    titleSeen = title(titleScreen);
     const err = realError(core, titleScreen); // an error raised after the key press is still the run's diagnosis
+    // A real BASIC error after the title key means the title did not stand (the same rule as `!run.error` above).
+    titleSeen = !err && title(titleScreen);
     if (err) run = { ...run, screen: titleScreen, error: err, stoppedOn: "error" };
   }
   let postTitle: MachineFacts["postTitle"] = "not-reached";
@@ -89,8 +90,11 @@ export function runListing(core: C64Core, listing: CanonicalListing, spec: Listi
     // Clause 2 is evidence the press PRODUCED the text (a2a arch-01): read only the program's own output (below the last
     // RUN, never the typed listing above it, which usually contains the very PRINT), and fail closed when the text was
     // already on the screen before the press.
+    // `titleScreen` may be the LATCHED frame (a title shown for fewer frames than a check): the program kept running after
+    // it, so the screen right before the press is read too. Text already there on either screen fails clause 2.
     const want = spec.postTitle.screenContains;
-    const before = afterLastRun(titleScreen ?? "").includes(want);
+    const prePress = readScreenText(core);
+    const before = afterLastRun(titleScreen ?? "").includes(want) || afterLastRun(prePress).includes(want);
     postScreen = pressKeys(core, spec.postTitle.keys, 300);
     postTitle = !before && afterLastRun(postScreen).includes(want) ? "pass" : "fail";
   }

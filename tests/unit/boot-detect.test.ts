@@ -92,6 +92,20 @@ describe("Unchanged", () => {
     expect(f.titleSeen).toBe(true);
     expect(f.postTitle).toBe("fail");
   });
+  it("U3b (arch review 02): a LATCHED title, then post-title text the program printed by itself before the press, fails closed", () => {
+    // The title is gone at the check (latched), the program clears it and prints OPENED itself, then waits and ENDs on
+    // the key: the press produced nothing, so clause 2 must not pass on the latched frame alone.
+    const f = runListing(core, listing('PRINT"{CLR}THE CRYPT"', "FORI=1TO300:NEXT", 'PRINT"{CLR}OPENED"', GET(40), "END"), specFor(5));
+    expect(f.run.latched).toContain("THE CRYPT");
+    expect(f.titleSeen).toBe(true);
+    expect(f.postTitle).toBe("fail");
+  });
+  it("U3c (arch review 02): a real error after the title-key press means the title did not stand", () => {
+    const f = runListing(core, listing('PRINT"{CLR}PRESS A KEY"', GET(20), 'PRINT"{CLR}THE CRYPT"', 'PRIMT"X"'), specFor(4, [13]));
+    expect(f.run.error).toEqual({ kind: "SYNTAX", line: 40 });
+    expect(f.titleSeen).toBe(false);
+    expect(f.postTitle).toBe("not-reached");
+  });
   it("U4: title text in the typed source never counts, and no latch call happens while keys are pending", () => {
     const rem = runListing(core, listing("REM THE CRYPT", GET(20)), specFor(2), 300);
     expect(rem.titleSeen).toBe(false);
