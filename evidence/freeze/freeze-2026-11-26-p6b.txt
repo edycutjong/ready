@@ -1,0 +1,32 @@
+# Prompt/steering/gate freeze #3 — P6b eval cases 5/6 + experiments E1–E4, 2026-11-25T16:53Z
+git HEAD: 657ac889e5b0723732e1c89e8efabfe254b7e326
+
+Every P6b model run (eval cases 5 and 6, the E1–E4 arms) ran at commit 657ac88 under these hashes. One file differs from
+freeze #2: scripts/hooks/listing-context.mjs gained an experiment-only branch (READY_CONTEXT=error-line, arm E3). Its
+default output is byte-identical to freeze #2's on the knock, ossuary and line20 inputs (cmp, 2026-11-26). The agent
+profile, the steering and the gate are unchanged. Check: grep -E '^[0-9a-f]{64}  ' <this file> | shasum -a 256 -c
+
+b8f0b37eb5d65f10b5cc7a561b97a563f5b78edc32fee8a98c3399d6fd0af726  .kiro/agents/resurrector.json
+4d01b7865b335296d3f573e31acf3df84a1f2b7f6800507f581180cb912458a5  .kiro/steering/basic-modules.md
+413341152c372b10df2f9176db040936bf697fe1af2e6ccb1fe1d3eec7dc5bc8  .kiro/steering/commodore-basic-v2.md
+ff0f0ff7e0a1a6645ee3a0f06a7646a5b2ea2f38be757d9bb5eeef74e8c75ed9  .kiro/steering/gazette-notation.md
+0962b42f80ad597593322b06102850f34efd1289f4e324fff48a2ad7a7b77d78  .kiro/steering/product.md
+4e1e434a68bcbe8cfe1c73b5391013f8fa2beda4652f747c3b8a48cb84dba10b  .kiro/steering/resurrector.md
+a423358bfe523849c132c1c7d3b9ade65e1a82327f4ce5e261273d23bb9c128c  .kiro/steering/structure.md
+816337542b78b022193358ff3fe36fdd58bd7219e83e07c46eb5a9bf910d68b1  .kiro/steering/tech.md
+52b9105bf86ea8cdd8596c9ff93127be9aa6345d1a666aa86c18598f7ff404ce  .kiro/skills/petscii-notation/SKILL.md
+e582969f00e20a6b0d0626196f4fd6e8e7ac3c2309f6b2aadcc3966b9094d5e3  src/gate/checksum-gate.ts
+165a8c93b7f34eaae5ac80a413f823c2ca31b66f11db009ffcda2a75b8c7ae7c  src/gate/contract.ts
+919a7cc6b11a702660434a11730667b64e246013373e4577ed7b120b02e6c34c  src/basic/checksum.ts
+45d4e281d323daac97aedfb345dd0822428a14ebdfeef112722b01984e7cf9cb  scripts/hooks/checksum-gate.mjs
+cc2360a6d1d35ab96b88a547ea50a59aa1a3b4be1ad5585b173daa3f2498dad9  scripts/hooks/listing-context.mjs
+ec67b38116ad50cffc606ba43ad7d09dfe077120a0eefd875da407715ef0a215  scripts/hooks/prop-tests-on-save.mjs
+e10636c28c396cb07e6ac398fe68705976931524ae820e51f9cb2e14f4e4fc99  scripts/hooks/until-title.mjs
+6d6e8aa323e6c87b4b073dfabc6a9a95407d428370addc5200ee473e52248452  mcp/c64-server/render.ts
+278a236c2f10a2f0c6920cc50692f4bf856f99f858c03f400f491d9daf13cf01  mcp/c64-server/rundir.ts
+78c5385b72469680dbfe7a5deb8cc616736b0723996bdd4e2667231aedde6556  mcp/c64-server/schemas.ts
+50941d9ce273db3eed6dec8af88c46a2353ee5d7f9ac2bacf47a1729be1a8e6c  mcp/c64-server/server.ts
+64438c63d6f4cbfea40f3e9ad99fcf45cda7417d23b619af182789cd5fae820f  mcp/c64-server/tools.ts
+ae1fd63ce3147d527c7f16d483839a73830eee45f16dedd7c70ebd040d230e47  src/emu/session.ts
+32df105ce41843650cc07943cb360aad08771785908609ac56f14f26f6812b56  src/emu/core.ts
+a3e0e31b757b3680c10e68e964198872299659aa32d852291fa686547c5edb56  src/replay/replay.ts

@@ -1,0 +1,262 @@
+{
+ "since": "2026-11-25T16:53",
+ "commit": "657ac88",
+ "note": "aggregated from the harness rows; no run re-judged",
+ "stopHookSummary": {
+  "runs": 17,
+  "blockedAtLeastOnce": 13,
+  "blockedThenResurrected": 12,
+  "runnerResumed": 0
+ },
+ "table": [
+  {
+   "arm": "shipped",
+   "case": 1,
+   "n": 2,
+   "resurrected": 2,
+   "partial": 0,
+   "notResurrected": 0,
+   "targetOk": 2,
+   "iterationsP50": 5,
+   "creditsP50": 3.0022,
+   "creditsTotal": 9.009,
+   "unmetered": 0,
+   "cyclesMax": 1,
+   "caps": [],
+   "wallSP50": 94,
+   "stopHookFired": [
+    1,
+    1
+   ],
+   "stopHookBlocked": [
+    1,
+    1
+   ]
+  },
+  {
+   "arm": "shipped",
+   "case": 6,
+   "n": 3,
+   "resurrected": 3,
+   "partial": 0,
+   "notResurrected": 0,
+   "targetOk": 3,
+   "iterationsP50": 1,
+   "creditsP50": 0.9033,
+   "creditsTotal": 2.709,
+   "unmetered": 0,
+   "cyclesMax": 1,
+   "caps": [],
+   "wallSP50": 26.2,
+   "stopHookFired": [
+    1,
+    1,
+    1
+   ],
+   "stopHookBlocked": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "arm": "haiku",
+   "case": 1,
+   "n": 2,
+   "resurrected": 1,
+   "partial": 1,
+   "notResurrected": 0,
+   "targetOk": 1,
+   "iterationsP50": 11,
+   "creditsP50": 0.3874,
+   "creditsTotal": 0.387,
+   "unmetered": 1,
+   "cyclesMax": 1,
+   "caps": [
+    "iterations"
+   ],
+   "wallSP50": 189.4,
+   "stopHookFired": [
+    1,
+    1
+   ],
+   "stopHookBlocked": [
+    0,
+    1
+   ]
+  },
+  {
+   "arm": "haiku",
+   "case": 6,
+   "n": 2,
+   "resurrected": 2,
+   "partial": 0,
+   "notResurrected": 0,
+   "targetOk": 2,
+   "iterationsP50": 1,
+   "creditsP50": 0.0713,
+   "creditsTotal": 0.146,
+   "unmetered": 0,
+   "cyclesMax": 1,
+   "caps": [],
+   "wallSP50": 32.7,
+   "stopHookFired": [
+    1,
+    1
+   ],
+   "stopHookBlocked": [
+    1,
+    1
+   ]
+  },
+  {
+   "arm": "stop-hook",
+   "case": 1,
+   "n": 2,
+   "resurrected": 2,
+   "partial": 0,
+   "notResurrected": 0,
+   "targetOk": 2,
+   "iterationsP50": 5,
+   "creditsP50": 2.359,
+   "creditsTotal": 4.851,
+   "unmetered": 0,
+   "cyclesMax": 1,
+   "caps": [],
+   "wallSP50": 69.8,
+   "stopHookFired": [
+    1,
+    1
+   ],
+   "stopHookBlocked": [
+    0,
+    0
+   ]
+  },
+  {
+   "arm": "stop-hook",
+   "case": 6,
+   "n": 2,
+   "resurrected": 2,
+   "partial": 0,
+   "notResurrected": 0,
+   "targetOk": 2,
+   "iterationsP50": 1,
+   "creditsP50": 0.868,
+   "creditsTotal": 1.795,
+   "unmetered": 0,
+   "cyclesMax": 1,
+   "caps": [],
+   "wallSP50": 23.9,
+   "stopHookFired": [
+    1,
+    1
+   ],
+   "stopHookBlocked": [
+    1,
+    1
+   ]
+  },
+  {
+   "arm": "error-line",
+   "case": 1,
+   "n": 2,
+   "resurrected": 0,
+   "partial": 2,
+   "notResurrected": 0,
+   "targetOk": 0,
+   "iterationsP50": 7,
+   "creditsP50": 15.2062,
+   "creditsTotal": 31.883,
+   "unmetered": 0,
+   "cyclesMax": 3,
+   "caps": [
+    "credits",
+    "credits"
+   ],
+   "wallSP50": 435.5,
+   "stopHookFired": [
+    3,
+    2
+   ],
+   "stopHookBlocked": [
+    3,
+    2
+   ]
+  },
+  {
+   "arm": "error-line",
+   "case": 6,
+   "n": 2,
+   "resurrected": 2,
+   "partial": 0,
+   "notResurrected": 0,
+   "targetOk": 2,
+   "iterationsP50": 1,
+   "creditsP50": 3.2765,
+   "creditsTotal": 13.227,
+   "unmetered": 0,
+   "cyclesMax": 5,
+   "caps": [
+    "credits"
+   ],
+   "wallSP50": 72,
+   "stopHookFired": [
+    5,
+    2
+   ],
+   "stopHookBlocked": [
+    5,
+    1
+   ]
+  },
+  {
+   "arm": "no-basic-steering",
+   "case": 1,
+   "n": 2,
+   "resurrected": 2,
+   "partial": 0,
+   "notResurrected": 0,
+   "targetOk": 2,
+   "iterationsP50": 5,
+   "creditsP50": 2.5916,
+   "creditsTotal": 5.936,
+   "unmetered": 0,
+   "cyclesMax": 1,
+   "caps": [],
+   "wallSP50": 78.4,
+   "stopHookFired": [
+    1,
+    1
+   ],
+   "stopHookBlocked": [
+    0,
+    1
+   ]
+  },
+  {
+   "arm": "no-basic-steering",
+   "case": 6,
+   "n": 2,
+   "resurrected": 2,
+   "partial": 0,
+   "notResurrected": 0,
+   "targetOk": 2,
+   "iterationsP50": 1,
+   "creditsP50": 0.8094,
+   "creditsTotal": 1.653,
+   "unmetered": 0,
+   "cyclesMax": 1,
+   "caps": [],
+   "wallSP50": 23.3,
+   "stopHookFired": [
+    1,
+    1
+   ],
+   "stopHookBlocked": [
+    1,
+    1
+   ]
+  }
+ ]
+}
