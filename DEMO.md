@@ -15,9 +15,10 @@ Live: https://ready.edycu.dev · No account, no install, no key.
 6. Open `/scan`: pick an archive.org Gazette page (fetched through `/api/page`) or upload a scan. Self-hosted tesseract.js reads it in
    your tab; each line is checked against its printed checksum and the mismatches are flagged. No Kiro call, 0 credits, repair withheld.
    Or press **Read our authored page** (our typeset line-20 page, not a 1984 scan): in Chrome 158 it flags 2 of 12 lines, line 20 (the
-   planted `PRIMT`) and line 60 (the OCR's own misread, `THEN5®`); Playwright's bundled Chromium 147 also flags line 90. The page is
-   resampled on a canvas before OCR and that resampler differs between browser builds (`node scripts/live-scan-authored.mjs
-   https://ready.edycu.dev`, 3 runs per browser, rows identical within a build: `evidence/e2e/scan-authored.json`).
+   planted `PRIMT`) and line 60 (the OCR's own misread, `THEN5®`); Playwright's bundled Chromium 147 also flags line 90. Both builds
+   OCR the same page after a canvas resample (`imageSmoothingQuality = "high"`); we attribute the difference to that resampler, which
+   we have not isolated (`node scripts/live-scan-authored.mjs https://ready.edycu.dev evidence/e2e/scan-authored.json`, 3 runs per
+   browser, rows identical within a build).
 
 ## From a clone
 

@@ -161,7 +161,7 @@ function Desk() {
         <p class="kicker">Kiroween 2026 · Resurrection</p>
         {errText && <p class="err" data-testid="first-error">{errText}</p>}
         <h1>Syntax error in 20</h1>
-        <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A 1984 type-in listing refuses to run. The magazine printed a checksum on every line; a Kiro agent proposes the fix, a deterministic gate decides, and an emulated Commodore 64 runs the result. Below: one recorded real run, played back.</p>
+        <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A 1984 type-in listing refuses to run. The magazine printed a checksum on most program lines; a Kiro agent proposes the fix, a deterministic gate decides, and an emulated Commodore 64 runs the result. Below: one recorded real run, played back.</p>
         <p class="mode" data-testid="mode">
           {mode === "replay" && <><b>REPLAY</b> — a recorded real Kiro run, re-executed now: the gate re-judges every patch and this browser's C64 re-runs the program (replaying recorded OCR input).</>}
           {mode === "recorded" && <><b>RECORDED PLAYBACK</b> — captured screens of a recorded real Kiro run. The gate re-judges every patch in your browser; nothing runs on a C64 here (Commodore ROM rights not cleared).</>}
@@ -211,7 +211,7 @@ function Desk() {
             <section class="c64" aria-label="C64 screen">
               <pre data-testid="screen">{view.screen}</pre>
               <p class="note" data-testid="screen-caption">{mode === "replay" ? "A real C64 (c64-ready) re-ran the program in this tab." : step === 0 ? "No C64 is running here. Press Resurrect to play the recorded run." : `Recorded screen from ${String(start?.t ?? "").slice(0, 10)}'s run, shown as text. No C64 is running in this tab (ROM rights not cleared).`}</p>
-              <button data-testid="cheat" onClick={() => { const c = cheat(view.listing, result.input.spec.expectedLines, view.errLine); setCheatOut(`Cheat: empty line ${c.line} → ${c.verdict.verdict.toUpperCase()} — ${c.verdict.reason}`); }}>Cheat: delete the error line</button>
+              <button data-testid="cheat" onClick={() => { const c = cheat(view.listing, result.input.spec.expectedLines, view.errLine); const V = c.verdict.verdict.toUpperCase(), r = c.verdict.reason; setCheatOut(`Cheat: empty line ${c.line} → ${r.startsWith(V) ? r : `${V} — ${r}`}`); }}>Cheat: delete the error line</button>
               <p class="note">Cheat runs the same gate code as the Kiro Pre Tool Use hook, in your browser. It does not call Kiro.</p>
               {cheatOut && <p data-testid="cheat-out" class="refused">{cheatOut}</p>}
             </section>

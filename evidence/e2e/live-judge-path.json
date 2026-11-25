@@ -1,13 +1,13 @@
 {
  "base": "https://ready.edycu.dev",
- "date": "2026-11-24T20:27:41.998Z",
+ "date": "2026-11-25T16:05:34.420Z",
  "ok": true,
  "checks": [
   {
    "name": "first playable paint ≤ 60 s, no install, clean profile",
    "pass": true,
    "detail": {
-    "ms": 2020
+    "ms": 2106
    }
   },
   {
@@ -48,7 +48,7 @@
   {
    "name": "Cheat is refused by the gate",
    "pass": true,
-   "detail": "Cheat: empty line 10 → REFUSED — REFUSED (R4.4): replacing line 10 with an empty body deletes it. Deletion is a hard refusal; no flag or other operation can override it."
+   "detail": "Cheat: empty line 10 → REFUSED (R4.4): replacing line 10 with an empty body deletes it. Deletion is a hard refusal; no flag or other operation can override it."
   },
   {
    "name": ".PRG download works",
