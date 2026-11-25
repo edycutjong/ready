@@ -544,7 +544,7 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
   <div class="body">
     <div class="r8">
       <div class="rc"><p class="num">{{tests}}</p><p>tests passing on <code>{{tests_commit}}</code></p></div>
-      <div class="rc"><p class="num">6<small>/ 6</small></p><p>model runs RESURRECTED (2 cases × 3)</p></div>
+      <div class="rc"><p class="num">12<small>/ 12</small></p><p>model runs RESURRECTED (4 cases × 3)</p></div>
       <div class="rc"><p class="num">{{gate_p95}}<small>ms</small></p><p>gate p95, in node, N={{gate_n}}</p></div>
     </div>
     <div class="e0">
@@ -560,7 +560,7 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
     </div>
     <p class="small">On the authored page, search alone fixes its one failing line.</p>
   </div>
-  <aside class="notes">All numbers are measured; the raw 1984 page and the three case-1 recordings are withheld (rights), so those figures rest on counts in the repo. Six model runs across two eval cases reached RESURRECTED and re-judge with zero mismatches. On the real 1984 page plain search fixed 3 of 18 failing lines and the agent made all 18 checksum-consistent; on our authored page search alone is enough.</aside>
+  <aside class="notes">All numbers are measured; the raw 1984 page and the three case-1 recordings are withheld (rights), so those figures rest on counts in the repo. Twelve model runs across four eval cases reached RESURRECTED, and every recording on disk re-judges with zero mismatches. On the real 1984 page plain search fixed 3 of 18 failing lines and the agent made all 18 checksum-consistent; on our authored page search alone is enough.</aside>
 </section>
 
 <!-- 9 · limits -->
@@ -577,7 +577,7 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
       <blockquote>Evals and experiments use small N on one machine (N=3 per eval case, N=2–3 per experiment arm): directions, not rates.<cite>Honest limits 5</cite></blockquote>
     </div>
   </div>
-  <aside class="notes">Stet is the proofreader's mark for "let it stand", and these limits stand. No C64 ROM is served, so the site plays a recording, and the 1984 page and its OCR output are not in the repository. On the real magazine page, in the two spike G runs, only 19 of 28 lines match a vision-read reference exactly. And two eval cases have not been run yet.</aside>
+  <aside class="notes">Stet is the proofreader's mark for "let it stand", and these limits stand. No C64 ROM is served, so the site plays a recording, and the 1984 page and its OCR output are not in the repository. On the real magazine page, in the two spike G runs, only 19 of 28 lines match a vision-read reference exactly. And evals and experiments use small N: directions, not rates.</aside>
 </section>
 
 <!-- 10 · see it rise -->

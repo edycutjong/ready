@@ -21,7 +21,7 @@ consistent, TITLE-PATH RESURRECTED in both attempts (N = 2), 19/28 source-exact 
 On an easy page, search is enough; on the real 1984 page it is not.
 
 ## E1–E4 — what changes the outcome? (2026-11-26, 18 new runs + reused shipped rows, 68.89 credits — a lower bound: one Haiku run was unmetered)
-**Protocol** (`kiro-plan.md` §3, harness `scripts/eval-agents.mjs --model --case <1|6> --arm <arm> --n 2`): every arm
+**Protocol** (harness `scripts/eval-agents.mjs --model --case <1|6> --arm <arm> --n 2`): every arm
 runs eval case 1 (the June 1984 Random Number Test title path, tier-C input kept local) and case 6 (the authored
 `?OUT OF DATA IN 19` page), N=2 per case. One thing changes per arm against `shipped` (Sonnet 5.5, whole-listing
 context with printed checksums, steering, runner-driven loop). Every run went through the real recorder, the real
@@ -49,10 +49,10 @@ Table: `node scripts/experiments-table.mjs` → `evidence/experiments/e1-e4.json
 \* p50 with N=2 is the lower of the two runs; `credits total` gives the sum.
 
 **What the runs say (N=2 per cell: directions, not rates):**
-- **E3 is the large effect at this N.** With only the error line in view, case 1 ended BOOTED-PARTIAL twice at 15.21 and 16.68
+- **E3 is the large difference at this N (a direction, not a cause).** With only the error line in view, case 1 ended BOOTED-PARTIAL twice at 15.21 and 16.68
   credits (both stopped by the 8-credit cap, which is checked between cycles, so a cycle overshoots it), against 2 of 2
   RESURRECTED at 3.00 and 6.01 for `shipped`. On case 6 it still reached RESURRECTED, but at 3.28 and 9.95 credits
-  against about 0.9. On these inputs, taking away the whole-listing context with printed checksums cost the 1984 page its resurrection in 2 of 2 runs and made the authored page 4–11× dearer.
+  against about 0.9. Both case-1 runs stopped at the credit cap with 17 of the 18 failing lines accepted, so they ran out of budget rather than being shown unable to finish; case 6 cost 3.6× and 11× the `shipped` credits (N=2).
 - **E1:** Haiku 5.5 is an order of magnitude cheaper (case 6: 0.07 per run) and solved case 6 twice, but on the 1984
   page it resurrected 1 of 2 and the other run hit the 15-iteration cap (BOOTED-PARTIAL; its credits were not reported,
   so that cell's total is a lower bound).
@@ -65,7 +65,7 @@ Table: `node scripts/experiments-table.mjs` → `evidence/experiments/e1-e4.json
 **`/goal` (two tries, qualitative, not an arm):** sent as the prompt of a headless `kiro-cli chat --v3 --no-interactive`
 run on case 5, twice (with and without the listing context): each time the turn ended in about 4 s with no tool call
 and no credits reported (`evidence/experiments/goal-try-knock*.jsonl`). On kiro-cli 3.6.0, `/goal` did nothing in a
-headless session. It also inverts this project's rule (the agent verifies its own goal; here code decides).
+headless session. Per Kiro's `/goal` documentation the agent verifies its own goal; in this project code decides, so `/goal` would not replace the gate even where it runs.
 
 **Workflow (`.kiro/workflows/resurrect-ab.workflow.yaml`):** one experiment's two arms in parallel plus an aggregator.
 Ran once headless through `run_workflow` (case 6, shipped vs haiku, N=1): both arms RESURRECTED, all three steps

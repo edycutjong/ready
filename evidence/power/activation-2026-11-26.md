@@ -10,6 +10,7 @@ its `checksum_line` once. `--trust-tools=*checksum_line*`, Sonnet 5.5, effort lo
 | 2 | scratch dir with no `.kiro/` (repo code linked in) | the same two | registered as `power-c64-resurrect-c64`; kiro-cli logged `Failed to connect … Connection closed`; no Power tool in the catalogue | 0.481 |
 
 Result: with the Power installed, both skills appear in the session catalogue (we did not observe a keyword loading a
-skill body); the Power's MCP server does not start. Suspected cause, not tested: its server path is relative
-(`mcp/c64-server/server.ts`) and may not resolve from where kiro-cli spawns a Power's server. The
+skill body); the Power's MCP server does not start. Suspected causes, not tested: its server path is relative
+(`mcp/c64-server/server.ts`) and may not resolve from where kiro-cli spawns a Power's server, and the server exits
+when `RUN_DIR` does not name an existing directory. The
 `resurrector` agent therefore keeps using the workspace MCP config, and the Power is packaging for the skills only.

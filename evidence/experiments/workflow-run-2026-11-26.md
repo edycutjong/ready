@@ -4,7 +4,8 @@ Recipe: `.kiro/workflows/resurrect-ab.workflow.yaml` (a `parallel` node with two
 `node scripts/eval-agents.mjs --model --case <case> --arm <arm> --n <n>`, then a `wf-planner` aggregate step).
 
 1. **Validation.** Asked headless to run `validate_workflow`: kiro-cli 3.6.0 offers no such tool in a `--no-interactive`
-   session (it lists `run_workflow`, `inspect_workflow`, `update_workflow`). It did list the recipe in the `run_workflow`
+   session (it lists `run_workflow`, `inspect_workflow`, `update_workflow`; the session's reply is in
+   `validate-workflow-headless.json`). It did list the recipe in the `run_workflow`
    catalogue with inputs `case`, `armA`, `armB`, `n`, so the file was discovered (the run in step 2 shows it also parsed). (0.267 credits)
 2. **Run.** Launched with `case=6, armA=shipped, armB=haiku, n=1` through `run_workflow`, followed with
    `inspect_workflow`. Run id `wf_b8f32d75b82c5e02`: `armA`, `armB` and `aggregate` all completed; no step paused for

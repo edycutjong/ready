@@ -1,10 +1,10 @@
 {
- "t": "2026-11-25T18:04:32.450Z",
+ "t": "2026-11-25T18:45:23.482Z",
  "node": "v22.22.0",
  "n": 5,
- "staticNoLatchMs": 7411,
- "staticLatchMs": 7446,
- "heroRunListingMs": 1142,
- "knockRunListingMs": 407,
- "latchOverhead": 1
+ "staticNoLatchMs": 8317,
+ "staticLatchMs": 8386,
+ "heroRunListingMs": 1265,
+ "knockRunListingMs": 450,
+ "latchOverhead": 1.01
 }

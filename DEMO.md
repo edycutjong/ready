@@ -27,7 +27,7 @@ npm ci
 node scripts/vendor-ocr.mjs                  # self-hosted tesseract.js worker, needed for /scan
 npm test                                   # 44 files, 508 tests + 1 expected fail
 node scripts/bench.mjs                     # p50/p95 → evidence/bench/bench-<date>.json (N stated per row)
-node scripts/eval-agents.mjs --deterministic   # 0 credits: cases 2, 4, 7, 8, 9
+node scripts/eval-agents.mjs --deterministic   # 0 credits: cases 2, 4, 7, 8, 9, 5d, 6d
 node scripts/e0-search.mjs --input fixtures/authored/line20-input.json --out /tmp/e0.json   # experiment E0 baseline, authored row only (0 credits)
 node scripts/live-judge-path.mjs https://ready.edycu.dev out.json   # the judge path on the deployed URL
 node scripts/verify_offline.mjs            # OCR + checksum + emulator + REPLAY with network blocked
@@ -44,7 +44,7 @@ the hero run (`public/runs/`) and the case-3, 5 and 6 runs (`evidence/evals/runs
 | gate p50 0.01 ms (p95 0.03) · boot p50 829 ms · REPLAY p50 2295 ms · OCR p50 842 ms (N = 2000 / 10 / 10 / 5) | `evidence/bench/bench-2026-11-25.json` |
 | evals: 9 of 9 cases run and passing; 12 of 12 model runs RESURRECTED | `evidence/evals/evals-2026-11-2{4,5}.jsonl`, `docs/EVALS.md` |
 | experiments E1–E4 (N=2 per arm) | `node scripts/experiments-table.mjs` → `evidence/experiments/e1-e4.json`, `docs/EXPERIMENTS.md` |
-| every recording re-judges, 0 mismatches | `node scripts/rejudge-runs.mjs` |
+| every recording re-judges, 0 mismatches (35 on the builder's machine; a clone has only the 20 public ones, and `experiments-table.mjs` needs the local tier-C files) | `node scripts/rejudge-runs.mjs` |
 | E0: search fixed 3 of 18 failing lines on the real page; the agent 18 of 18 (N=2) | `evidence/experiments/e0.json`, `docs/EXPERIMENTS.md` |
 | Live judge path, interaction and first-viewport checks | `evidence/e2e/` |
 | Kiro credits per session | `docs/DX-REPORT.md` |

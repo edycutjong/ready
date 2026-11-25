@@ -4,7 +4,9 @@ git HEAD: 657ac889e5b0723732e1c89e8efabfe254b7e326
 Every P6b model run (eval cases 5 and 6, the E1–E4 arms) ran at commit 657ac88 under these hashes. One file differs from
 freeze #2: scripts/hooks/listing-context.mjs gained an experiment-only branch (READY_CONTEXT=error-line, arm E3). Its
 default output is byte-identical to freeze #2's on the knock, ossuary and line20 inputs (cmp, 2026-11-26). The agent
-profile, the steering and the gate are unchanged. Check: grep -E '^[0-9a-f]{64}  ' <this file> | shasum -a 256 -c
+profile, the steering and the gate are unchanged. Check at 657ac88: for each line, `git show 657ac88:<file> | shasum -a 256`. At HEAD src/emu/core.ts and src/emu/session.ts differ
+(bugfix-boot-detect, 4cea201 + ef82fea, after every P6b model run); all 35 recordings re-judge with 0 mismatches on that code
+(evidence/boot-detect/rejudge-after.json).
 
 b8f0b37eb5d65f10b5cc7a561b97a563f5b78edc32fee8a98c3399d6fd0af726  .kiro/agents/resurrector.json
 4d01b7865b335296d3f573e31acf3df84a1f2b7f6800507f581180cb912458a5  .kiro/steering/basic-modules.md

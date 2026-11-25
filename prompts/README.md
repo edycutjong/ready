@@ -1,6 +1,6 @@
 # Prompts sent to Kiro, in order
 
-Every prompt sent to Kiro (kiro-cli) while building this project, in order. One line per file: prompt, what it produced,
+Every prompt sent to Kiro (kiro-cli) through phase P1c of the build, in order (the P6b sessions — bugfix spec, bugfix tasks 1/4/5, Power activation, workflow run — are added at the final publish). One line per file: prompt, what it produced,
 build commit. Credits are what `kiro-cli` reported (`credits.usage`); the full ledger and who-wrote-what is in
 [`docs/DX-REPORT.md`](../docs/DX-REPORT.md).
 

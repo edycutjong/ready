@@ -1,0 +1,4 @@
+{
+ "source": "kiro-cli 3.6.0 headless, Kiro turn 16 (validate_workflow request), 2026-11-26",
+ "finalText": "I couldn't run `validate_workflow`, because no tool by that name exists in this session. The tools I have for workflows are `run_workflow`, `inspect_workflow` and `update_workflow`. `run_workflow` is the only one that validates a file, and it does so by starting the run, which you told me not to do.\\n\\nSo I have no errors or warnings to report for `.kiro/workflows/resurrect-ab.workflow.yaml`. I made no tool calls, launched nothing and edited no files.\\n\\nThe workflow does appear in the `run_workflow` catalog as a workspace recipe with inputs `case`, `armA`, `armB` and `n`. That only shows it was discovered. It doesn't show the file is valid.\\n\\nIf you can give me a validator, I'll run it. A "
+}
