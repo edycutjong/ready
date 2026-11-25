@@ -1,13 +1,13 @@
 {
  "base": "https://ready.edycu.dev",
- "date": "2026-11-25T19:52:42.613Z",
+ "date": "2026-11-25T20:34:13.806Z",
  "ok": true,
  "checks": [
   {
    "name": "first playable paint ≤ 60 s, no install, clean profile",
    "pass": true,
    "detail": {
-    "ms": 1884
+    "ms": 1828
    }
   },
   {
@@ -51,6 +51,14 @@
    "detail": "Cheat: empty line 10 → REFUSED (R4.4): replacing line 10 with an empty body deletes it. Deletion is a hard refusal; no flag or other operation can override it."
   },
   {
+   "name": "fix it yourself: the agent's line 20 is ACCEPTED, a line that breaks the printed checksum is REFUSED",
+   "pass": true,
+   "detail": [
+    "Your line 20 → ACCEPTED: 20: checksum 159 = printed 159",
+    "Your line 20 → REFUSED (R4.15): line 20 checksum mismatch — printed :rem 159, computed 173. The magazine's checksum says this is not the printed line."
+   ]
+  },
+  {
    "name": ".PRG download works",
    "pass": true,
    "detail": "line20-recorded.prg"
@@ -82,6 +90,24 @@
    "name": "/ autoplay: 0 console errors, 0 failed or 4xx/5xx requests",
    "pass": true,
    "detail": []
+  },
+  {
+   "name": "knock-case5: plays to its recorded RESURRECTED certificate and the program's own post-title screen, 0 errors",
+   "pass": true,
+   "detail": {
+    "errs": [],
+    "prefill": "40 GETK$:IFK$=\"\"THEN4®",
+    "mine": ""
+   }
+  },
+  {
+   "name": "ossuary-case6: plays to its recorded RESURRECTED certificate and the program's own post-title screen, 0 errors; the line the C64 blamed (19), judged as read, already matches its printed checksum",
+   "pass": true,
+   "detail": {
+    "errs": [],
+    "prefill": "19 FORI=1TOC:READA:S=S+A:NEXT",
+    "mine": "Line 19, as read, already matches its printed checksum (135 = 135): the misprint is not in this line."
+   }
   },
   {
    "name": "/kiro lists ≥ 1 real hook firing from the recorded run",
