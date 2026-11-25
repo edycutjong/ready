@@ -1,0 +1,134 @@
+{
+ "base": "https://ready.edycu.dev",
+ "date": "2026-11-25T21:15:06.754Z",
+ "ok": true,
+ "checks": [
+  {
+   "name": "first playable paint ≤ 60 s, no install, clean profile",
+   "pass": true,
+   "detail": {
+    "ms": 1883
+   }
+  },
+  {
+   "name": "mode is stated (RECORDED PLAYBACK while ROM rights are not cleared)",
+   "pass": true,
+   "detail": {
+    "mode": "recorded"
+   }
+  },
+  {
+   "name": "the recorded run plays to its end",
+   "pass": true,
+   "detail": {
+    "steps": 3
+   }
+  },
+  {
+   "name": "certificate shows the recorded RESURRECTED result",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "name": "IT LIVES stamp lands, captioned 'as recorded' when nothing was re-run",
+   "pass": true,
+   "detail": {
+    "mode": "recorded"
+   }
+  },
+  {
+   "name": "C64 pane shows the program's own screen, not the tool report",
+   "pass": true,
+   "detail": [
+    " THE SPIRITS ANSWER",
+    " THE PAGE",
+    " THE CHECKSUM"
+   ]
+  },
+  {
+   "name": "Cheat is refused by the gate",
+   "pass": true,
+   "detail": "Cheat: empty line 10 → REFUSED (R4.4): replacing line 10 with an empty body deletes it. Deletion is a hard refusal; no flag or other operation can override it."
+  },
+  {
+   "name": "fix it yourself: the agent's line 20 is ACCEPTED, a line that breaks the printed checksum is REFUSED",
+   "pass": true,
+   "detail": [
+    "Your line 20 → ACCEPTED: 20: checksum 159 = printed 159",
+    "Your line 20 → REFUSED (R4.15): line 20 checksum mismatch — printed :rem 159, computed 173. The magazine's checksum says this is not the printed line."
+   ]
+  },
+  {
+   "name": ".PRG download works",
+   "pass": true,
+   "detail": "line20-recorded.prg"
+  },
+  {
+   "name": ".PRG loads at $0801 and lists the run's page-inventory lines in order (the hero has no orphan; tests/unit/replay.test.ts proves the orphan filter)",
+   "pass": true,
+   "detail": {
+    "lines": 12,
+    "want": 12
+   }
+  },
+  {
+   "name": "judge path page: 0 console errors, 0 failed or 4xx/5xx requests",
+   "pass": true,
+   "detail": []
+  },
+  {
+   "name": "/ autoplays: the caption never asks to press Resurrect while the run plays",
+   "pass": true,
+   "detail": "No C64 is running here. Playing the recorded run."
+  },
+  {
+   "name": "/ autoplay reaches the RESURRECTED certificate",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "name": "/ autoplay: 0 console errors, 0 failed or 4xx/5xx requests",
+   "pass": true,
+   "detail": []
+  },
+  {
+   "name": "knock-case5: plays to its recorded RESURRECTED certificate and the program's own post-title screen, 0 errors",
+   "pass": true,
+   "detail": {
+    "errs": [],
+    "prefill": "40 GETK$:IFK$=\"\"THEN4®",
+    "mine": ""
+   }
+  },
+  {
+   "name": "ossuary-case6: plays to its recorded RESURRECTED certificate and the program's own post-title screen, 0 errors; the line the C64 blamed (19), judged as read, already matches its printed checksum",
+   "pass": true,
+   "detail": {
+    "errs": [],
+    "prefill": "19 FORI=1TOC:READA:S=S+A:NEXT",
+    "mine": "Line 19, as read, already matches its printed checksum (135 = 135): the misprint is not in this line."
+   }
+  },
+  {
+   "name": "/kiro lists ≥ 1 real hook firing from the recorded run",
+   "pass": true,
+   "detail": [
+    "19:56:44hook listing-context (runner-context) exit 0",
+    "19:56:47hook listing-context (kiro-session-start) exit 0"
+   ]
+  },
+  {
+   "name": "no ROM-bearing WASM is served",
+   "pass": true,
+   "detail": 404
+  },
+  {
+   "name": "/api/page serves the real archive.org page image",
+   "pass": true,
+   "detail": {
+    "status": 200,
+    "bytes": 390309
+   }
+  }
+ ]
+}
