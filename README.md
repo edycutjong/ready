@@ -48,7 +48,7 @@ Then try [`/scan`](https://ready.edycu.dev/scan): pick a page of the June 1984 G
 ## 💡 The Problem & Solution
 
 ### The Problem
-COMPUTE!'s Gazette (1984) printed programs for you to type in, and every line carried a checksum (`:rem NNN`). Scans of
+COMPUTE!'s Gazette (1984) printed programs for you to type in, and its program lines carried a checksum (`:rem NNN`). Scans of
 those pages are OCR'd with errors, and a single wrong character gives `?SYNTAX  ERROR IN 20` on a machine nobody owns
 any more. An LLM asked to "fix the listing" will happily invent a line that runs and is wrong.
 
@@ -92,7 +92,7 @@ Kiro is the engine, not the decoration. What each `.kiro/` artefact did, and who
 | Hook `until-title` (Agent Stop) | Forces one more turn until the contract is RESURRECTED, only unfixable lines remain, or a cap hits (15 patches, 8 credits, 600 s); `scripts/record-run.mjs` resumes the session between cycles (one forced turn per prompt) | `evidence/spikes/spike-K2.md` |
 | Hook `listing-context` (Session Start) | Hands the agent the flagged listing | `scripts/hooks/` |
 | Hook `prop-tests-on-save` (File Save) | After a save under `src/basic` or `src/gate`, runs `tests/prop` | `evidence/hooks/file-save.jsonl` (4 firings, 1 clean pass) |
-| `.kiro/steering/` (7 files; 6 claude-direct, `resurrector.md` written by Kiro in the resurrect-loop session) | Commodore BASIC V2, Gazette notation, the resurrector's rules | `.kiro/steering/` |
+| `.kiro/steering/` (7 files; 6 claude-direct, 4 of them in place before Kiro's first session, `product.md` and `commodore-basic-v2.md` committed after its first two; `resurrector.md` written by Kiro in the resurrect-loop session) | Commodore BASIC V2, Gazette notation, the resurrector's rules | `.kiro/steering/` |
 | `.kiro/skills/petscii-notation` | PETSCII control-code notation the agent must use | `.kiro/skills/` |
 
 Credits are metered by `kiro-cli` and logged per session in [`docs/DX-REPORT.md`](docs/DX-REPORT.md), including two spec lines

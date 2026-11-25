@@ -8,6 +8,8 @@ reported here and in `evidence/spikes/` as counts only.
 ## Build day 1 — Wed 25 Nov 2026 (WIB)
 
 ### Kiro sessions
+Every Kiro session in this report ran in kiro-cli. The Kiro IDE, Kiro Web and Kiro Crew were not used.
+
 | # | Surface | What | Model | Credits | Wall |
 |---|---|---|---|---|---|
 | 1 | `kiro-cli chat --no-interactive` (engine v3) | Feature spec `checksum-oracle`: EARS requirements, an analyze-requirements pass (contradictions resolved in the text), design with 7 correctness properties, 12 tasks | claude-sonnet-5.5 | 22.35 | 1162 s |
@@ -63,7 +65,7 @@ only untypeable characters passed the deletion check) and is now refused. All fo
 Kiro (kiro-cli sessions, prompts kept with the build log): the `checksum-oracle` spec, `src/basic/{types,keywords,
 tokenizer,notation,checksum}.ts` and their tests. **claude-direct** (Claude Code, not Kiro): the steering files and
 hook definitions (commit `fbfac9f`, titled "Kiro steering …", means steering files *for* Kiro: they were written
-claude-direct before Kiro's first session, whose prompt tells it to read `.kiro/steering/*.md` first),
+claude-direct; four of the seven files existed before Kiro's first session, whose prompt tells it to read `.kiro/steering/*.md` first, and `product.md` and `commodore-basic-v2.md` were committed in `832e72d`, after its first two sessions),
 `src/emu/*`, the recorder (`runner/`, `scripts/record-run.mjs`), the day-1 probe MCP server, the
 gate and contract (`src/gate/*`, tasks 7–12), the property tests for tasks 9–12, the trailing-blank and
 `controlOutsideQuotes` additions to `src/basic`, CI/deploy config and this report. Commit `18aaa84` says "production

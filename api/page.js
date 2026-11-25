@@ -18,7 +18,7 @@ export async function GET(request) {
   const id = q.get("id") ?? "";
   const n = Number(q.get("n"));
   const wRaw = q.get("w");
-  // Own keys only: a plain-object lookup would let `constructor`, `toString` or `__proto__` through (a2a arch-01).
+  // Own keys only: a plain-object lookup would let `constructor`, `toString` or `__proto__` through (arch review 01).
   const items = /** @type {Record<string, { maxPage: number; widths: number[] }>} */ (pages.items);
   if (!Object.hasOwn(items, id)) return json(400, { error: "item not allow-listed" });
   const item = items[id];
@@ -31,7 +31,7 @@ export async function GET(request) {
   const url = `https://archive.org/download/${id}/page/n${n}${w ? `_w${w}` : ""}.jpg`;
   const t0 = Date.now();
   // Redirects are followed by hand so every hop is checked BEFORE it is fetched: archive.org sends /download/ to its own
-  // ia*.us.archive.org hosts, and nothing else may be contacted (a2a arch-01). One 8 s budget covers every hop.
+  // ia*.us.archive.org hosts, and nothing else may be contacted (arch review 01). One 8 s budget covers every hop.
   const signal = AbortSignal.timeout(8000);
   let target = url;
   /** @type {Response} */ let up;

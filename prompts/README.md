@@ -8,7 +8,7 @@ build commit. Credits are what `kiro-cli` reported (`credits.usage`); the full l
 |---|---|---|---|
 | `01-checksum-oracle-spec.md` | feature spec `checksum-oracle`: EARS requirements, analyze-requirements pass, design, tasks | `6969675` | 22.35 |
 | `02-probe-hooks-mcp.md` | mechanism probe: the Pre Tool Use hook refuses an empty-body patch through the `c64` MCP tools | evidence in `evidence/spikes/` | 0.73 |
-| `03-probe-stop-hook.md` | probe: Stop hook behaviour, 3 cycles | evidence in `evidence/spikes/` | 0.06 |
+| `03-probe-stop-hook.md` | probe: Stop hook asked to block 3 times; it fired once | evidence in `evidence/spikes/` | 0.06 |
 | `04-probe-meter-v3.md` | probe: credit metering, `--v3` | evidence in `evidence/spikes/` | 0.03 |
 | `05-probe-meter-plain.md` | probe: credit metering, plain `--no-interactive` | evidence in `evidence/spikes/` | 0.01 |
 | `06-probe-cheat-refusal.md` | probe: the checksum gate refuses a cheating patch | evidence in `evidence/spikes/` | 0.13 |

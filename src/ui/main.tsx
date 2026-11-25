@@ -69,7 +69,7 @@ function Desk() {
   const [step, setStep] = useState(0);
   const [cheatOut, setCheatOut] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
-  // One playback timer at a time, owned here: a new stone, a second press or unmount stops it (a2a arch-01).
+  // One playback timer at a time, owned here: a new stone, a second press or unmount stops it (arch review 01).
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stopTick = () => { if (tickRef.current !== null) { clearInterval(tickRef.current); tickRef.current = null; } };
   useEffect(() => stopTick, []);
@@ -98,7 +98,7 @@ function Desk() {
   useEffect(() => {
     const ref = runs.find((r) => r.id === sel);
     if (!ref) return;
-    // A slower earlier load must never paint over the stone just chosen (a2a arch-01): clear, then ignore stale replies.
+    // A slower earlier load must never paint over the stone just chosen (arch review 01): clear, then ignore stale replies.
     let live = true;
     stopTick(); setPlaying(false); setEvents(null); setResult(null); setStep(0); setErr(null);
     fetch(ref.file).then((r) => r.text()).then((t) => { if (live) setEvents(parseJsonl(t)); }).catch(() => { if (live) setErr(`run ${ref.id} unavailable`); });

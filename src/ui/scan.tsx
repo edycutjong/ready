@@ -53,7 +53,7 @@ export function ScanView() {
       await run(await r.blob(), `archive.org ${ITEM} n${page} (via /api/page)`);
     } catch (e) { setBusy(null); setMsg(`scan unavailable — ${(e as Error).message}. "Read our authored page" works without archive.org, and the recorded run on the first page still plays.`); }
   }
-  /** a2a arch-01: a page that never depends on archive.org — the 2026 page we typeset ourselves (the hero run's input). */
+  /** arch review 01: a page that never depends on archive.org — the 2026 page we typeset ourselves (the hero run's input). */
   async function readAuthored() {
     setMsg(null); setBusy("loading our authored page…");
     try {

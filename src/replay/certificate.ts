@@ -33,7 +33,7 @@ export type Provenance = {
 export type AppliedOps = readonly { op?: unknown; type?: unknown; lineno?: unknown; new_lineno?: unknown; new_body?: unknown }[];
 
 /**
- * Final line number → the input line it started as, carried through every applied renumber (a2a arch-01). A batch
+ * Final line number → the input line it started as, carried through every applied renumber (arch review 01). A batch
  * renumbers atomically and the gate keeps numbers unique (R4.10), so identity is exact; a number never renumbered
  * maps to itself. Without this a renumbered line read as "added during the run" and dropped out of the errata.
  */
@@ -87,7 +87,7 @@ export function errata(inputLines: readonly CanonicalLine[], final: CanonicalLis
 }
 
 export function errataText(title: string, heading: string, rows: readonly Erratum[]): string {
-  // Say what each change rests on (a2a arch-01 QA): only a "verified" row matched the :rem printed on the page.
+  // Say what each change rests on (arch review 01 QA): only a "verified" row matched the :rem printed on the page.
   const by = (s: Erratum["status"]) => rows.filter((r) => r.status === s).length;
   const parts: [number, string][] = [
     [by("verified"), "matched the checksum printed on the page"],

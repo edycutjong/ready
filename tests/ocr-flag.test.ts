@@ -28,7 +28,7 @@ describe("ASSISTED flags (browser OCR → checksum)", () => {
     expect(errataSheet(lines)).toMatch(/line 30: printed :rem 1/);
     expect(bas).not.toMatch(/DIGIT-MISREAD/);
   });
-  it("a digit-misread line is never called verified: the header names it (a2a arch-01)", () => {
+  it("a digit-misread line is never called verified: the header names it (arch review 01)", () => {
     const l = flagLine(20, body, 0, false);
     const misread = { ...l, state: "digit-misread" as const };
     const bas = basExport([misread]);
@@ -37,7 +37,7 @@ describe("ASSISTED flags (browser OCR → checksum)", () => {
     expect(bas).not.toMatch(/verified against the magazine checksum/);
     expect(bas).toMatch(/as printed, except the DIGIT-MISREAD lines named below/);
   });
-  it("/scan names an untypeable character instead of 'printed X, computed X' (a2a arch-01 QA)", () => {
+  it("/scan names an untypeable character instead of 'printed X, computed X' (arch review 01 QA)", () => {
     const good = 'PRINT "HI"';
     const l = flagLine(10, 'PRINT \u2122HI"', flagLine(10, good, 0).computed);
     expect(l).toMatchObject({ state: "mismatch", untypeable: "\u2122" });

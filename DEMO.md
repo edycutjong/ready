@@ -36,7 +36,7 @@ the hero run (`public/runs/`) and the case-3 runs (`evidence/evals/runs/`) are c
 | Claim | File |
 |---|---|
 | 492 tests, 41 files | `npm test` on HEAD |
-| gate p50 0.009 ms · boot p50 641 ms · REPLAY p50 2485 ms · OCR p50 903 ms (N = 2000 / 10 / 10 / 5) | `evidence/bench/bench-2026-11-24.json` |
+| gate p50 0.01 ms (p95 0.03) · boot p50 829 ms · REPLAY p50 2295 ms · OCR p50 842 ms (N = 2000 / 10 / 10 / 5) | `evidence/bench/bench-2026-11-25.json` |
 | evals: 7 of 9 cases run and passing; 6 of 6 model runs RESURRECTED | `evidence/evals/evals-2026-11-24.jsonl`, `docs/EVALS.md` |
 | E0: search fixed 3 of 18 failing lines on the real page; the agent 18 of 18 (N=2) | `evidence/experiments/e0.json`, `docs/EXPERIMENTS.md` |
 | Live judge path, interaction and first-viewport checks | `evidence/e2e/` |

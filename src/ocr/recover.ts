@@ -10,7 +10,7 @@ import { computeChecksum } from "../basic/checksum.ts";
 import { parseBody } from "../basic/notation.ts";
 
 /**
- * Two readings are one line when the C64 would store the same bytes (a2a arch-01). The checksum ignores every space
+ * Two readings are one line when the C64 would store the same bytes (arch review 01). The checksum ignores every space
  * (R2.2), but a space inside quotes is typed (R1.4); stripping all whitespace let two readings that differ only in a
  * quoted space count as one and "recover" the first.
  */

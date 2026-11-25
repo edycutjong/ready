@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * Experiment E0 (Kiro plan §3, a2a r01) — "does a model add anything over search?" A NON-LLM baseline on the same
+ * Experiment E0 (Kiro plan §3, review r01) — "does a model add anything over search?" A NON-LLM baseline on the same
  * run input the agent gets: for every line failing its printed checksum, enumerate edits from the MEASURED OCR
  * confusions (gazette-notation steering; kill test REPORT row 2) — 1 or 2 substitutions, or 1 deletion / dropped-quote
  * insertion — and line-number readings from the page inventory; keep candidates whose Gazette checksum equals the
  * printed one and that pass the gate's 40% cap. One candidate → applied through the gate. Several → the real C64
  * decides between them (re-run each; never accept the first collision); still several → the line is left unfixed.
- * A comparison arm only: no search pre-pass ships in the product (a2a r02). 0 credits.
+ * A comparison arm only: no search pre-pass ships in the product (review r02). 0 credits.
  *   node scripts/e0-search.mjs --input <input.json> [--out <result.json>]
  */
 import { readFileSync, writeFileSync } from "node:fs";
