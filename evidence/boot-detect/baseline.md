@@ -11,6 +11,8 @@ one reused core, delays run in order (`runListing`, title `THE CRYPT`, post-titl
 
 The middle row's failures came from a reused core: rows below the new RUN echo still held the previous run's output, the
 per-frame latch caught that stale title, and its stale `OPENED` made the post-title press look pre-satisfied (clause 2
-fails closed). The same stale latch produced 4 per-run fact mismatches in one local recording (`rejudge` before the CLR
-fix: 32/33). Final: `rejudge-before.json` 33/33 and `rejudge-after.json` 33/33, 0 mismatches (18 public + 15 tier-C
-recordings; tier-C rows carry counts only). Cost: `cost.json` (latch overhead 1.00× on 3000 static frames, N=5).
+fails closed). On the code of that middle row, the re-judge also flagged 4 per-run fact differences in one local
+recording (console output, not saved). Both are gone in the final code. Re-judge of every recording on disk (20 public,
+15 tier-C; tier-C rows carry counts only): `rejudge-before.json` at the pre-fix commit `90cbeec` 35/35, 0 mismatches;
+`rejudge-after.json` at `3e13355` (final code) 35/35, 0 mismatches. Cost: `cost.json` (latch overhead 1.00× on 3000
+static frames, N=5; `scripts/bench-boot-detect.mjs`).

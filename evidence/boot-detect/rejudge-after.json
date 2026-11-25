@@ -1,12 +1,14 @@
 {
- "t": "2026-11-25T18:09:11.810Z",
+ "t": "2026-11-25T18:34:41.661Z",
+ "commit": "3e13355",
+ "codeClean": true,
  "summary": {
-  "runs": 33,
-  "ok": 33,
+  "runs": 35,
+  "ok": 35,
   "mismatches": 0,
   "skipped": 0,
   "byTier": {
-   "public": 18,
+   "public": 20,
    "tierC": 15
   }
  },
@@ -92,6 +94,16 @@
    "mismatchText": []
   },
   {
+   "file": "evidence/evals/runs/eval-case6-1-1795630318286.jsonl",
+   "tier": "public",
+   "recorded": "RESURRECTED",
+   "recomputed": "RESURRECTED",
+   "mismatches": 0,
+   "refused": null,
+   "ok": true,
+   "mismatchText": []
+  },
+  {
    "file": "evidence/evals/runs/eval-case6-2-1795625732406.jsonl",
    "tier": "public",
    "recorded": "RESURRECTED",
@@ -133,6 +145,16 @@
   },
   {
    "file": "evidence/evals/runs/eval-case6-haiku-1-1795626495948.jsonl",
+   "tier": "public",
+   "recorded": "RESURRECTED",
+   "recomputed": "RESURRECTED",
+   "mismatches": 0,
+   "refused": null,
+   "ok": true,
+   "mismatchText": []
+  },
+  {
+   "file": "evidence/evals/runs/eval-case6-haiku-1-1795630318799.jsonl",
    "tier": "public",
    "recorded": "RESURRECTED",
    "recomputed": "RESURRECTED",

@@ -36,3 +36,4 @@ Tests first. Tasks 1 to 3 run against the unfixed code and must leave `src/` unc
 
 Tasks 1, 4, 5: Kiro (turn 14, 3.43 credits). Tasks 2, 3, 6, 7, 8 and the review fixes R1, R2 (bugfix.md): claude-direct, P6b.
 Evidence: `evidence/boot-detect/` (baseline.md, cost.json, rejudge-before.json, rejudge-after.json); scripts `scripts/rejudge-runs.mjs`, `scripts/bench-boot-detect.mjs`.
+Where the artefacts ended up (they differ from the names planned above): task 2's cost baseline is `evidence/boot-detect/cost.json` (from `scripts/bench-boot-detect.mjs`), task 3/7's replay baseline and check are `evidence/boot-detect/rejudge-before.json` / `rejudge-after.json` (from `scripts/rejudge-runs.mjs`, all recordings, not only the 9 of the original plan), task 6's property is `tests/prop/boot-detect.prop.ts`. P4, P5 and U9 are covered by those scripts and their JSON, not by unit tests in `boot-detect.test.ts`.

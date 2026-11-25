@@ -49,4 +49,4 @@ the hero run (`public/runs/`) and the case-3, 5 and 6 runs (`evidence/evals/runs
 | Live judge path, interaction and first-viewport checks | `evidence/e2e/` |
 | Kiro credits per session | `docs/DX-REPORT.md` |
 
-The demo video was cut on 2026-11-25 at commit `31c0a10`; its receipts (492 tests, 6 of 6 model runs) are evals release 1. The rows above are HEAD.
+The demo video was cut on 2026-11-25 at commit `31c0a10`; its receipts (492 tests, the count of the last test run before the cut, on `2b4fadd`; 6 of 6 model runs) are evals release 1. The rows above are HEAD.

@@ -9,6 +9,7 @@
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { execFileSync } from "node:child_process";
 import { bootNodeCore, c64ReadyWasmSha256 } from "../src/emu/node.ts";
 import { replay } from "../src/replay/replay.ts";
 
@@ -29,7 +30,7 @@ for (const f of files) {
 }
 const judged = rows.filter((x) => !x.skipped);
 const summary = { runs: judged.length, ok: judged.filter((x) => x.ok).length, mismatches: judged.reduce((a, x) => a + x.mismatches, 0), skipped: rows.length - judged.length, byTier: { public: judged.filter((x) => x.tier === "public").length, tierC: judged.filter((x) => x.tier === "tier-c").length } };
-if (out) { mkdirSync(dirname(out), { recursive: true }); writeFileSync(out, JSON.stringify({ t: new Date().toISOString(), summary, rows: rows.map(({ _path, _mm, ...x }) => (x.tier === "public" ? { ...x, mismatchText: _mm } : x)) }, null, 1) + "\n"); }
+if (out) { mkdirSync(dirname(out), { recursive: true }); writeFileSync(out, JSON.stringify({ t: new Date().toISOString(), commit: execFileSync("git", ["rev-parse", "--short", "HEAD"]).toString().trim(), codeClean: execFileSync("git", ["status", "--porcelain", "src", "mcp"]).toString().trim() === "", summary, rows: rows.map(({ _path, _mm, ...x }) => (x.tier === "public" ? { ...x, mismatchText: _mm } : x)) }, null, 1) + "\n"); }
 console.log(JSON.stringify(summary));
 for (const x of judged.filter((y) => !y.ok)) console.log("NOT OK (console only)", x._path, JSON.stringify(x._mm).slice(0, 600));
 process.exit(summary.ok === summary.runs ? 0 : 1);

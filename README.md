@@ -89,15 +89,15 @@ Kiro is the engine, not the decoration. What each `.kiro/` artefact did, and who
 | `.kiro/specs/resurrect-loop/` | The agent loop spec; the agent profile and steering came out of it (T1 done, T2–T6 open) | DX report, P1b |
 | `.kiro/agents/resurrector.json` | The shipped agent: only the `@c64` MCP tools; file read, shell, write and web are denied | `tests/unit/resurrector-profile.test.ts`, `evidence/spikes/spike-G.json`, `.kiro/agents/resurrector.json` |
 | Hook `checksum-gate` (Pre Tool Use) | Exit 2 refuses an `apply_patch` before it reaches the server | `scripts/hooks/checksum-gate.mjs`, `evidence/spikes/spike-K1.md` (probe profile) |
-| Hook `until-title` (Agent Stop) | Forces one more turn until the contract is RESURRECTED, only unfixable lines remain, or a cap hits (15 patches, 8 credits, 600 s); `scripts/record-run.mjs` resumes the session between cycles (one forced turn per prompt) | `evidence/spikes/spike-K2.md` |
+| Hook `until-title` (Agent Stop) | Forces one more turn until the contract is RESURRECTED, only unfixable lines remain, or a cap hits (15 patches, 8 credits, 600 s); `scripts/record-run.mjs` resumes the session between cycles (one forced turn per prompt; a safety net: outside E3 it never had to, `docs/EXPERIMENTS.md`) | `evidence/spikes/spike-K2.md` |
 | Hook `listing-context` (Session Start) | Hands the agent the flagged listing | `scripts/hooks/` |
 | Hook `prop-tests-on-save` (File Save) | After a save under `src/basic` or `src/gate`, runs `tests/prop` | `evidence/hooks/file-save.jsonl` (4 firings, 1 clean pass) |
 | `.kiro/steering/` (7 files; 6 claude-direct, 4 of them in place before Kiro's first session, `product.md` and `commodore-basic-v2.md` committed after its first two; `resurrector.md` written by Kiro in the resurrect-loop session) | Commodore BASIC V2, Gazette notation, the resurrector's rules | `.kiro/steering/` |
 | `.kiro/skills/petscii-notation` | PETSCII control-code notation the agent must use | `.kiro/skills/` |
-| `.kiro/specs/bugfix-boot-detect/` (bugfix spec) | Current / Expected / Unchanged for two boot-detection bugs we measured (a title shown under 50 frames was missed; printed error-shaped text counted as an error); Kiro wrote the spec and the fix (tasks 1, 4, 5). Our re-judge of every recording then caught a stale-screen bug in that fix, fixed claude-direct | `evidence/boot-detect/` (33/33 recordings re-judge, 0 mismatches) |
-| `.kiro/workflows/resurrect-ab.workflow.yaml` | Two experiment arms in parallel + an aggregator; ran once headless through `run_workflow` | `evidence/experiments/workflow-run-2026-11-26.md` |
-| `powers/c64-resurrect/` (Power) | Packages the skills and the MCP server; the skills load by keyword, the MCP server does not connect from a Power yet (relative path) | `evidence/power/activation-2026-11-26.md` |
-| Experiments E1–E4 | 18 real runs: whole-listing context is what makes the loop converge (E3); Kiro's Agent Stop hook did the looping (E2) | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) |
+| `.kiro/specs/bugfix-boot-detect/` (bugfix spec) | Current / Expected / Unchanged for two boot-detection bugs we measured (a title shown under 50 frames was missed; printed error-shaped text counted as an error); Kiro wrote the spec and the fix (tasks 1, 4, 5). Our re-judge of every recording then caught a stale-screen bug in that fix, fixed claude-direct | `evidence/boot-detect/` (every recording re-judges, 0 mismatches) |
+| `.kiro/workflows/resurrect-ab.workflow.yaml` | Two experiment arms in parallel + an aggregator (written claude-direct); ran once headless through `run_workflow` | `evidence/experiments/workflow-run-2026-11-26.md` |
+| `powers/c64-resurrect/` (Power) | Packages the skills and the MCP server. Installed, both skills appear in the session catalogue; the Power's MCP server does not connect (suspected cause: its relative server path, not tested) | `evidence/power/activation-2026-11-26.md` |
+| Experiments E1–E4 | 18 real runs (N=2 per arm): with only the error line as context (E3) the 1984 page ended BOOTED-PARTIAL at the credit cap in 2 of 2 runs; Kiro's Agent Stop hook forced one extra turn in 13 of 17 runs outside E3 and the runner never had to resume (E2) | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) |
 
 Credits are metered by `kiro-cli` and logged per session in [`docs/DX-REPORT.md`](docs/DX-REPORT.md), including two spec lines
 that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tasks we then completed were written `claude-direct` and labelled as such (c64-mcp-server task 8 is still open).
@@ -108,7 +108,7 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 |---|---|---|
 | Tests | 508 passing, 44 files, plus 1 expected fail (the known-limitation marker) (`npm test` on 549e8d6) | `tests/`, `evidence/tests/npm-test-2026-11-26.txt` |
 | Agent evals, release 2 | 9 of 9 cases run and passing; cases 5 (silent DATA fault) and 6 (`?OUT OF DATA`) are original 2026 pages | [`docs/EVALS.md`](docs/EVALS.md) |
-| Model runs | 12 of 12 `RESURRECTED` (4 model cases × N=3). Every recording on disk (18 public, 15 local tier-C) re-judges with 0 mismatches | `scripts/rejudge-runs.mjs`, `evidence/boot-detect/rejudge-after.json`; the case-3, 5 and 6 runs are in `evidence/evals/runs/`; the case-1 recordings are withheld (rights) and cannot be reproduced from a clone |
+| Model runs | 12 of 12 `RESURRECTED` (4 model cases × N=3). Every recording on disk (35: 20 public, 15 local tier-C) re-judges with 0 mismatches | `scripts/rejudge-runs.mjs`, `evidence/boot-detect/rejudge-after.json`; the case-3, 5 and 6 runs are in `evidence/evals/runs/`; the case-1 recordings are withheld (rights) and cannot be reproduced from a clone |
 | Gate `applyPatch` | p50 0.01 ms, p95 0.03 ms (N=2000, node) | `evidence/bench/bench-2026-11-25.json` (re-run on the current gate; the 11-24 file predates the P1d changes) |
 | Emulator boot | p50 829 ms (N=10, node) | same file |
 | REPLAY of the recorded run in node (incl. a core boot) | p50 2295 ms, range 2.3–2.8 s (N=10) | same file |
@@ -130,7 +130,7 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 2. The 1984 magazine page and its OCR output are not in this repository (rights); that run cannot be reproduced from a clone.
 3. On the real 1984 page the title-path result is `19/28` lines source-exact against a vision-read reference; the other lines are checksum-consistent, not proven identical.
 4. `/scan` flags checksum mismatches but withholds the repair on live pages.
-5. Evals and experiments use small N on one machine (N=3 per eval case, N=2 per experiment arm): directions, not rates.
+5. Evals and experiments use small N on one machine (N=3 per eval case, N=2–3 per experiment arm): directions, not rates.
 6. The MEGA65 Open ROMs spike failed (5/5 syntax probes unimplemented), so the C64 core is the one `c64-ready` ships.
 
 ## 🚀 Getting Started

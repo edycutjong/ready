@@ -20,7 +20,7 @@ Same input, the `resurrector` agent (spike G, `evidence/spikes/spike-G.json`): 1
 consistent, TITLE-PATH RESURRECTED in both attempts (N = 2), 19/28 source-exact against the reference transcript.
 On an easy page, search is enough; on the real 1984 page it is not.
 
-## E1–E4 — what changes the outcome? (2026-11-26, 18 new runs + reused shipped rows, 68.89 credits)
+## E1–E4 — what changes the outcome? (2026-11-26, 18 new runs + reused shipped rows, 68.89 credits — a lower bound: one Haiku run was unmetered)
 **Protocol** (`kiro-plan.md` §3, harness `scripts/eval-agents.mjs --model --case <1|6> --arm <arm> --n 2`): every arm
 runs eval case 1 (the June 1984 Random Number Test title path, tier-C input kept local) and case 6 (the authored
 `?OUT OF DATA IN 19` page), N=2 per case. One thing changes per arm against `shipped` (Sonnet 5.5, whole-listing
@@ -33,7 +33,7 @@ Table: `node scripts/experiments-table.mjs` → `evidence/experiments/e1-e4.json
 - **E3 `error-line`**: the context shows only the line the C64 stops on, not the whole listing with its checksums (`READY_CONTEXT=error-line`).
 - **E4 `no-basic-steering`**: `commodore-basic-v2.md` removed from the profile AND the workspace (it is `inclusion: always`), in a scratch copy of the tree.
 
-| Arm | Case | N | RESURRECTED | PARTIAL | target lines right | iterations p50 | credits p50 | credits total | runner cycles max | Kiro Stop-hook firings (per run) | caps hit |
+| Arm | Case | N | RESURRECTED | PARTIAL | target lines right | iterations p50* | credits p50* | credits total | runner cycles max | Kiro Stop-hook firings (per run) | caps hit |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | shipped | 1 | 2 | 2 | 0 | 2 | 5 | 3.0022 | 9.009 | 1 | 1, 1 | none |
 | shipped | 6 | 3 | 3 | 0 | 3 | 1 | 0.9033 | 2.709 | 1 | 1, 1, 1 | none |
@@ -46,23 +46,25 @@ Table: `node scripts/experiments-table.mjs` → `evidence/experiments/e1-e4.json
 | no-basic-steering | 1 | 2 | 2 | 0 | 2 | 5 | 2.5916 | 5.936 | 1 | 1, 1 | none |
 | no-basic-steering | 6 | 2 | 2 | 0 | 2 | 1 | 0.8094 | 1.653 | 1 | 1, 1 | none |
 
+\* p50 with N=2 is the lower of the two runs; `credits total` gives the sum.
+
 **What the runs say (N=2 per cell: directions, not rates):**
-- **E3 is the large effect.** With only the error line in view, case 1 ended BOOTED-PARTIAL twice at 15.21 and 16.68
+- **E3 is the large effect at this N.** With only the error line in view, case 1 ended BOOTED-PARTIAL twice at 15.21 and 16.68
   credits (both stopped by the 8-credit cap, which is checked between cycles, so a cycle overshoots it), against 2 of 2
   RESURRECTED at 3.00 and 6.01 for `shipped`. On case 6 it still reached RESURRECTED, but at 3.28 and 9.95 credits
-  against about 0.9. The whole-listing context with printed checksums is what makes the loop converge and keeps it cheap.
+  against about 0.9. On these inputs, taking away the whole-listing context with printed checksums cost the 1984 page its resurrection in 2 of 2 runs and made the authored page 4–11× dearer.
 - **E1:** Haiku 5.5 is an order of magnitude cheaper (case 6: 0.07 per run) and solved case 6 twice, but on the 1984
   page it resurrected 1 of 2 and the other run hit the 15-iteration cap (BOOTED-PARTIAL; its credits were not reported,
   so that cell's total is a lower bound).
 - **E2 found no difference, and the reason is measured:** Kiro's Agent Stop hook blocked a premature stop in 13 of the
   17 runs outside E3, and 12 of those 13 then ended RESURRECTED inside the same `kiro-cli` process; the runner never had
   to resume a session (0 of 17). The runner's resume loop is a safety net these inputs never needed.
-- **E4:** no measurable difference at N=2 (2 of 2 RESURRECTED on both cases, credits within the `shipped` range). We do
-  not claim a steering effect.
+- **E4:** no measurable difference at N=2: 2 of 2 RESURRECTED on both cases, credits comparable to `shipped` (case 1:
+  2.59 and 3.34 vs 3.00 and 6.01; case 6: 0.81 and 0.84 vs 0.88–0.93). We do not claim a steering effect.
 
-**`/goal` (one try, qualitative, not an arm):** sent as the prompt of a headless `kiro-cli chat --v3 --no-interactive`
+**`/goal` (two tries, qualitative, not an arm):** sent as the prompt of a headless `kiro-cli chat --v3 --no-interactive`
 run on case 5, twice (with and without the listing context): each time the turn ended in about 4 s with no tool call
-and no metered credits (`evidence/experiments/goal-try-knock*.jsonl`). On kiro-cli 3.6.0, `/goal` did nothing in a
+and no credits reported (`evidence/experiments/goal-try-knock*.jsonl`). On kiro-cli 3.6.0, `/goal` did nothing in a
 headless session. It also inverts this project's rule (the agent verifies its own goal; here code decides).
 
 **Workflow (`.kiro/workflows/resurrect-ab.workflow.yaml`):** one experiment's two arms in parallel plus an aggregator.

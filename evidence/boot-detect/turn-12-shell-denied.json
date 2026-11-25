@@ -1,0 +1,11 @@
+{
+ "source": "kiro-cli 3.6.0 stream-json of Kiro turn 12 (bugfix spec), --trust-tools=fs_read,fs_write, 2026-11-26",
+ "failedToolCalls": [
+  {
+   "toolCallId": "run_command_toolu_bdrk_01EWieeTaqnRMihM6HYuFpxW",
+   "title": "Run Command",
+   "status": "failed",
+   "text": "Output:\nThe permission request failed before it was answered, so this call did not run; the user did not reject it.\n\nExit Code: -1"
+  }
+ ]
+}

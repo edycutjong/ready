@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The success predicate is code, never the model. In the kill test before this build, a harness bug made the success check miss a boot screen the program had cleared, and a 6.291-credit run was judged wrong. `afterLastRun` handles a cleared screen now. Two more defects in the same boot-detection path were measured on the real C64 core (`c64-ready@3.4.0`) on 2026-11-25. Both make the check say something false about a program that behaved correctly. A third probe shows a gap that stays open (see Known Limitation).
+The success predicate is code, never the model. In the kill test before this build, a harness bug made the success check miss a boot screen the program had cleared, and a run was judged wrong. `afterLastRun` handles a cleared screen now. Two more defects in the same boot-detection path were measured on the real C64 core (`c64-ready@3.4.0`) on 2026-11-25. Both make the check say something false about a program that behaved correctly. A third probe shows a gap that stays open (see Known Limitation).
 
 Measured probes. `{CLR}` is the clear-screen control inside the quotes. Title text is `THE CRYPT`, post-title text is `OPENED`.
 
@@ -46,7 +46,7 @@ Probe b: `10 PRINT"{CLR}THE CRYPT"` / `20 PRINT"RUN"` / `30 GETK$:IFK$=""THEN30`
 
 ## Review findings after the fix (P6b, 2026-11-26, claude-direct — measured, `evidence/boot-detect/`)
 
-- **R1 (new defect in the first fix, now fixed).** On a reused core the rows below the new `RUN` echo still held the previous run's output, and the per-frame latch caught that stale title in the first frames after `RUN`; its stale post-title text then made clause 2 fail closed. Probe a failed the post-title press for delays 1–300 on a reused core, and one local recording re-judged with 4 per-run fact mismatches. Fix: `runProgram` types CLR/HOME (PETSCII 147) before `RUN`, so only this run's output is ever on screen below the RUN row. New Unchanged item **U11**: output of an earlier run on the same core never counts as this run's title or post-title text.
+- **R1 (new defect in the first fix, now fixed).** On a reused core the rows below the new `RUN` echo still held the previous run's output, and the per-frame latch caught that stale title in the first frames after `RUN`; its stale post-title text then made clause 2 fail closed. Probe a failed the post-title press at every sampled delay from 1 to 300 (1, 25, 50, 100, 200, 300) on a reused core, and the re-judge flagged 4 per-run fact differences in one local recording (console output, not saved). Fix: `runProgram` types CLR/HOME (PETSCII 147) before `RUN`, so only this run's output is ever on screen below the RUN row. New Unchanged item **U11**: output of an earlier run on the same core never counts as this run's title or post-title text.
 - **R2 (C3 f1 reproduced, now fixed).** With CLR/HOME queued, a budget spent before `RUN` is even typed left the typed listing on screen, and `parseError` matched error-shaped text inside it while the machine was in direct mode (so `realError` alone could not help). Fix: no error is reported at the budget-end return while keys are still queued. C3 is fixed at both sites (f1, f2); nothing moved to Unchanged.
-- **U8 holds:** every recording on disk re-judges with 0 mismatches before and after (33/33; `scripts/rejudge-runs.mjs`).
+- **U8 holds:** every recording on disk re-judges with 0 mismatches on the pre-fix code (`90cbeec`) and on the final code (`evidence/boot-detect/rejudge-before.json`, `rejudge-after.json`; `scripts/rejudge-runs.mjs`).
 
