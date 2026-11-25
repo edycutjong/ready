@@ -1,7 +1,7 @@
 import { render } from "preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { createC64ReadyCore, type C64Core } from "../emu/core.ts";
-import { cheat, replay, type ReplayResult, type RunEvent } from "../replay/replay.ts";
+import { cheat, judgePatch, replay, type ReplayResult, type RunEvent } from "../replay/replay.ts";
 import { certificateHeading, errata, errataText, lineOrigins, prgBytes, provenance, type RecoveryEvent } from "../replay/certificate.ts";
 import type { CanonicalLine } from "../basic/types.ts";
 import { screenOf } from "../replay/screens.ts";
@@ -71,6 +71,9 @@ function Desk() {
   const [err, setErr] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const [cheatOut, setCheatOut] = useState<string | null>(null);
+  // "Fix it yourself" (a2a judge r01): the visitor types one line; the agent's gate judges it against the page as read.
+  const [mine, setMine] = useState("");
+  const [mineOut, setMineOut] = useState<{ text: string; ok: boolean } | null>(null);
   const [playing, setPlaying] = useState(false);
   // One playback timer at a time, owned here: a new stone, a second press or unmount stops it (arch review 01).
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -138,6 +141,21 @@ function Desk() {
   const firstErr = result?.steps.find((s) => s.kind === "run" && (s.facts?.run.error ?? s.recorded.error));
   const errObj = firstErr && firstErr.kind === "run" ? ((firstErr.facts?.run.error ?? firstErr.recorded.error) as { kind: string; line: number | null }) : null;
   const errText = errObj ? `?${errObj.kind}  ERROR${errObj.line != null ? ` IN ${errObj.line}` : ""}` : "";
+  // Prefill the box with the line the C64 first blamed, as OCR read it (before any patch). On a new stone, start over.
+  const blamed = result ? (result.input.lines.find((l) => l.n === errObj?.line) ?? result.input.lines.find((l) => l.status !== "verified")) : undefined;
+  useEffect(() => { setMine(blamed ? `${blamed.n} ${blamed.body.trimEnd()}` : ""); setMineOut(null); }, [result]);
+  const judgeMine = () => {
+    if (!result) return;
+    const j = judgePatch(result.input.lines, result.input.spec.expectedLines, mine);
+    if (j.line === null) { setMineOut({ text: j.error, ok: false }); return; }
+    const v = j.verdict, V = v.verdict.toUpperCase(), op = v.perOp.find((o) => o.line === j.line);
+    const sums = op && op.computed != null && !/checksum/i.test(v.reason) ? ` · checksum ${op.computed}, printed ${op.printed ?? "none"}` : "";
+    const asRead = result.input.lines.find((l) => l.n === j.line);
+    const unchanged = asRead !== undefined && asRead.body.replace(/\s+/g, "") === mine.replace(/^\s*\d+/, "").replace(/\s+/g, "");
+    // The line the C64 blames can already match its printed sum (The Ossuary: line 19): then the misprint is elsewhere.
+    if (unchanged && v.verdict === "accepted") { setMineOut({ text: `Line ${j.line}, as read, already matches its printed checksum (${op?.computed ?? "?"} = ${op?.printed ?? "?"}): the misprint is not in this line.`, ok: true }); return; }
+    setMineOut({ text: `${unchanged ? `Line ${j.line} as read` : `Your line ${j.line}`} → ${v.reason.startsWith(V) ? v.reason : `${V} — ${v.reason}`}${sums}`, ok: v.verdict === "accepted" });
+  };
   const creditText = !credits ? "credits: unknown" : credits.metered === false || credits.total === null ? "credits: unmetered" : `${credits.lowerBound ? "≥ " : ""}${Number(credits.total).toFixed(2)} credits`;
   const runLabel = start ? `recorded ${String(start.t ?? "").slice(0, 16).replace("T", " ")} UTC · ${String(start.model ?? "")} · ${creditText}` : "";
   const capIter = Number((start?.runner as { caps?: { iterations?: number } } | undefined)?.caps?.iterations ?? 15);
@@ -164,7 +182,7 @@ function Desk() {
         <p class="kicker">Kiroween 2026 · Resurrection</p>
         {errText && <p class="err" data-testid="first-error">{errText}</p>}
         <h1>Syntax error in 20</h1>
-        <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A type-in listing in the 1984 magazine format refuses to run. Those magazines printed a checksum on most program lines; a Kiro agent proposes the fix, a deterministic gate decides, and an emulated Commodore 64 runs the result. Below: one recorded real run, played back.</p>
+        <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A type-in listing in the 1984 magazine format refuses to run. Those magazines printed a checksum on most program lines; a Kiro agent proposes the fix, a deterministic gate decides, and an emulated Commodore 64 runs the result. Below: three recorded real runs on pages we typeset in that format, played back. Then try to beat the gate yourself.</p>
         <p class="mode" data-testid="mode">
           {mode === "replay" && <><b>REPLAY</b> — a recorded real Kiro run, re-executed now: the gate re-judges every patch and this browser's C64 re-runs the program (replaying recorded OCR input).</>}
           {mode === "recorded" && <><b>RECORDED PLAYBACK</b> — captured screens of a recorded real Kiro run. The gate re-judges every patch in your browser; nothing runs on a C64 here (Commodore ROM rights not cleared).</>}
@@ -184,7 +202,7 @@ function Desk() {
             </button>
           </li>
         ))}
-        <li><a class="stone" style="display:block;text-decoration:none" href="/scan"><span class="t">Random Number Test</span><span class="m">COMPUTE!'s Gazette, June 1984 · the real scan</span><span class="cod">checksum-flagged live · repair withheld (rights)</span></a></li>
+        <li><a class="stone" style="display:block;text-decoration:none" href="/scan"><span class="t">Random Number Test</span><span class="m">COMPUTE!'s Gazette, June 1984 · the real scan</span><span class="cod">checksum-flagged live · fix by hand · agent repair withheld (rights)</span></a></li>
         <li><a class="stone" style="display:block;text-decoration:none" href="/scan"><span class="t">Your own page</span><span class="m">ASSISTED: OCR + the magazine's checksum, in your tab, 0 credits</span></a></li>
       </ul>
       {result && <p><button data-testid="resurrect" disabled={playing} onClick={() => play()}>{playing ? "raising…" : step >= result.steps.length ? "Resurrect again (replay the run)" : "Resurrect"}</button> <span class="note">replays the recorded run step by step; or drag the slider.</span></p>}
@@ -217,6 +235,13 @@ function Desk() {
               <button data-testid="cheat" onClick={() => { const c = cheat(view.listing, result.input.spec.expectedLines, view.errLine); const V = c.verdict.verdict.toUpperCase(), r = c.verdict.reason; setCheatOut(`Cheat: empty line ${c.line} → ${r.startsWith(V) ? r : `${V} — ${r}`}`); }}>Cheat: delete the error line</button>
               <p class="note">Cheat runs the same gate code as the Kiro Pre Tool Use hook, in your browser. It does not call Kiro.</p>
               {cheatOut && <p data-testid="cheat-out" class="refused">{cheatOut}</p>}
+              <form class="mine" onSubmit={(e) => { e.preventDefault(); judgeMine(); }}>
+                <label for="mine">Or fix it yourself. Type the line the way you would on a C64:</label>
+                <input id="mine" data-testid="mine" type="text" spellcheck={false} autocomplete="off" value={mine} onInput={(e) => { setMine((e.target as HTMLInputElement).value); setMineOut(null); }} />
+                <button data-testid="mine-judge" type="submit">Judge my line</button>
+              </form>
+              {mineOut && <p data-testid="mine-out" class={mineOut.ok ? "accepted-out" : "refused"}>{mineOut.text}</p>}
+              <p class="note">The agent's gate, the agent's rules: typeable on a C64 keyboard, its checksum equal to the one printed, at most 40% of the line changed, no deleting or adding lines. Judged against the page as read, before the agent's fix. Only the gate judges here: no C64 runs your line.</p>
             </section>
           </div>
           <section class="strip" aria-label="run strip">

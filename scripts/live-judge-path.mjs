@@ -34,6 +34,14 @@ check("C64 pane shows the program's own screen, not the tool report", /THE SPIRI
 await page.click("[data-testid=cheat]");
 const cheat = await page.textContent("[data-testid=cheat-out]");
 check("Cheat is refused by the gate", /REFUSED/.test(cheat), cheat);
+// a2a judge r01: "fix it yourself" runs the visitor's line through the agent's gate (no C64): the agent's fix passes, a guess does not
+await page.fill("[data-testid=mine]", '20 PRINT"   ** THE LAST SEANCE **"');
+await page.click("[data-testid=mine-judge]");
+const mineOk = await page.textContent("[data-testid=mine-out]");
+await page.fill("[data-testid=mine]", '20 PRINT"   ** THE LOST SEANCE **"');
+await page.click("[data-testid=mine-judge]");
+const mineBad = await page.textContent("[data-testid=mine-out]");
+check("fix it yourself: the agent's line 20 is ACCEPTED, a line that breaks the printed checksum is REFUSED", /ACCEPTED/i.test(mineOk) && /REFUSED/i.test(mineBad), [mineOk, mineBad]);
 const [dl] = await Promise.all([page.waitForEvent("download"), page.click("[data-testid=dl-prg]")]);
 check(".PRG download works", /\.prg$/.test(dl.suggestedFilename()), dl.suggestedFilename());
 // arch review 02: the .PRG holds exactly the page-inventory lines (the ones typed and compared by clause 6), in order
@@ -61,6 +69,23 @@ check("judge path page: 0 console errors, 0 failed or 4xx/5xx requests", console
   check("/ autoplay reaches the RESURRECTED certificate", /RESURRECTED/.test(await auto.textContent("[data-testid=certificate]")), null);
   check("/ autoplay: 0 console errors, 0 failed or 4xx/5xx requests", autoErr.length === 0, autoErr.slice(0, 5));
   await auto.close();
+}
+// a2a judge r01: the two harder public authored runs (eval cases 5 and 6) play to their certificates on the same page
+for (const [id, post, blamed] of [["knock-case5", /THE WALL SAYS: IT LIVES/, null], ["ossuary-case6", /24 BONES, SUM 115/, /^19 /]]) {
+  const pg = await ctx.newPage(), errs = [];
+  pg.on("console", (m) => { if (m.type() === "error") errs.push(m.text()); });
+  pg.on("response", (r) => { if (r.status() >= 400 && !/\/c64\.wasm$/.test(r.url())) errs.push(`${r.status()} ${r.url()}`); });
+  await pg.goto(`${base}/?still=1&run=${id}`);
+  await pg.waitForFunction(() => window.__ready && window.__ready.steps > 0, null, { timeout: 60_000 });
+  await pg.click("[data-testid=resurrect]");
+  await pg.waitForFunction(() => window.__ready.step === window.__ready.steps, null, { timeout: 90_000 });
+  const cert = await pg.textContent("[data-testid=certificate]"), scr = await pg.textContent("[data-testid=screen]");
+  const pre = await pg.inputValue("[data-testid=mine]");
+  let mine = "";
+  if (blamed) { await pg.click("[data-testid=mine-judge]"); mine = await pg.textContent("[data-testid=mine-out]"); }
+  check(`${id}: plays to its recorded RESURRECTED certificate and the program's own post-title screen, 0 errors${blamed ? "; the line the C64 blamed (19), judged as read, already matches its printed checksum" : ""}`,
+    /RESURRECTED/.test(cert) && post.test(scr) && errs.length === 0 && (!blamed || (blamed.test(pre) && /already matches its printed checksum/.test(mine))), { errs: errs.slice(0, 3), prefill: pre, mine });
+  await pg.close();
 }
 await page.goto(base + "/kiro");
 await page.waitForFunction(() => document.querySelectorAll("[data-testid=kiro-rows] tbody tr").length > 0, null, { timeout: 30_000 });

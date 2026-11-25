@@ -153,3 +153,15 @@ export function cheat(listing: CanonicalListing, expectedLines: readonly number[
   const line = errorLine ?? bad?.n ?? listing[0]?.n ?? 0;
   return { line, verdict: applyPatch(listing, [{ type: "replace", lineno: line, new_body: "" }], expectedLines) };
 }
+
+/**
+ * A visitor's own fix, typed the way a C64 owner types a line ("20 PRINT…"), judged by the same applyPatch as the
+ * agent's apply_patch and the Pre Tool Use hook. No C64 runs it: only the gate's clauses (typeable, checksum = printed,
+ * edit cap, no delete/insert) decide. The leading spaces after the number are dropped, as the C64's line editor does.
+ */
+export function judgePatch(listing: CanonicalListing, expectedLines: readonly number[], typed: string): { line: number; verdict: GateVerdict } | { line: null; error: string } {
+  const m = /^\s*(\d+)\s*([\s\S]*)$/.exec(typed.replace(/[\r\n]+/g, " "));
+  if (!m) return { line: null, error: "Type the line as you would on a C64: its number first, then the program text (e.g. 20 PRINT\"HELLO\")." };
+  const line = Number(m[1]);
+  return { line, verdict: applyPatch(listing, [{ type: "replace", lineno: line, new_body: m[2].trimEnd() }], expectedLines) };
+}
