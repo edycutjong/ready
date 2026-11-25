@@ -72,7 +72,9 @@ if (a.model) {
     5: { input: "fixtures/authored/knock-input.json", listing: "knock", dir: "evidence/evals/runs", name: "authored DATA value misread, silent failure (no ?ERROR)", mustFix: 80 },
     6: { input: "fixtures/authored/ossuary-input.json", listing: "ossuary", dir: "evidence/evals/runs", name: "authored ?OUT OF DATA IN 19, fault in DATA 890", mustFix: 890, mustNotFix: 10 },
   };
-  // Experiment arms (docs/EXPERIMENTS.md; kiro-plan.md §3). Every arm but stop-hook uses the runner-driven loop.
+  // The run prompt is the published prompts/12-run-prompt-resurrect.md, byte-identical (cmp) to the one every recorded
+  // model run used; --prompt-file overrides it (arch review 02: the harness runs from a public clone).
+  // Experiment arms (docs/EXPERIMENTS.md; Kiro plan §3). Every arm but stop-hook uses the runner-driven loop.
   const ARMS = {
     shipped: {}, // Sonnet 5.5, whole-listing context, steering, runner loop: the configuration the product records with
     haiku: { model: "claude-haiku-5.5" }, // E1
@@ -101,7 +103,7 @@ if (a.model) {
   for (let i = 1; i <= n; i++) {
     const out = resolve(`${cfg.dir}/eval-case${c}${arm === "shipped" ? "" : `-${arm}`}-${i}-${Date.now()}.jsonl`);
     const t0 = Date.now();
-    const argv = ["scripts/record-run.mjs", "--listing", cfg.listing, "--prompt-file", resolve("../kiro-prompts/run-prompt-resurrect.md"), "--agent", "resurrector", "--input", resolve(cfg.input), "--context", "--stop-check", "node scripts/hooks/until-title.mjs --check", "--out", out, "--workspace", workspace, "--run-dir", resolve(`work/${cfg.listing}-${arm}-${i}-${Date.now()}`), ...(armCfg.model ? ["--model", armCfg.model] : []), ...(armCfg.extra ?? [])];
+    const argv = ["scripts/record-run.mjs", "--listing", cfg.listing, "--prompt-file", resolve(a["prompt-file"] ?? "prompts/12-run-prompt-resurrect.md"), "--agent", "resurrector", "--input", resolve(cfg.input), "--context", "--stop-check", "node scripts/hooks/until-title.mjs --check", "--out", out, "--workspace", workspace, "--run-dir", resolve(`work/${cfg.listing}-${arm}-${i}-${Date.now()}`), ...(armCfg.model ? ["--model", armCfg.model] : []), ...(armCfg.extra ?? [])];
     const r = spawnSync(process.execPath, argv, { encoding: "utf8", timeout: 700_000, env: { ...process.env, ...(armCfg.env ?? {}) } });
     let summary = null; try { summary = JSON.parse(r.stdout.trim().split("\n").at(-1)); } catch {}
     const result = summary?.result ?? "error";

@@ -34,7 +34,7 @@ node scripts/verify_offline.mjs            # OCR + checksum + emulator + REPLAY 
 ```
 
 Model runs (`scripts/record-run.mjs`, `scripts/eval-agents.mjs --model`) need a logged-in `kiro-cli` and spend credits;
-the hero run (`public/runs/`) and the case-3, 5 and 6 runs (`evidence/evals/runs/`) are committed and re-judged by REPLAY; the case-1 recordings are withheld (rights), and `--model` needs the builder's local prompt file.
+the hero run (`public/runs/`) and the case-3, 5 and 6 runs (`evidence/evals/runs/`) are committed and re-judged by REPLAY; the case-1 recordings are withheld (rights). `--model` sends the published run prompt `prompts/12-run-prompt-resurrect.md`, byte-identical to the one every recorded model run used (`--prompt-file` overrides it).
 
 ## Recorded numbers and where they live
 
