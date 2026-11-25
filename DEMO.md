@@ -20,9 +20,9 @@ Live: https://ready.edycu.dev · No account, no install, no key.
    prints a period for a comma: our planted misprint). Judge line 19 as read: it already matches its printed checksum, so the line the C64 blames is not
    the misprinted one. Pick
    **The Ninth Knock** (eval case 5): OCR broke line 40, and a planted DATA misprint in line 80 would run silently and print
-   `IT NIVES`; the agent fixes both, two accepted patches. Both are byte copies of `evidence/evals/runs/eval-case5-1-*.jsonl`
-   and `eval-case6-1-*.jsonl` (`tests/unit/judge-patch.test.ts`).
-5. Open `/kiro`: the Pre Tool Use / Agent Stop / Session Start hook rows of the recorded run.
+   `IT NIVES`; the agent fixes both, two accepted patches. Both are byte copies of `evidence/evals/runs/eval-case5-1-1795625618995.jsonl`
+   and `eval-case6-1-1795625707333.jsonl` (`evidence/boot-detect/rejudge-p6d.json`, `identicalCopiesNotCounted`).
+5. Open `/kiro`: the Pre Tool Use / Agent Stop / Session Start hook rows of the three recorded runs, in time order.
 6. Open `/scan`: pick an archive.org Gazette page (fetched through `/api/page`) or upload a scan. Self-hosted tesseract.js reads it in
    your tab; each line is checked against its printed checksum and the mismatches are flagged. No Kiro call, 0 credits, repair withheld.
    Or press **Read our authored page** (our typeset line-20 page, not a 1984 scan): in Chrome 158 it flags 2 of 12 lines, line 20 (the
@@ -60,4 +60,4 @@ the hero run (`public/runs/`) and the case-3, 5 and 6 runs (`evidence/evals/runs
 | Live judge path, interaction and first-viewport checks | `evidence/e2e/` |
 | Kiro credits per session | `docs/DX-REPORT.md` |
 
-The demo video was cut on 2026-11-25 at commit `31c0a10`; its receipts (492 tests, the count of the last test run before the cut, on `2b4fadd`; 6 of 6 model runs) are evals release 1. Each row above names the commit or file it was measured on.
+The demo video was cut on 2026-11-25; its receipts (492 tests, the count of the last test run before the cut, on `2b4fadd`; 6 of 6 model runs) are evals release 1. Each row above names the commit or file it was measured on.

@@ -169,3 +169,6 @@ input[type="file"]:focus-visible { outline: 2px solid var(--ink); outline-offset
 .c64 form.mine input[type=text] { width: 100%; font-family: var(--font-data), monospace; }
 .c64 form.mine button { justify-self: start; }
 .accepted-out { color: var(--after); font-weight: 700; }
+
+/* judge review 01: at 320 px the three nav links overflowed by 16 px (/kiro hooks); let them wrap and tighten the tracking. */
+@media (max-width: 360px) { .nav { flex-wrap: wrap; gap: 0.4rem 0.8rem; letter-spacing: 0.08em; } }

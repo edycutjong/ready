@@ -21,7 +21,7 @@
       "file": "/runs/ossuary-2026-11-25T16-55-07Z.jsonl",
       "label": "The Ossuary \u2014 authored 2026 page, the C64 blames line 19, the misprint is in line 890 (recorded real Kiro run, eval case 6 run 1)",
       "title": "The Ossuary",
-      "meta": "authored 2026 page \u00b7 eval case 6 \u00b7 the error names line 19, the fault is in DATA line 890 \u00b7 recorded real Kiro run",
+      "meta": "authored 2026 page \u00b7 eval case 6 \u00b7 the error names line 19; the misprint (a period we planted for a comma) is in DATA line 890 \u00b7 recorded real Kiro run",
       "cod": "?OUT OF DATA  ERROR IN 19"
     }
   ]

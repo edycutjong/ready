@@ -1,7 +1,7 @@
 <div align="center">
   <img src="docs/icon.svg" alt="SYNTAX ERROR IN 20 icon" width="144">
   <h1>SYNTAX ERROR IN 20 🕯️</h1>
-  <p><em>Resurrect 1984 magazine type-in programs: OCR finds the misread lines, a Kiro agent proposes fixes, and a deterministic gate accepts a line only when it is typeable on a C64, matches the checksum the magazine printed beside it, and a real C64 core then runs the program.</em></p>
+  <p><em>Resurrect 1984 magazine type-in programs: the magazine's own printed checksums flag the lines OCR misread, a Kiro agent proposes fixes, a deterministic gate accepts a fix only when it is typeable on a C64 and matches its printed checksum, and a real C64 core then runs the program and decides the verdict.</em></p>
   <img src="docs/readme-hero.png" alt="SYNTAX ERROR IN 20: a singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen" width="100%">
 
   <br/>
@@ -27,8 +27,9 @@
 > LLM asked to fix it will invent a line that runs and is wrong.
 >
 > **What this is.** A Kiro agent that may only change a line through a gate: typeable on a C64 keyboard, checksum equal to the
-> one printed, and the C64 then runs the program. "True" here means exactly that contract: consistent with the magazine's
-> printed sums and the machine's own output, not proven identical to the 1984 text.
+> one printed, within a 40% edit cap. The C64 then runs the patched program, and its screen and memory decide the verdict.
+> "True" here means exactly that: consistent with the magazine's printed sums and the machine's own output, not proven
+> identical to the 1984 text.
 >
 > **What you can open.** https://ready.edycu.dev plays back three recorded real Kiro runs on pages we typeset in the 1984 format
 > (one planted typo; two faults where one runs silently; an error the C64 blames on the wrong line), re-judging each patch in
@@ -45,11 +46,11 @@ The 60-second judge path:
 
 | Seconds | Do | You see |
 |---|---|---|
-| 0–20 | Open [ready.edycu.dev](https://ready.edycu.dev) | A scanned 2026-typeset listing under candle light; the recorded run plays itself once (`?still=1` keeps it still): the C64 pane reports `?SYNTAX  ERROR IN 20`, the agent's patch is struck in red, then re-inked in blue only once the gate accepts it. **Resurrect** replays it |
-| 20–30 | Press **Cheat** (empties the error line), then edit the line in **fix it yourself** and press **Judge my line** | The gate refuses the deletion; your line is ACCEPTED only if its checksum equals the printed one (no C64 runs it) |
+| 0–20 | Open [ready.edycu.dev](https://ready.edycu.dev) | A 2026-typeset listing (our own page, read by real OCR) under candle light; the recorded run plays itself once (`?still=1` keeps it still): the C64 pane reports `?SYNTAX  ERROR IN 20`, the agent's patch is struck in red, then re-inked in blue only once the gate accepts it. **Resurrect** replays it |
+| 20–30 | Press **Cheat** (empties the error line), then edit the line in **fix it yourself** and press **Judge my line** | The gate refuses the deletion; your line is ACCEPTED only if it is typeable, within the 40% edit cap, and its checksum equals the printed one (or fits only a misread printed digit); no C64 runs it |
 | 30–40 | Pick **The Ossuary** or **The Ninth Knock** | Harder recorded runs: the C64 blames line 19 while the misprint sits in DATA line 890; a DATA misprint that runs silently is caught by its checksum alone |
 | 40–50 | Read the certificate | The certificate of resurrection, then the **IT LIVES** stamp, captioned as recorded, not re-run |
-| 50–60 | Open [`/kiro`](https://ready.edycu.dev/kiro) | The Kiro hook rows and tool calls of that run, grouped as they happened |
+| 50–60 | Open [`/kiro`](https://ready.edycu.dev/kiro) | The Kiro hook rows and tool calls of the three recorded runs, in time order |
 
 Then try [`/scan`](https://ready.edycu.dev/scan): pick a page of the June 1984 Gazette on archive.org, or upload a scan. Tesseract.js
 (self-hosted, in your tab) reads it and each line's recomputed sum is checked against the printed one and the mismatches are flagged. Fix a flagged line by hand and its checksum is rechecked on every keystroke; export the result as `.bas` (unverified lines commented out) plus an errata sheet. The agent's repair is withheld there (see Honest limits).
@@ -68,9 +69,9 @@ it is rechecked as you type, and you export the `.bas` and an errata sheet. The 
 runs (Engineering Rigor) and withheld on live pages (Honest limits, 4).
 
 ### The Solution
-The model chooses where to look; code decides what is true. A line is only accepted when (1) it is typeable on a real
-C64 keyboard, (2) its Gazette checksum matches the printed one (or the patch is marked `forced`, which can never be
-certified), and (3) the emulated C64 then runs it. The verdict (`RESURRECTED`, `BOOTED-PARTIAL`, `NOT-RESURRECTED`) is
+The model chooses where to look; code decides what is true. A patch is only accepted when (1) it is typeable on a real
+C64 keyboard and (2) its Gazette checksum matches the printed one (or the patch is marked `forced`, which can never be
+certified); a program only counts as resurrected when (3) the emulated C64 then runs it. The verdict (`RESURRECTED`, `BOOTED-PARTIAL`, `NOT-RESURRECTED`) is
 computed from the machine's screen and memory plus the listing's checksums, not from the model's say-so.
 
 ## 🏗️ Architecture & Tech Stack
@@ -107,7 +108,7 @@ Kiro is the engine, not the decoration. What each `.kiro/` artefact did, and who
 | `.kiro/specs/bugfix-boot-detect/` (bugfix spec) | Current / Expected / Unchanged for two boot-detection bugs we measured (a title shown under 50 frames was missed; printed error-shaped text counted as an error); Kiro wrote the spec and the fix (tasks 1, 4, 5). Our probe and re-judge then caught a stale-screen bug in that fix, fixed claude-direct | `evidence/boot-detect/` (every recording re-judges, 0 mismatches) |
 | `.kiro/workflows/resurrect-ab.workflow.yaml` | Two experiment arms in parallel + an aggregator (written claude-direct); ran once headless through `run_workflow` | `evidence/experiments/workflow-run-2026-11-26.md` |
 | `powers/c64-resurrect/` (Power) | Packages the skills and the MCP server. Installed, both skills appear in the session catalogue; the Power's MCP server does not connect (suspected causes, not tested: its relative server path, and `RUN_DIR`, without which the server exits) | `evidence/power/activation-2026-11-26.md` |
-| Experiments E1–E4 | 18 new real runs (N=2 per arm and case; the shipped case-6 row reuses release 2's 3 runs): Haiku (E1) raised the 1984 page in 1 of 2 runs; with only the error line as context (E3) the 1984 page ended BOOTED-PARTIAL at the credit cap in 2 of 2 runs; Kiro's Agent Stop hook forced one extra turn in 13 of the 17 runs outside E3 (14 new + 3 reused), and in the 13 where the runner could resume it never did (E2) | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) |
+| Experiments E1–E4 | 18 new real runs (N=2 per arm and case; the shipped case-6 row reuses release 2's 3 runs): Haiku (E1) raised the 1984 page in 1 of 2 runs; with only the error line as context (E3) the 1984 page ended BOOTED-PARTIAL at the credit cap in 2 of 2 runs; Kiro's Agent Stop hook forced one extra turn in 13 of the 17 runs outside E3 (14 new + 3 reused), and the runner never had to resume a session in any of the 17 (E2) | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) |
 
 Credits are metered by `kiro-cli` and logged per session in [`docs/DX-REPORT.md`](docs/DX-REPORT.md), including two spec lines
 that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tasks we then completed were written `claude-direct` and labelled as such (c64-mcp-server task 8 is still open).
@@ -118,7 +119,7 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 |---|---|---|
 | Tests | 520 passing, 45 files, plus 1 expected fail (the known-limitation marker, Honest limits 7) (`npm test` on 887de9f) | `tests/`, `evidence/tests/npm-test-2026-11-26b.txt` |
 | Agent evals, release 2 | 9 of 9 cases run and passing; cases 5 (silent DATA fault) and 6 (`?OUT OF DATA`) are original 2026 pages | [`docs/EVALS.md`](docs/EVALS.md) |
-| Model runs | 12 of 12 `RESURRECTED` with the shipped profile (4 model cases × N=3; the E1–E4 ablation arms are not counted here and include failures). Every recording on disk (35: 20 public, 15 local tier-C) re-judges with 0 mismatches, a run counting only when its recorded and recomputed verdicts are both present and equal | `scripts/rejudge-runs.mjs`, `evidence/boot-detect/rejudge-p6c.json`; the case-3, 5 and 6 runs are in `evidence/evals/runs/`; the case-1 recordings are withheld (rights) and cannot be reproduced from a clone |
+| Model runs | 12 of 12 `RESURRECTED` with the shipped profile (4 model cases × N=3; the E1–E4 ablation arms are not counted here and include failures). Every recording on disk (35: 20 public, 15 local tier-C) re-judges with 0 mismatches, a run counting only when its recorded and recomputed verdicts are both present and equal | `scripts/rejudge-runs.mjs`, `evidence/boot-detect/rejudge-p6d.json`; the case-3, 5 and 6 runs are in `evidence/evals/runs/`; the case-1 recordings are withheld (rights) and cannot be reproduced from a clone |
 | Gate `applyPatch` | p50 0.01 ms, p95 0.03 ms (N=2000, node) | `evidence/bench/bench-2026-11-25.json` (re-run on the current gate; the 11-24 file predates the P1d changes) |
 | Emulator boot | p50 829 ms (N=10, node) | same file |
 | REPLAY of the recorded run in node (incl. a core boot) | p50 2295 ms, range 2.3–2.8 s (N=10) | same file |
