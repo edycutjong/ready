@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SYNTAX ERROR IN 20 — pitch deck</title>
-<meta name="description" content="Pitch deck: a Kiro agent proposes the fix to a 1984 type-in listing, a checksum gate decides, an emulated C64 runs it. Kiroween 2026, Resurrection.">
+<meta name="description" content="Pitch deck: a Kiro agent proposes the fix to a misread magazine type-in listing, a checksum gate decides, an emulated C64 runs it. Kiroween 2026, Resurrection.">
 <meta name="theme-color" content="#110C0A">
 <link rel="icon" href="/landing/icon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://ready.edycu.dev/deck/">
@@ -153,12 +153,14 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
 /* 2 the death */
 .s2::before{background:radial-gradient(40% 55% at 50% 62%,color-mix(in srgb,var(--after) 10%,transparent),transparent 70%),radial-gradient(120% 90% at 50% -18%,var(--soot-2),var(--bg) 66%)}
 .impact{margin-top:22px;font-size:34px;line-height:1.35;color:color-mix(in srgb,var(--ink) 86%,var(--muted));max-width:1300px}
-.death{display:grid;grid-template-columns:640px 500px minmax(0,1fr);grid-template-rows:auto auto;column-gap:56px;row-gap:28px}
-.death .ex{align-self:end}
+.impact a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--before);text-decoration-thickness:2px;text-underline-offset:.16em;transition:color .2s,text-decoration-color .2s}
+.impact a:hover{color:var(--paper);text-decoration-color:var(--after)}
+.death{display:grid;grid-template-columns:680px 600px minmax(0,1fr);grid-template-rows:auto auto;column-gap:52px;row-gap:28px}
+.death .ex{align-self:center}
 .death .step{align-self:start;font:700 30px/1.2 var(--font-body);color:var(--ink);padding-top:18px;border-top:2px solid var(--rule)}
-.death .strip{padding:74px 36px 52px}
-.death .strip .ln{font-size:26px;grid-template-columns:2.4ch minmax(0,1fr)}
-.death .strip .remline{margin-top:22px;font:500 26px/1 var(--font-data);color:var(--paper-dim);text-align:right}
+.death .strip{padding:58px 36px 52px}
+.death .strip .ln{font-size:27px;grid-template-columns:2.4ch minmax(0,1fr)}
+.death .strip .remline{margin-top:26px;font:500 27px/1 var(--font-data);color:var(--paper-dim);text-align:right;white-space:nowrap}
 .death .consq{font:800 56px/1.06 var(--font-display);color:var(--ink);letter-spacing:-.005em}
 .death .consq em{font-style:normal;color:var(--before)}
 
@@ -166,17 +168,17 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
 .sheet{position:absolute;inset:56px 70px 100px;padding:52px 80px 60px;display:flex;flex-direction:column}
 .sheet .label{color:var(--before-on-paper)}
 .sheet h2{color:var(--paper-ink)}
-.wline{display:flex;align-items:center;gap:28px;font:500 42px/1 var(--font-data);white-space:pre}
+.wline{display:flex;align-items:center;gap:30px;font:500 56px/1 var(--font-data);white-space:pre}
 .wline .no{color:var(--paper-dim)}
 .wline .rem{position:relative;padding:10px 6px}
 .wline .rem svg{position:absolute;left:-18%;top:-34%;width:136%;height:168%;overflow:visible}
 .wline .rem path{fill:none;stroke:var(--before-on-paper);stroke-width:4;stroke-linecap:round;vector-effect:non-scaling-stroke}
-.wgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:70px;align-items:end}
-.wmath{font:500 32px/1.5 var(--font-data);border-top:3px double var(--paper-ink);padding-top:24px}
+.wgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:90px;align-items:end;margin-top:54px}
+.wmath{font:500 35px/1.5 var(--font-data);border-top:3px double var(--paper-ink);padding-top:26px}
 .wmath b{color:var(--before-on-paper);font-weight:700}
-.wq{margin-top:30px;font:800 58px/1.04 var(--font-display)}
+.wq{margin-top:34px;font:800 66px/1.04 var(--font-display)}
 .wstat{text-align:right}
-.wstat .big{font:800 220px/.84 var(--font-display);letter-spacing:-.03em;color:var(--after-on-paper)}
+.wstat .big{font:800 196px/.84 var(--font-display);letter-spacing:-.03em;color:var(--after-on-paper)}
 .wstat p:not(.big){font-size:29px;line-height:1.3;margin-top:18px}
 
 /* 4 the rite */
@@ -292,7 +294,7 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
 .readme blockquote::before{content:"stet";position:absolute;left:0;top:25px;font:800 28px/1 var(--font-display);letter-spacing:.1em;color:var(--before);border-bottom:3px dotted var(--before);padding-bottom:5px}
 .readme cite{display:block;margin-top:10px;font:500 18px/1.3 var(--font-data);font-style:normal;color:var(--muted)}
 
-/* 10 raise one */
+/* 10 see it rise */
 .s10::before{background:radial-gradient(50% 60% at 50% 105%,color-mix(in srgb,var(--candle) 15%,transparent),transparent 70%),radial-gradient(120% 90% at 50% -18%,var(--soot-2),var(--bg) 66%)}
 .r10{display:grid;grid-template-columns:400px minmax(0,1fr);gap:70px;align-items:start}
 .qr{padding:34px 34px 28px;text-align:center}
@@ -382,7 +384,7 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
       <p class="scr-cap">recorded screen · {{emulator}}</p>
     </div>
   </div>
-  <aside class="notes">This is SYNTAX ERROR IN 20, our Resurrection entry. Magazines in 1984 printed programs to type in, with a checksum on every line. A Kiro agent repairs what OCR breaks, but only code decides whether a fix is true: the printed checksum, then a C64 that must run it. The red strike is the wound, the blue ring is the cure the gate accepted.</aside>
+  <aside class="notes">This is SYNTAX ERROR IN 20, our Resurrection entry. COMPUTE!'s Gazette printed programs to type in, in 1984, each line ending in a :rem checksum. A Kiro agent repairs what OCR breaks, but only code decides whether a fix is true: the printed checksum, then a C64 that must run it. The red strike is the wound, the blue ring is the cure the gate accepted.</aside>
 </section>
 
 <!-- 2 · the death -->
@@ -428,7 +430,7 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
           <p class="wmath">Σ codes of number and body · <b>mod 256</b></p>
           <p class="wq">“A match is evidence, never proof.”</p>
         </div>
-        <div class="wstat"><p class="big">43/43</p><p>line checksums matched the printed :rem on a real June 1984 page (page withheld, rights)</p></div>
+        <div class="wstat"><p class="big">43/43</p><p>line checksums matched the printed :rem on a real June 1984 page (vision-read; page withheld, rights)</p></div>
       </div>
     </div>
   </div>
@@ -577,10 +579,11 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
   <aside class="notes">Stet is the proofreader's mark for "let it stand", and these limits stand. No C64 ROM is served, so the site plays a recording, and the 1984 page and its OCR output are not in the repository. On the real magazine page, in the two spike G runs, only 19 of 28 lines match a vision-read reference exactly. And two eval cases have not been run yet.</aside>
 </section>
 
-<!-- 10 · raise one -->
-<section class="slide s10" role="group" aria-roledescription="slide" aria-label="10 of 10: raise one yourself">
-  <p class="label">X · raise one</p>
-  <h2>Raise one yourself.</h2>
+<!-- 10 · see it rise -->
+<section class="slide s10" role="group" aria-roledescription="slide" aria-label="10 of 10: see it rise yourself">
+  <p class="label">X · see it rise</p>
+  <h2>See it rise yourself.</h2>
+  <p class="impact">For anyone typing a listing back in from a scan: <a href="/scan">/scan</a> flags its misread lines today.</p>
   <div class="body">
     <div class="r10">
       <div>
@@ -593,8 +596,7 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
       <div>
         <ul class="links">
           <li><a href="/">ready.edycu.dev</a><span>press Resurrect, then Cheat</span></li>
-          <li><a href="/kiro">/kiro</a><span>the hooks, as they fired</span></li>
-          <li><a href="/scan">/scan</a><span>check your own page</span></li>
+          <li><a href="/kiro">/kiro</a><span>every hook firing</span></li>
           <li><a href="https://github.com/edycutjong/ready">GitHub</a><span>code, specs, evidence</span></li>
         </ul>
         <figure class="shot" data-drawn>

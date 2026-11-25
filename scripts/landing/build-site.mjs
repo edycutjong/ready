@@ -41,8 +41,9 @@ const SCREENS = { error: block(runs[0].text, "AFTER RUN"), title: block(runs[1].
 ok(SCREENS.error.some((r) => r.trim() === "?SYNTAX  ERROR IN 20"), "error screen prints ?SYNTAX  ERROR IN 20 (two spaces, ROM string)");
 ok(SCREENS.title.some((r) => r.includes("** THE LAST SEANCE **")), "title screen");
 ok(SCREENS.post.some((r) => r.includes("IT LIVES")) && SCREENS.post.some((r) => r.includes("READY TO RISE.")), "post-title screen");
-// row pitch 9: the C64 cell is 8 rows; one extra unit of leading keeps adjacent rows apart at small display sizes
-const ROW = 9;
+// row pitch 10: the C64 cell is 8 rows; two extra units of leading keep adjacent rows apart at small display sizes
+// (the post-title screen's last row, the cursor on row 11, still ends inside the 200-unit face)
+const ROW = 10;
 const screenPath = (rows) => rows.map((r, i) => (r.trim() ? pf.path(r.replace(/\s+$/, ""), 0, i * ROW, 1) : "")).join("");
 // the blinking cursor sits on the row after the last READY. (a screen waiting in GET has none)
 const cursorRow = (rows) => { const i = rows.map((r) => r.trim()).lastIndexOf("READY."); return i < 0 ? "" : `<rect class="cur" x="0" y="${(i + 1) * ROW}" width="8" height="8"/>`; };

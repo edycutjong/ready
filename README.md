@@ -52,6 +52,10 @@ COMPUTE!'s Gazette (1984) printed programs for you to type in, and every line ca
 those pages are OCR'd with errors, and a single wrong character gives `?SYNTAX  ERROR IN 20` on a machine nobody owns
 any more. An LLM asked to "fix the listing" will happily invent a line that runs and is wrong.
 
+**Who it is for:** anyone typing a listing back in from a scan. [`/scan`](https://ready.edycu.dev/scan) already flags each
+misread line of a Gazette page or your own scan in the browser (no install, no ROM); the gated repair is proven on recorded
+runs (Engineering Rigor) and withheld on live pages (Honest limits, 4).
+
 ### The Solution
 The model chooses where to look; code decides what is true. A line is only accepted when (1) it is typeable on a real
 C64 keyboard, (2) its Gazette checksum matches the printed one (or the patch is marked `forced`, which can never be
