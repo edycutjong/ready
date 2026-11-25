@@ -27,6 +27,18 @@ const ranges = (ns) => {
   if (a !== null) out.push(a === b ? `${a}` : `${a}-${b}`);
   return out.join(", ");
 };
+// Experiment E3 only (READY_CONTEXT=error-line, never set by the shipped profile): the listing section is cut down to the
+// one line the C64 itself stops on (the kill test's "strict" fixer context, REPORT F3); the rest of the context is unchanged.
+const errorLineOnly = process.env.READY_CONTEXT === "error-line";
+let shown = lines, errorLineNote = "";
+if (errorLineOnly) {
+  const { bootNodeCore } = await import("../../src/emu/node.ts");
+  const { runListing } = await import("../../src/emu/session.ts");
+  const facts = runListing(await bootNodeCore(), lines.filter((l) => expected.includes(l.n)), spec);
+  const at = facts.run.error?.line;
+  shown = lines.filter((l) => l.n === at);
+  errorLineNote = at != null ? `(Context limited to the line the C64 stops on: ?${facts.run.error.kind} ERROR IN ${at}. The other lines are not shown.)` : "(Context limited to the error line: the C64 printed no error. No listing lines are shown.)";
+}
 const mark = (l) => (l.status === "verified" ? "✓" : l.status === "digit-misread" ? "✓(checksum digits misread)" : l.status === "forced" ? "✗FORCED" : l.printed == null ? "?unparseable checksum" : "✗checksum mismatch");
 const text = [
   `LISTING ${input.listingId} — scope: ${input.scope} (${expected.length} printed lines, inventory read from the page before the run).`,
@@ -35,7 +47,8 @@ const text = [
   `Title: the screen shows "${spec.titlePredicate.screenContains}"${spec.titlePredicate.keys?.length ? ` (the program waits for a key first; c64_press accepts only: ${spec.titlePredicate.keys.map(keyName).join(", ")})` : ""}. After the title the SERVER presses ${spec.postTitle.keys.map(keyName).join(", ")} and checks for "${spec.postTitle.screenContains}" — you never press it.`,
   "Success is computed by code, never declared: title + post-title + every expected line present once + every line's checksum consistent + nothing forced + the C64's memory equal to the gated listing.",
   "Current canonical listing (Gazette notation; :rem = the checksum PRINTED in the magazine; status from the gate):",
-  ...lines.map((l) => `${l.n} ${l.body} :rem ${l.printed ?? "??"}   ${mark(l)}${l.provisional ? " (recovered, provisional)" : ""}${expected.includes(l.n) ? "" : "   [not in the page inventory: never typed, excluded from the verdict]"}`),
+  ...shown.map((l) => `${l.n} ${l.body} :rem ${l.printed ?? "??"}   ${mark(l)}${l.provisional ? " (recovered, provisional)" : ""}${expected.includes(l.n) ? "" : "   [not in the page inventory: never typed, excluded from the verdict]"}`),
+  ...(errorLineOnly ? [errorLineNote] : []),
 ].join("\n");
 process.stdout.write(text + "\n");
 appendFileSync(join(runDir, "events.jsonl"), JSON.stringify({ t: new Date().toISOString(), k: "hook", hook: "listing-context", via: process.env.READY_HOOK_VIA ?? "kiro-session-start", exit: 0, lines: lines.length, missing }) + "\n");

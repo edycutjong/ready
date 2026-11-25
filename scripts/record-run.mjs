@@ -7,6 +7,7 @@
  *        [--workspace .] [--trust-tools @c64/apply_patch,...] [--stop-check "node scripts/hooks/until-title.mjs --check"]
  *        [--out runs/<id>/<iso>.jsonl] [--ledger ledger] [--input <input.json>] [--kiro-bin kiro-cli]
  *        [--reference <transcript> --reference-origin "two machine reads"]   (evaluation-only source check, after the run)
+ *        [--max-cycles 1]   (experiment E2: no runner resume — Kiro's own Agent Stop hook is the only loop controller)
  *
  * --input: the run's $RUN_DIR/input.json (listingId, scope, spec, canonical lines after recovery, provisional) that
  * the c64 MCP server types in at start; copied into RUN_DIR and stored whole in the `start` event (replay fidelity,
@@ -82,6 +83,7 @@ while (true) {
   stop = stopCheck();
   emit({ k: "hook", hook: "until-title", exit: 0, decision: stop.stop ? "allow" : "block", stderr: stop.stop ? undefined : stop.reason, via: "runner-cycle" });
   if (stop.stop) break;
+  if (args["max-cycles"] && cycles >= Number(args["max-cycles"])) { capReason = "max-cycles"; break; }
   if (!sessionId) { emit({ k: "error", why: "no session id in stream; cannot resume" }); break; }
   prompt = stop.reason;
 }
