@@ -462,7 +462,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
         <a class="btn" href="/deck/"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M2.5 3.5h15v10h-15zM10 13.5v3M6.5 16.5h7"/></svg>Pitch deck</a>
         <a class="btn" href="/"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M4 10h11M11 5.5 15.5 10 11 14.5"/></svg>Open the live site</a>
       </div>
-      <p class="proof reveal" style="--d:.52s">Recorded playback of a real Kiro run · no C64 ROM served · every patch re-judged in your tab · <a href="{{run_file}}">the raw run log</a></p>
+      <p class="proof reveal" style="--d:.52s">Recorded playback of a real Kiro run · no C64 ROM served · its patch re-judged in your tab by the real gate · <a href="{{run_file}}">the raw run log</a></p>
     </div>
 
     <div class="exhibit reveal" style="--d:.25s">
@@ -719,6 +719,9 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   const runMs = (v) => { for (const s of segs) { if (v <= s.v) return s.a + v * s.s; v -= s.v; } return total; };
   const ticker = $("#ticker"), fill = $(".track .fill"), ticks = $$(".tick"), play = $("#play");
   const POST_AFTER = 900; // run-ms after the title screen; both screens come from one c64_run call
+  // the recorded patch, re-judged in this tab by the bundled gate (src/gate): the same code the Kiro hook ran
+  const RJ = window.READY_GATE ? window.READY_GATE.applyPatch(D.listing, [{ type: "replace", lineno: 20, new_body: D.l20.agent }], D.expected) : null;
+  const rjNote = RJ ? " · re-judged in this tab: " + RJ.verdict.toUpperCase() : "";
   let raf = 0, t0 = 0;
   const esc = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
   function show(ms) {
@@ -727,7 +730,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
     hero.dataset.ph = x.ph;
     hero.classList.toggle("post", ms >= ph4 + POST_AFTER);
     const lead = /^\d\d:/.test(x.text) ? x.text.slice(0, sp) : "+" + (x.ms / 1000).toFixed(1) + " s";
-    ticker.innerHTML = "<b>" + esc(lead) + "</b> " + esc(/^\d\d:/.test(x.text) ? x.text.slice(sp + 1) : x.text);
+    ticker.innerHTML = "<b>" + esc(lead) + "</b> " + esc((/^\d\d:/.test(x.text) ? x.text.slice(sp + 1) : x.text) + (x.ph === 3 ? rjNote : ""));
     fill.style.width = (ms / total * 100).toFixed(2) + "%";
     ticks.forEach((t, j) => t.classList.toggle("on", j <= i));
   }
