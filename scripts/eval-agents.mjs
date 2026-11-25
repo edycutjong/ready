@@ -74,7 +74,7 @@ if (a.model) {
   };
   // The run prompt is the published prompts/12-run-prompt-resurrect.md, byte-identical (cmp) to the one every recorded
   // model run used; --prompt-file overrides it (arch review 02: the harness runs from a public clone).
-  // Experiment arms (docs/EXPERIMENTS.md; Kiro plan §3). Every arm but stop-hook uses the runner-driven loop.
+  // Experiment arms (docs/EXPERIMENTS.md). Every arm but stop-hook uses the runner-driven loop.
   const ARMS = {
     shipped: {}, // Sonnet 5.5, whole-listing context, steering, runner loop: the configuration the product records with
     haiku: { model: "claude-haiku-5.5" }, // E1

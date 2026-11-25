@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * E1–E4 (docs/EXPERIMENTS.md, Kiro plan §3): aggregate the eval harness's own rows — never re-judges a run.
+ * E1–E4 (docs/EXPERIMENTS.md): aggregate the eval harness's own rows — never re-judges a run.
  *   node scripts/experiments-table.mjs [--since 2026-11-25T16:53] [--commit 657ac88]
  * Reads evidence/evals/evals-*.jsonl rows with kind "model" (cases 1 and 6, every arm) at one commit, and for each run
  * whose event file is on disk counts Kiro's own Agent Stop hook firings (`until-title` via kiro-stop) and their

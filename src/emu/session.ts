@@ -87,7 +87,7 @@ export function runListing(core: C64Core, listing: CanonicalListing, spec: Listi
   let postScreen: string | undefined;
   if (titleSeen && titleScreen === undefined) titleScreen = run.latched ?? readScreenText(core); // capture the title BEFORE the post-title press (P1b smoke test)
   if (titleSeen) {
-    // Clause 2 is evidence the press PRODUCED the text (arch review 01): read only the program's own output (below the last
+    // Clause 2 is evidence the text was NOT on screen before the press (arch review 01; a timer-printed text still passes, README Honest limits 8): read only the program's own output (below the last
     // RUN, never the typed listing above it, which usually contains the very PRINT), and fail closed when the text was
     // already on the screen before the press.
     // `titleScreen` may be the LATCHED frame (a title shown for fewer frames than a check): the program kept running after
