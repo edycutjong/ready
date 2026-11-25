@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYNTAX ERROR IN 20 — pitch deck</title>
+<meta name="description" content="Pitch deck: a Kiro agent proposes the fix to a 1984 type-in listing, a checksum gate decides, an emulated C64 runs it. Kiroween 2026, Resurrection.">
+<meta name="theme-color" content="#110C0A">
+<link rel="icon" href="/landing/icon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://ready.edycu.dev/deck/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SYNTAX ERROR IN 20">
+<meta property="og:title" content="SYNTAX ERROR IN 20 — pitch deck">
+<meta property="og:description" content="The dead listing rises only when the checksum agrees. One recorded run: 1 patch, {{wall_s}} s, {{credits}} Kiro credits.">
+<meta property="og:url" content="https://ready.edycu.dev/deck/">
+<meta property="og:image" content="https://ready.edycu.dev/landing/og.jpg?v=p4">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="brand frame: the error this project is named after. A singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="/fonts/rokkitt-latin-800-normal.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="/fonts/atkinson-hyperlegible-next-latin-400-normal.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="/fonts/atkinson-hyperlegible-mono-latin-500-normal.woff" as="font" type="font/woff" crossorigin>
+<style>
+@font-face{font-family:"Rokkitt";font-weight:800;font-display:swap;src:url(/fonts/rokkitt-latin-800-normal.woff) format("woff")}
+@font-face{font-family:"Rokkitt";font-weight:500;font-display:swap;src:url(/fonts/rokkitt-latin-500-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:400;font-display:swap;src:url(/fonts/atkinson-hyperlegible-next-latin-400-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:700;font-display:swap;src:url(/fonts/atkinson-hyperlegible-next-latin-700-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Mono";font-weight:500;font-display:swap;src:url(/fonts/atkinson-hyperlegible-mono-latin-500-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Mono";font-weight:700;font-display:swap;src:url(/fonts/atkinson-hyperlegible-mono-latin-700-normal.woff) format("woff")}
+:root {
+  --bg:      #110C0A;
+  --ink:     #EFE4CC;
+  --muted:   #A3937C;
+  --before:  #EC4A34;
+  --after:   #9D8FF2;
+  --rule:    #3A2A22;
+  --screen:  #352879;
+  --stamp:   #EC4A34;
+  --candle:  #F4A13A;
+  --paper:   #E6D5B0;
+  --paper-ink: #1E1611;
+  --before-on-paper: #A32A1E;
+  --after-on-paper:  #4A3CA0;
+  --stone:   #2A211C;
+  --font-display: "Rokkitt", "Rockwell", "Roboto Slab", serif;
+  --font-body:    "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --font-data:    "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --border64: #6C5EB5; /* the C64 border light blue (Pepto), named in design.md §4 */
+  --soot-2: color-mix(in srgb, var(--stone) 55%, var(--bg));
+  --paper-dim: color-mix(in srgb, var(--paper-ink) 66%, var(--paper));
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);overflow:hidden}
+body{color:var(--ink);font:400 28px/1.45 var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--before);color:var(--bg)}
+:focus-visible{outline:3px solid var(--after);outline-offset:4px}
+p,h1,h2,h3,figure,blockquote,ol,ul{margin:0;padding:0}
+h1,h2,h3{font-family:var(--font-display);font-weight:800;line-height:.96;letter-spacing:-.008em}
+code,time,.mono{font-family:var(--font-data);font-variant-ligatures:none}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-underline-offset:.18em}
+
+.viewport{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
+.stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform:translate(-50%,-50%) scale(var(--s,.5));transform-origin:50% 50%;overflow:hidden;background:var(--bg)}
+.slide{position:absolute;inset:0;padding:84px 120px 120px;display:none;isolation:isolate;overflow:hidden}
+.slide.on{display:block;animation:sIn .42s var(--ease) both}
+.slide.settled{animation:none}
+@keyframes sIn{from{opacity:0;transform:translateY(12px)}}
+.slide::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(120% 90% at 50% -18%,var(--soot-2),var(--bg) 66%)}
+.slide::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.18;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+.label{display:flex;align-items:center;gap:16px;font:500 21px/1.2 var(--font-data);letter-spacing:.22em;text-transform:uppercase;color:var(--before)}
+.label::before{content:"";width:40px;height:3px;background:currentColor}
+h2{font-size:84px;margin-top:22px;max-width:1500px}
+.verb{color:var(--after);text-decoration:underline solid var(--after);text-decoration-thickness:.06em;text-underline-offset:.12em}
+.foot{position:absolute;left:120px;right:120px;bottom:40px;display:flex;justify-content:space-between;align-items:center;font:500 19px/1 var(--font-data);color:var(--muted);letter-spacing:.06em}
+.foot b{color:var(--ink);font-weight:500}
+.nav{display:flex;gap:10px;align-items:center}
+.nav button{font:700 22px/1 var(--font-body);width:46px;height:40px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);cursor:pointer;transition:border-color .2s,transform .15s,background-color .2s}
+.nav button:hover{border-color:var(--ink);transform:translateY(-1px)}
+.nav button:active{transform:translateY(1px)}
+.nav .count{min-width:5.5ch;text-align:center}
+.notes{display:none}
+.show-notes .slide.on .notes{display:block;position:absolute;left:120px;right:120px;bottom:88px;z-index:30;padding:24px 30px;background:color-mix(in srgb,var(--bg) 94%,transparent);border:1px solid var(--rule);font:400 25px/1.5 var(--font-body);color:var(--ink)}
+.show-notes .slide.on .notes::before{content:"Presenter notes · P to hide";display:block;margin-bottom:8px;font:500 16px/1 var(--font-data);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+
+/* paper */
+.paper{position:relative;color:var(--paper-ink);isolation:isolate}
+.paper::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(85% 70% at 6% 106%,color-mix(in srgb,var(--candle) 30%,transparent),transparent 62%),linear-gradient(172deg,color-mix(in srgb,var(--paper) 90%,var(--ink)),var(--paper) 46%,color-mix(in srgb,var(--paper) 86%,var(--paper-ink)));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--paper-ink) 80%,var(--candle)),inset 0 0 38px 10px color-mix(in srgb,var(--paper-ink) 58%,transparent),0 30px 60px rgb(0 0 0 / .55);filter:url(#burn)}
+.g{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* listing rows (filled by the generator) */
+.ln{display:grid;grid-template-columns:3.2ch minmax(0,1fr) 7ch 22px;gap:0 14px;align-items:center;font:500 19px/1.62 var(--font-data);white-space:nowrap}
+.ln .no,.ln .rem{text-align:right;color:var(--paper-dim)}
+.ln .bd{overflow:hidden;text-overflow:ellipsis;white-space:pre}
+.st{display:grid;place-items:center}
+.st.ok{color:var(--paper-dim)}
+.st .x{display:none;color:var(--before-on-paper)}
+.st .v{color:var(--after-on-paper)}
+.l20{position:relative;margin:0 -10px;padding:1.05em 10px 0;background:color-mix(in srgb,var(--after-on-paper) 9%,transparent)}
+.l20 .bd{overflow:visible}
+.mis{position:relative;display:inline-block;text-decoration:line-through solid var(--after-on-paper) 2px}
+.ring{position:absolute;left:-14%;top:-36%;width:128%;height:172%;overflow:visible;pointer-events:none}
+.ring path{fill:none;stroke:var(--after-on-paper);stroke-width:3.4;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.fix{position:absolute;left:0;bottom:84%;font:800 1.18em/1 var(--font-display);color:var(--after-on-paper);transform:rotate(-5deg);transform-origin:0 100%;white-space:nowrap}
+.dead{background:color-mix(in srgb,var(--before-on-paper) 11%,transparent)}
+.dead .mis{color:var(--before-on-paper);text-decoration-color:var(--before-on-paper)}
+.dead .ring path{stroke:var(--before-on-paper)}
+.dead .st .x{display:block}
+
+/* the C64 */
+.crt{padding:18px;border-radius:24px;background:linear-gradient(158deg,color-mix(in srgb,var(--stone) 78%,var(--ink)),var(--stone) 34%,color-mix(in srgb,var(--stone) 50%,var(--bg)));box-shadow:0 34px 60px rgb(0 0 0 / .62),inset 0 1px 0 color-mix(in srgb,var(--ink) 16%,transparent);position:relative}
+.crt::before{content:"";position:absolute;z-index:-1;left:-70%;right:-10%;top:-30%;bottom:-45%;pointer-events:none;background:radial-gradient(46% 50% at 66% 46%,color-mix(in srgb,var(--after) 19%,transparent),transparent 72%)}
+.scr{display:block;width:100%;height:auto;border-radius:10px}
+.scr .bord{fill:var(--border64)}
+.scr .face{fill:var(--screen)}
+.scr .txt{fill:var(--after)}
+.cur{animation:blink 1.06s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.scr-cap{margin-top:10px;font:500 15px/1.3 var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right}
+.candle{position:absolute;z-index:3;width:42px;height:138px;border-radius:6px 6px 3px 3px;background:linear-gradient(90deg,color-mix(in srgb,var(--paper) 72%,var(--paper-ink)),color-mix(in srgb,var(--paper) 88%,var(--ink)) 44%,color-mix(in srgb,var(--paper) 66%,var(--paper-ink)));box-shadow:0 16px 26px rgb(0 0 0 / .5)}
+.candle::before{content:"";position:absolute;left:50%;top:-12px;width:3px;height:13px;translate:-50% 0;background:var(--paper-ink)}
+.flame{position:absolute;left:50%;bottom:99%;width:30px;height:64px;translate:-50% 0;border-radius:50% 50% 45% 45%/62% 62% 38% 38%;background:radial-gradient(46% 56% at 50% 74%,var(--ink),var(--candle) 54%,transparent 76%);transform-origin:50% 100%;animation:flick 3.3s ease-in-out infinite}
+@keyframes flick{0%,100%{transform:scale(1,1) skewX(0)}22%{transform:scale(.94,1.07) skewX(2deg)}48%{transform:scale(1.04,.95) skewX(-1.5deg)}71%{transform:scale(.97,1.05) skewX(1deg)}}
+.candlelight{position:absolute;left:50%;bottom:105%;width:900px;height:900px;translate:-50% 50%;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,color-mix(in srgb,var(--candle) 24%,transparent),color-mix(in srgb,var(--candle) 7%,transparent) 46%,transparent 72%);mix-blend-mode:screen;animation:breathe 3.3s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.92}30%{opacity:.78}60%{opacity:1}}
+.stamp{display:grid;justify-items:center;font:800 64px/1 var(--font-display);letter-spacing:.09em;color:var(--after);padding:.2em .5em .16em;border:.11em double currentColor;transform:rotate(-8deg);filter:url(#ink);text-shadow:0 0 .35em color-mix(in srgb,var(--after) 60%,transparent)}
+.stamp small{font:700 16px/1.2 var(--font-data);letter-spacing:.24em;margin-top:.4em}
+.on-paper.stamp{color:var(--after-on-paper);text-shadow:none;mix-blend-mode:multiply}
+.refused{color:var(--before-on-paper)}
+
+/* 1 cover */
+.s1::before{background:radial-gradient(42% 50% at 62% 88%,color-mix(in srgb,var(--candle) 14%,transparent),transparent 70%),radial-gradient(120% 90% at 50% -18%,var(--soot-2),var(--bg) 66%)}
+.s1 .icon{position:absolute;left:120px;top:76px;width:84px;height:84px;filter:drop-shadow(0 0 22px color-mix(in srgb,var(--after) 45%,transparent))}
+.s1 .copy{position:absolute;left:120px;top:214px;width:790px}
+.s1 h1{font-size:108px;line-height:.93;margin:26px 0 34px;letter-spacing:-.014em}
+.s1 .sub{font-size:33px;line-height:1.38;color:color-mix(in srgb,var(--ink) 86%,var(--muted));max-width:740px}
+.s1 .meta{margin-top:34px;display:flex;flex-wrap:wrap;gap:12px}
+.s1 .meta span{font:500 21px/1 var(--font-data);padding:11px 13px;border:1px solid var(--rule);color:var(--ink)}
+.s1 .meta b{font-weight:700;color:var(--after)}
+.seance{position:absolute;left:960px;top:120px;width:860px;height:800px}
+.seance .slip{position:absolute;left:0;top:0;width:730px;padding:34px 38px 40px;transform:rotate(-1.6deg);transform-origin:40% 60%;z-index:1}
+.seance .crt{position:absolute;right:0;bottom:0;width:470px;z-index:2}
+.seance .candle{left:22px;bottom:-14px}
+.seance .stamp{position:absolute;z-index:4;right:-24px;top:-64px}
+.prog{font:800 30px/1.1 var(--font-display)}
+.src{font:500 17px/1.35 var(--font-data);color:var(--paper-dim);margin:6px 0 14px;max-width:460px}
+
+/* 2 the death */
+.s2::before{background:radial-gradient(40% 55% at 50% 62%,color-mix(in srgb,var(--after) 10%,transparent),transparent 70%),radial-gradient(120% 90% at 50% -18%,var(--soot-2),var(--bg) 66%)}
+.death{position:absolute;left:120px;right:120px;top:300px;bottom:150px;display:grid;grid-template-columns:640px 470px minmax(0,1fr);gap:56px;align-items:stretch}
+.death > div{display:flex;flex-direction:column;justify-content:center}
+.death .strip{padding:74px 36px 52px}
+.death .strip .ln{font-size:26px;grid-template-columns:2.4ch minmax(0,1fr)}
+.death .strip .remline{margin-top:22px;font:500 26px/1 var(--font-data);color:var(--paper-dim);text-align:right}
+.death .step{display:block;margin-top:30px;font:700 32px/1.2 var(--font-body);color:var(--ink)}
+.death .step i{font-style:normal;font:500 20px/1 var(--font-data);color:var(--before);margin-right:12px;letter-spacing:.1em}
+.death blockquote{font:800 48px/1.1 var(--font-display);color:var(--ink);letter-spacing:-.005em}
+.death blockquote q{quotes:"\201C" "\201D"}
+.death cite{display:block;margin-top:18px;font:500 19px/1.3 var(--font-data);font-style:normal;color:var(--muted)}
+.arrow{position:absolute;top:50%;width:46px;height:20px;color:var(--before)}
+
+/* 3 the witness (paper slide) */
+.s3 .sheet{position:absolute;inset:60px 70px 100px;padding:60px 80px}
+.s3 .label{color:var(--before-on-paper)}
+.s3 h2{color:var(--paper-ink)}
+.wline{margin-top:58px;display:flex;align-items:center;gap:28px;font:500 40px/1 var(--font-data);white-space:pre}
+.wline .no{color:var(--paper-dim)}
+.wline .rem{position:relative;padding:10px 6px}
+.wline .rem svg{position:absolute;left:-18%;top:-34%;width:136%;height:168%;overflow:visible}
+.wline .rem path{fill:none;stroke:var(--before-on-paper);stroke-width:4;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.wgrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:70px;margin-top:64px;align-items:end}
+.wmath{font:500 30px/1.5 var(--font-data);border-top:3px double var(--paper-ink);padding-top:24px}
+.wmath b{color:var(--before-on-paper);font-weight:700}
+.wq{margin-top:34px;font:800 52px/1.05 var(--font-display)}
+.wstat{text-align:right}
+.wstat .big{font:800 230px/.84 var(--font-display);letter-spacing:-.03em;color:var(--after-on-paper)}
+.wstat p{font-size:30px;line-height:1.3;margin-top:16px}
+
+/* 4 the rite */
+.flow{position:absolute;left:120px;right:120px;top:410px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:26px;list-style:none}
+.flow li{position:relative;min-height:400px;padding:32px 26px;border:1px solid var(--rule);background:linear-gradient(180deg,color-mix(in srgb,var(--stone) 70%,var(--bg)),var(--bg));display:flex;flex-direction:column;gap:14px}
+.flow li:not(:last-child)::after{content:"";position:absolute;right:-22px;top:50%;width:18px;height:18px;border-top:3px solid var(--muted);border-right:3px solid var(--muted);transform:translateY(-50%) rotate(45deg)}
+.flow .k{font:700 18px/1 var(--font-data);letter-spacing:.18em;color:var(--muted)}
+.flow h3{font-size:46px;line-height:1.02}
+.flow p{font-size:27px;line-height:1.3;color:color-mix(in srgb,var(--ink) 84%,var(--muted));margin-top:auto}
+.flow .yes{border-color:color-mix(in srgb,var(--after) 60%,var(--rule));box-shadow:0 0 0 1px color-mix(in srgb,var(--after) 35%,transparent)}
+.flow .yes .k{color:var(--after)}
+.flow .model{border-style:dashed}
+.flow .model .k{color:var(--before)}
+.bracket{position:absolute;top:352px;height:40px;border:3px solid var(--after);border-bottom:0;left:calc(120px + 3 * (1680px - 5 * 26px) / 6 + 3 * 26px);right:120px}
+.bracket span{position:absolute;left:50%;top:-46px;translate:-50% 0;white-space:nowrap;font:800 34px/1 var(--font-display);letter-spacing:.06em;color:var(--after)}
+.s4 .coda{position:absolute;left:120px;bottom:128px;font:800 54px/1 var(--font-display);color:var(--ink)}
+.s4 .coda em{font-style:normal;color:var(--before)}
+
+/* 5 the gate (paper slide) */
+.s5 .sheet{position:absolute;inset:60px 70px 100px;padding:60px 80px}
+.s5 .label{color:var(--before-on-paper)}
+.s5 h2{color:var(--paper-ink)}
+.gate2{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:80px;margin-top:56px}
+.rlist{display:grid;gap:22px;align-content:start}
+.rlist div{display:grid;grid-template-columns:210px 130px minmax(0,1fr);gap:22px;align-items:center;font-size:31px;line-height:1.2;padding-bottom:20px;border-bottom:1px dashed color-mix(in srgb,var(--paper-ink) 40%,transparent)}
+.rlist .vst{justify-self:start;font:800 30px/1 var(--font-display);letter-spacing:.08em;padding:.2em .42em .14em;border:.12em double currentColor;color:var(--before-on-paper);transform:rotate(-5deg);filter:url(#ink)}
+.rlist code{font:700 25px/1 var(--font-data);color:var(--paper-dim)}
+.trapbox{padding:40px 44px;border:3px solid var(--paper-ink);background:color-mix(in srgb,var(--paper) 70%,var(--ink));box-shadow:10px 10px 0 var(--paper-ink)}
+.trapbox .t{font:700 22px/1 var(--font-data);letter-spacing:.18em;text-transform:uppercase;color:var(--before-on-paper)}
+.trapbox .math{margin-top:26px;font:800 74px/1 var(--font-display);letter-spacing:-.01em}
+.trapbox .line{margin-top:28px;font:500 26px/1.35 var(--font-data);white-space:pre;overflow:hidden;text-overflow:ellipsis}
+.trapbox .sum{margin-top:18px;font-size:30px}
+.trapbox .sum b{color:var(--before-on-paper)}
+.trapbox .stamp{margin-top:26px;justify-self:start;width:max-content;font-size:46px;color:var(--before-on-paper);text-shadow:none;mix-blend-mode:multiply}
+
+/* 6 kiro */
+.k6{position:absolute;left:120px;right:120px;top:360px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:64px}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-content:start}
+.tile{padding:24px 26px;border:1px solid var(--rule);background:linear-gradient(180deg,color-mix(in srgb,var(--stone) 70%,var(--bg)),var(--bg))}
+.tile b{display:block;font:800 76px/1 var(--font-display)}
+.tile span{display:block;margin-top:8px;font-size:24px;line-height:1.25;color:color-mix(in srgb,var(--ink) 84%,var(--muted))}
+.tile code{font-size:.9em}
+.tile.wide{grid-column:span 2;display:flex;align-items:center;gap:28px}
+.tile.wide b{flex:none}
+.shot{border:1px solid var(--rule);background:var(--stone);box-shadow:0 30px 60px rgb(0 0 0 / .45)}
+.chrome{display:flex;align-items:center;gap:9px;padding:13px 18px;border-bottom:1px solid var(--rule);font:500 17px/1 var(--font-data);color:var(--muted)}
+.chrome i{width:12px;height:12px;border-radius:50%;background:var(--rule)}
+.chrome span{margin-left:12px;padding:7px 14px;background:var(--bg);border-radius:4px;flex:1;max-width:460px}
+.kcred{margin-top:22px;padding:18px 22px;border:1px dashed color-mix(in srgb,var(--before) 60%,var(--rule));font-size:25px;line-height:1.35}
+
+/* 7 the run */
+.run7{position:absolute;left:120px;right:120px;top:330px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:56px;align-items:start}
+.term{border:1px solid var(--rule);background:color-mix(in srgb,var(--bg) 70%,var(--stone));box-shadow:0 30px 60px rgb(0 0 0 / .45)}
+.term-bar{display:flex;justify-content:space-between;gap:12px;padding:12px 18px;border-bottom:1px solid var(--rule);font:500 16px/1.3 var(--font-data);color:var(--muted)}
+.term-body{padding:14px 18px 18px;font:500 16.5px/1.5 var(--font-data)}
+.tr{display:grid;grid-template-columns:8.4ch 6.4ch minmax(0,1fr);gap:0 12px;padding:2px 0;color:color-mix(in srgb,var(--ink) 86%,var(--muted))}
+.tr time{color:var(--muted)}
+.tr b{font-weight:700;color:var(--muted)}
+.tr span{overflow-wrap:anywhere}
+.tr.acc span{color:var(--after)}
+.tr.bad span{color:var(--before)}
+.tr.dim span{color:var(--muted)}
+.cert{padding:40px 44px 150px}
+.cert h3{font-size:36px;letter-spacing:.04em;text-transform:uppercase;border-bottom:3px double var(--paper-ink);padding-bottom:14px}
+.cert dl{display:grid;grid-template-columns:230px minmax(0,1fr);margin:10px 0 0}
+.cert dt,.cert dd{padding:14px 0;border-bottom:1px solid color-mix(in srgb,var(--paper-ink) 22%,transparent)}
+.cert dt{font:700 17px/1.4 var(--font-data);letter-spacing:.14em;text-transform:uppercase;color:var(--paper-dim);padding-top:19px}
+.cert dd{margin:0;font-size:27px;line-height:1.35}
+.cert dd code{font-weight:700}
+.cert .bad{color:var(--before-on-paper)}
+.cert .stamp{position:absolute;right:48px;bottom:30px;font-size:58px}
+
+/* 8 receipts */
+.r8{position:absolute;left:120px;right:120px;top:350px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.rc{padding:34px 34px 30px;border:1px solid var(--rule);background:linear-gradient(180deg,color-mix(in srgb,var(--stone) 64%,var(--bg)),var(--bg))}
+.rc .num{font:800 112px/1 var(--font-display);letter-spacing:-.015em}
+.rc .num small{font-size:.42em;color:var(--muted);margin-left:.06em}
+.rc p{margin-top:14px;font-size:26px;line-height:1.3;color:color-mix(in srgb,var(--ink) 84%,var(--muted))}
+.e0{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:56px;align-items:center}
+.bars{display:grid;gap:18px}
+.bar{display:grid;grid-template-columns:110px minmax(0,1fr) 120px;gap:18px;align-items:center;font:500 22px/1 var(--font-data);color:var(--muted)}
+.bar i{display:block;height:34px;background:var(--rule)}
+.bar i span{display:block;height:100%;background:var(--muted)}
+.bar.agent i span{background:var(--after)}
+.bar b{font:800 34px/1 var(--font-display);color:var(--ink);text-align:right}
+.e0 q{display:block;font-size:30px;line-height:1.35;color:var(--ink);quotes:"\201C" "\201D"}
+.e0 cite{display:block;margin-top:12px;font:500 18px/1.3 var(--font-data);font-style:normal;color:var(--muted)}
+
+/* 9 stet */
+.s9::before{background:radial-gradient(60% 60% at 30% 40%,color-mix(in srgb,var(--before) 6%,transparent),transparent 70%),radial-gradient(120% 90% at 50% -18%,var(--soot-2),var(--bg) 66%)}
+.s9 h2 .stetmark{display:inline-block;font:800 .62em/1 var(--font-display);letter-spacing:.08em;color:var(--before);border:4px solid currentColor;padding:.16em .4em .1em;transform:rotate(-6deg) translateY(-.2em);margin-right:.3em}
+.s9 .sub{margin-top:22px;font-size:30px;color:color-mix(in srgb,var(--ink) 84%,var(--muted))}
+.readme{position:absolute;left:120px;right:120px;top:400px;padding:16px 0}
+.readme .bar2{display:flex;justify-content:space-between;font:500 18px/1 var(--font-data);color:var(--muted);padding-bottom:16px;border-bottom:1px solid var(--rule)}
+.readme blockquote{position:relative;padding:30px 0 30px 150px;border-bottom:1px solid var(--rule);font-size:36px;line-height:1.38}
+.readme blockquote::before{content:"stet";position:absolute;left:0;top:38px;font:800 28px/1 var(--font-display);letter-spacing:.1em;color:var(--before);border-bottom:3px dotted var(--before);padding-bottom:5px}
+.readme cite{display:block;margin-top:10px;font:500 18px/1.3 var(--font-data);font-style:normal;color:var(--muted)}
+
+/* 10 raise one */
+.s10::before{background:radial-gradient(50% 60% at 50% 105%,color-mix(in srgb,var(--candle) 15%,transparent),transparent 70%),radial-gradient(120% 90% at 50% -18%,var(--soot-2),var(--bg) 66%)}
+.r10{position:absolute;left:120px;right:120px;top:330px;display:grid;grid-template-columns:400px minmax(0,1fr);gap:70px;align-items:start}
+.qr{padding:34px 34px 28px;text-align:center}
+.qr svg{display:block;width:100%;height:auto;color:var(--paper-ink);shape-rendering:crispEdges}
+.qr p{margin-top:14px;font:700 21px/1.2 var(--font-data)}
+.links{list-style:none;display:grid;gap:0}
+.links li{display:grid;grid-template-columns:420px minmax(0,1fr);gap:24px;align-items:baseline;padding:20px 0;border-bottom:1px solid var(--rule)}
+.links li:first-child{border-top:1px solid var(--rule)}
+.links a{font:700 30px/1.2 var(--font-data);color:var(--ink);text-decoration:none;border-bottom:2px solid var(--before);justify-self:start}
+.links a:hover{color:var(--paper);border-bottom-color:var(--after)}
+.links span{font-size:27px;color:color-mix(in srgb,var(--ink) 84%,var(--muted))}
+.r10 .shot{margin-top:30px}
+.r10 .shot img{width:100%;height:300px;object-fit:cover;object-position:50% 0}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media print{
+  @page{size:1920px 1080px;margin:0}
+  html,body{height:auto;overflow:visible;background:var(--bg);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .viewport{position:static;overflow:visible}
+  .stage{position:static;transform:none!important;width:1920px;height:auto;overflow:visible}
+  .slide{display:block!important;position:relative;width:1920px;height:1080px;break-after:page;page-break-after:always}
+  .slide:last-of-type{break-after:auto;page-break-after:auto}
+  .slide::after{display:none}
+  .notes,.nav{display:none!important}
+  .foot{position:fixed;left:120px;right:120px;bottom:40px}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="burn" x="-4%" y="-4%" width="108%" height="108%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".016 .022" numOctaves="4" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="ink" x="-8%" y="-14%" width="116%" height="128%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="4" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.6 0 0 0 1.75" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in" result="t"/>
+      <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="9" result="w"/>
+      <feDisplacementMap in="t" in2="w" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="phos" x="-6%" y="-6%" width="112%" height="112%">
+      <feGaussianBlur stdDeviation="2.4" result="b"/>
+      <feComponentTransfer in="b" result="g"><feFuncA type="linear" slope=".55"/></feComponentTransfer>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <radialGradient id="glass" cx="50%" cy="45%" r="70%">
+      <stop offset="58%" style="stop-color:var(--bg);stop-opacity:0"/>
+      <stop offset="100%" style="stop-color:var(--bg);stop-opacity:.42"/>
+    </radialGradient>
+    <pattern id="scan" width="4" height="3" patternUnits="userSpaceOnUse"><rect width="4" height="1" style="fill:var(--bg);fill-opacity:.13"/></pattern>
+  </defs>
+</svg>
+
+<div class="viewport" id="viewport">
+<main class="stage" id="stage" aria-roledescription="slide deck" aria-label="SYNTAX ERROR IN 20, pitch deck">
+
+<!-- 1 · cover -->
+<section class="slide s1 on" data-title="The dead listing rises" role="group" aria-roledescription="slide" aria-label="1 of 10: cover">
+  <img class="icon" src="/landing/icon.svg" alt="SYNTAX ERROR IN 20 icon" width="84" height="84">
+  <div class="copy">
+    <p class="label">Kiroween 2026 · Resurrection</p>
+    <h1>The dead listing <span class="verb">rises</span> only when the checksum agrees.</h1>
+    <p class="sub">A Kiro agent proposes. A checksum gate decides. An emulated C64 runs it.</p>
+    <p class="meta"><span><b>{{wall_s}} s</b></span><span><b>{{credits}}</b> Kiro credits</span><span><b>1</b> patch</span><span>one recorded run</span></p>
+  </div>
+  <div class="seance" data-drawn>
+    <div class="slip paper">
+      <p class="prog">Program 1: The Last Seance</p>
+      <p class="src">authored 2026, typeset by us, read by real OCR</p>
+      <div class="listing" role="group" aria-label="The listing as OCR read it, with the checksum gate's mark on line 20">
+<!--@listing-->
+      </div>
+    </div>
+    <div class="candle" aria-hidden="true"><span class="candlelight"></span><span class="flame"></span></div>
+    <div class="crt">
+      <svg class="scr" viewBox="0 0 384 272" role="img" aria-label="Recorded C64 screen after the patch: {{post_screen}}">
+        <rect class="bord" width="384" height="272"/><rect class="face" x="32" y="36" width="320" height="200"/>
+        <g class="txt" transform="translate(42 46) scale(1.3)" filter="url(#phos)"><!--@screen:post--></g>
+        <rect x="32" y="36" width="320" height="200" fill="url(#scan)"/><rect width="384" height="272" fill="url(#glass)"/>
+      </svg>
+      <p class="scr-cap">recorded screen · {{emulator}}</p>
+    </div>
+    <div class="stamp" role="img" aria-label="IT LIVES, as recorded">IT LIVES<small>AS RECORDED</small></div>
+  </div>
+  <aside class="notes">This is SYNTAX ERROR IN 20, our Resurrection entry. Magazines in 1984 printed programs to type in, with a checksum on every line. We let a Kiro agent repair what OCR breaks, but only code decides whether a fix is true: the printed checksum, then a C64 that must run it.</aside>
+</section>
+
+<!-- 2 · the death -->
+<section class="slide s2" data-title="The death" role="group" aria-roledescription="slide" aria-label="2 of 10: the death">
+  <p class="label">II · the death</p>
+  <h2>One wrong character kills the program.</h2>
+  <div class="death">
+    <div>
+      <div class="strip paper" data-drawn>
+        <div class="ln l20 dead"><span class="no">20</span><span class="bd"><span class="mis">PRIMT™<svg class="ring" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path d="M8 22C6 9 32 3 54 4s42 5 40 18-30 15-52 14S10 34 8 22Z"/></svg></span>   ** THE LAST SEANCE **"</span></div>
+        <p class="remline">printed :rem {{printed20}} · computed {{ocr_sum}} <span class="refused" role="img" aria-label="checksum mismatch"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 2.5 9.5 9.5M9.5 2.5 2.5 9.5"/></svg></span></p>
+      </div>
+      <span class="step">OCR reads line 20</span>
+    </div>
+    <div>
+      <div class="crt" data-drawn>
+        <svg class="scr" viewBox="0 0 384 272" role="img" aria-label="Recorded C64 screen: {{err_screen}}">
+          <rect class="bord" width="384" height="272"/><rect class="face" x="32" y="36" width="320" height="200"/>
+          <g class="txt" transform="translate(42 46) scale(1.3)" filter="url(#phos)"><!--@screen:error--></g>
+          <rect x="32" y="36" width="320" height="200" fill="url(#scan)"/><rect width="384" height="272" fill="url(#glass)"/>
+        </svg>
+      </div>
+      <span class="step">The C64 answers</span>
+    </div>
+    <div>
+      <blockquote><q>An LLM asked to "fix the listing" will happily invent a line that runs and is wrong.</q><cite>README · The Problem</cite></blockquote>
+      <span class="step">A model guesses</span>
+    </div>
+  </div>
+  <aside class="notes">A misprint, or an OCR misread, is enough: here OCR read PRINT as PRIMT and the quote as a trademark sign, and the C64 answers SYNTAX ERROR IN 20. Ask a language model to fix it and it will produce something that runs, which is not the same as what was printed.</aside>
+</section>
+
+<!-- 3 · the witness -->
+<section class="slide s3" data-title="The witness" role="group" aria-roledescription="slide" aria-label="3 of 10: the witness">
+  <div class="sheet paper">
+    <p class="label">III · the witness</p>
+    <h2>The magazine left a witness on every line.</h2>
+    <div class="wline" data-drawn><span class="no">20</span><span>{{fix_body}}</span><span class="rem">:rem {{printed20}}<svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path d="M8 22C6 9 32 3 54 4s42 5 40 18-30 15-52 14S10 34 8 22Z"/></svg></span></div>
+    <div class="wgrid">
+      <div>
+        <p class="wmath">Σ codes of the line number and body, spaces 0, <b>mod 256</b></p>
+        <p class="wq">“A match is evidence, never proof.”</p>
+      </div>
+      <div class="wstat"><p class="big">43/43</p><p>lines reproduced on a real June 1984 page</p></div>
+    </div>
+  </div>
+  <aside class="notes">Every printed line ends in a :rem checksum. Our implementation reproduces the magazine's sums on 43 of 43 lines of a real June 1984 page. But a mod-256 sum collides easily, so a match is evidence, never proof: that is why the C64 must also run the line.</aside>
+</section>
+
+<!-- 4 · the rite -->
+<section class="slide s4" data-title="The rite" role="group" aria-roledescription="slide" aria-label="4 of 10: the rite">
+  <p class="label">IV · the rite</p>
+  <h2>The model proposes. Code decides.</h2>
+  <div class="bracket"><span>can say yes</span></div>
+  <ol class="flow">
+    <li><h3>OCR</h3><p>reads the page</p></li>
+    <li><h3>Flags</h3><p><code>:rem</code> mismatch</p></li>
+    <li class="model"><span class="k">MODEL</span><h3>Kiro agent</h3><p>proposes</p></li>
+    <li class="yes"><h3>Gate</h3><p>accepts or refuses</p></li>
+    <li class="yes"><h3>C64</h3><p>re-RUNs it</p></li>
+    <li class="yes"><h3>Contract</h3><p>certifies RESURRECTED</p></li>
+  </ol>
+  <p class="coda">No yes comes from the <em>model</em>.</p>
+  <aside class="notes">Tesseract reads the scan in the browser and the checksum flags the lines that disagree. The Kiro agent may only propose. The gate, the C64 re-run and the contract are deterministic code, and they are the only parts that can say yes.</aside>
+</section>
+
+<!-- 5 · the gate -->
+<section class="slide s5" data-title="The gate" role="group" aria-roledescription="slide" aria-label="5 of 10: the gate">
+  <div class="sheet paper">
+    <p class="label">V · the gate</p>
+    <h2>Four ways to cheat. Four refusals.</h2>
+    <div class="gate2">
+      <div class="rlist">
+        <div><span class="vst">REFUSED</span><code>R4.15</code><span>sum ≠ printed</span></div>
+        <div><span class="vst">REFUSED</span><code>R4.15</code><span>untypeable character</span></div>
+        <div><span class="vst">REFUSED</span><code>R4.4</code><span>empty line</span></div>
+        <div><span class="vst">REFUSED</span><code>R4.7</code><span>over 40% rewritten</span></div>
+      </div>
+      <div class="trapbox" data-drawn>
+        <p class="t">The ™ trap</p>
+        <p class="math">8482 mod 256 = 34</p>
+        <p class="line">20 {{tm_only}}</p>
+        <p class="sum">raw sum <b>{{tm_naive}}</b> = printed <b>{{printed20}}</b></p>
+        <div class="stamp">REFUSED</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">A Kiro Pre Tool Use hook runs this gate before apply_patch reaches the MCP server, and a refusal exits 2 with its reason. The trademark sign is the best trap: its code, 8482, is 34 mod 256, a quote, so a raw sum matches. The gate drops characters no C64 key can type before it sums.</aside>
+</section>
+
+<!-- 6 · kiro -->
+<section class="slide s6" data-title="Kiro" role="group" aria-roledescription="slide" aria-label="6 of 10: Kiro">
+  <p class="label">VI · Kiro</p>
+  <h2>Kiro built it and guards it.</h2>
+  <div class="k6">
+    <div>
+      <div class="tiles">
+        <div class="tile"><b>3</b><span>specs</span></div>
+        <div class="tile"><b>4</b><span>hooks: 3 run, 1 save</span></div>
+        <div class="tile"><b>{{steering}}</b><span>steering files</span></div>
+        <div class="tile"><b>{{tools}}</b><span>MCP tools only</span></div>
+        <div class="tile wide"><b>1</b><span>agent profile, <code>{{agent}}</code></span></div>
+      </div>
+      <p class="kcred">Credit caps hit: 51.26 of 50, 68.71 of 70; the rest claude-direct, labelled.</p>
+    </div>
+    <figure class="shot" data-drawn>
+      <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>ready.edycu.dev/kiro</span></div>
+      <img src="/landing/img/kiro.webp" width="1600" height="1023" alt="The /kiro page of the live site: the recorded run's hook rows and tool calls with times, from listing-context to until-title allow and 0.85 credits.">
+    </figure>
+  </div>
+  <aside class="notes">Kiro specs built the tokenizer, the checksum and the MCP tool layer. Kiro hooks fire on every run: listing-context at session start, checksum-gate before every patch, until-title at stop; a save hook runs the property tests. Two spec lines hit their credit cap, and the rest was written claude-direct and labelled so.</aside>
+</section>
+
+<!-- 7 · the run -->
+<section class="slide s7" data-title="The run" role="group" aria-roledescription="slide" aria-label="7 of 10: the run">
+  <p class="label">VII · the run</p>
+  <h2>One recorded run: {{wall_s}} seconds.</h2>
+  <div class="run7">
+    <div class="term" data-drawn>
+      <div class="term-bar"><span>{{kiro_cli}} · agent {{agent}}</span><span>{{model}} · {{run_date}}</span></div>
+      <div class="term-body" role="log" aria-label="The run's own events">
+<!--@terminal-->
+      </div>
+    </div>
+    <div class="cert paper">
+      <h3>Certificate of death, reversed</h3>
+      <dl>
+        <dt>Cause of death</dt><dd><code class="bad">?SYNTAX&nbsp;&nbsp;ERROR IN 20</code></dd>
+        <dt>Treatment</dt><dd>{{n_acc}} accepted · {{n_ref}} refused · {{n_forced}} forced</dd>
+        <dt>Revival</dt><dd>{{revival}} UTC</dd>
+        <dt>Alive</dt><dd>{{alive_at}} UTC · {{credits}} credits</dd>
+      </dl>
+      <div class="stamp on-paper" role="img" aria-label="IT LIVES, as recorded">IT LIVES<small>AS RECORDED</small></div>
+    </div>
+  </div>
+  <aside class="notes">This is the whole recorded run, every row from its log, including the skill load that failed. One patch, accepted by the gate at checksum 159, then the C64 re-run printed the title and the post-title screen. The certificate is filled in backwards from those rows.</aside>
+</section>
+
+<!-- 8 · receipts -->
+<section class="slide s8" data-title="Receipts" role="group" aria-roledescription="slide" aria-label="8 of 10: receipts">
+  <p class="label">VIII · receipts</p>
+  <h2>Receipts, not adjectives.</h2>
+  <div class="r8">
+    <div class="rc"><p class="num">{{tests}}</p><p>tests passing on <code>{{head}}</code></p></div>
+    <div class="rc"><p class="num">6<small>/ 6</small></p><p>model runs RESURRECTED, re-judged</p></div>
+    <div class="rc"><p class="num">{{gate_p95}}<small>ms</small></p><p>gate p95, N={{gate_n}}</p></div>
+    <div class="rc e0">
+      <div class="bars" data-drawn aria-hidden="true">
+        <div class="bar"><span>search</span><i><span style="width:16.67%"></span></i><b>3/18</b></div>
+        <div class="bar agent"><span>agent</span><i><span style="width:100%"></span></i><b>18/18</b></div>
+      </div>
+      <div><q>search fixed 3 of 18 failing lines; the agent made all 18 checksum-consistent (N=2)</q><cite>README · Experiment E0</cite></div>
+    </div>
+  </div>
+  <aside class="notes">All numbers are measured and in the repo. Six model runs across two eval cases all reached RESURRECTED and re-judge with zero mismatches. The gate decides in microseconds. And the experiment that justifies the agent: plain search fixed 3 of 18 failing lines on the real page, the agent made all 18 checksum-consistent.</aside>
+</section>
+
+<!-- 9 · stet -->
+<section class="slide s9" data-title="Stet" role="group" aria-roledescription="slide" aria-label="9 of 10: honest limits">
+  <p class="label">IX · honest limits</p>
+  <h2><span class="stetmark">stet</span>What we will not claim.</h2>
+  <div class="readme" data-drawn>
+    <p class="bar2"><span>README.md · Honest limits</span><span>verbatim</span></p>
+    <blockquote>The live site is recorded playback; no C64 ROM is hosted (rights), so "IT LIVES" there is captioned "as recorded".<cite>Honest limits 1</cite></blockquote>
+    <blockquote>On the real 1984 page the title-path result is 19/28 lines source-exact against a vision-read reference; the other lines are checksum-consistent, not proven identical.<cite>Honest limits 3</cite></blockquote>
+    <blockquote>Evals: N=3 per model case on one machine; cases 5 and 6 are not run.<cite>Honest limits 5</cite></blockquote>
+  </div>
+  <aside class="notes">Stet is the proofreader's mark for "let it stand", and these limits stand. No C64 ROM is served, so the site plays a recording. On the real magazine page only 19 of 28 lines are proven source-exact. And two eval cases have not been run yet.</aside>
+</section>
+
+<!-- 10 · raise one -->
+<section class="slide s10" data-title="Raise one" role="group" aria-roledescription="slide" aria-label="10 of 10: raise one yourself">
+  <p class="label">X · raise one</p>
+  <h2>Raise one yourself.</h2>
+  <div class="r10">
+    <div class="qr paper">
+      <svg viewBox="0 0 33 33" role="img" aria-label="QR code for https://ready.edycu.dev/landing/"><path stroke="currentColor" d="M2 2.5h7m2 0h1m1 0h4m3 0h1m3 0h7m-29 1h1m5 0h1m2 0h2m2 0h1m4 0h3m1 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m1 0h3m3 0h7m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m1 0h1m1 0h4m1 0h2m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h2m2 0h1m3 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m1 0h1m1 0h1m3 0h2m3 0h1m2 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-18 1h4m1 0h2m2 0h1m-20 1h1m2 0h1m1 0h1m1 0h1m2 0h3m1 0h3m1 0h3m1 0h2m1 0h1m-23 1h1m3 0h3m2 0h3m2 0h1m2 0h8m-29 1h1m1 0h2m1 0h4m2 0h2m2 0h1m1 0h2m1 0h2m3 0h2m1 0h1m-29 1h3m2 0h1m1 0h1m2 0h1m1 0h1m4 0h1m3 0h1m3 0h1m1 0h2m-28 1h1m1 0h2m1 0h2m6 0h1m1 0h2m1 0h2m2 0h1m4 0h1m-29 1h2m1 0h3m2 0h4m2 0h2m1 0h1m4 0h1m1 0h1m1 0h1m1 0h1m-29 1h1m1 0h6m2 0h3m1 0h1m2 0h1m4 0h1m1 0h1m3 0h1m-28 1h3m1 0h1m1 0h3m2 0h3m2 0h3m1 0h1m1 0h1m1 0h1m2 0h1m-29 1h2m1 0h1m1 0h2m3 0h2m1 0h3m1 0h1m1 0h2m7 0h1m-29 1h1m2 0h1m1 0h1m1 0h1m2 0h2m1 0h1m3 0h2m3 0h3m1 0h1m1 0h1m-26 1h2m1 0h1m1 0h1m1 0h1m4 0h1m1 0h1m5 0h1m1 0h1m2 0h1m-27 1h1m6 0h1m4 0h1m2 0h2m1 0h1m6 0h2m-29 1h3m1 0h1m1 0h1m2 0h1m2 0h1m2 0h1m1 0h2m1 0h6m-18 1h1m1 0h1m4 0h4m1 0h1m3 0h1m1 0h3m-29 1h7m6 0h3m2 0h3m1 0h1m1 0h1m3 0h1m-29 1h1m5 0h1m2 0h1m1 0h1m2 0h2m1 0h1m1 0h2m3 0h2m1 0h2m-29 1h1m1 0h3m1 0h1m1 0h5m1 0h1m2 0h1m1 0h6m2 0h1m-28 1h1m1 0h3m1 0h1m2 0h2m2 0h3m1 0h2m4 0h1m4 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m2 0h1m2 0h1m2 0h4m4 0h3m-29 1h1m5 0h1m1 0h2m1 0h3m3 0h1m2 0h1m2 0h1m1 0h1m1 0h2m-29 1h7m5 0h2m3 0h1m2 0h3m1 0h2m1 0h1"/></svg>
+      <p>ready.edycu.dev/landing</p>
+    </div>
+    <div>
+      <ul class="links">
+        <li><a href="/">ready.edycu.dev</a><span>press Resurrect, then Cheat</span></li>
+        <li><a href="/kiro">/kiro</a><span>the hooks, as they fired</span></li>
+        <li><a href="/scan">/scan</a><span>check your own page</span></li>
+        <li><a href="https://github.com/edycutjong/ready">GitHub</a><span>code, specs, evidence</span></li>
+      </ul>
+      <figure class="shot" data-drawn>
+        <img src="/landing/img/desk.webp" width="1800" height="652" alt="The live site after the recorded run: the galley with line 20 struck in red and re-inked in blue, and the C64 pane showing THE SPIRITS ANSWER, IT LIVES, READY TO RISE.">
+      </figure>
+    </div>
+  </div>
+  <aside class="notes">Open the live site, press Resurrect to replay the recorded run, then press Cheat and watch the gate refuse. The hooks are at /kiro, and /scan checks your own page with OCR in your browser. The code, the Kiro specs and every evidence file are in the repository.</aside>
+</section>
+
+<footer class="foot" id="foot">
+  <span><b>SYNTAX ERROR IN 20</b> · Kiroween 2026 · built {{build_date}} from {{head}}</span>
+  <span class="nav"><button type="button" id="prev" aria-label="Previous slide">‹</button><span class="count" id="count" aria-live="polite">1 / 10</span><button type="button" id="next" aria-label="Next slide">›</button></span>
+</footer>
+</main>
+</div>
+
+<script>
+(() => {
+  const de = document.documentElement, stage = document.getElementById("stage");
+  const slides = [...document.querySelectorAll(".slide")], count = document.getElementById("count");
+  let i = 0;
+  const fit = () => stage.style.setProperty("--s", Math.min(de.clientWidth / 1920, de.clientHeight / 1080));
+  function go(n, write = true) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, j) => {
+      const on = j === i;
+      s.classList.toggle("on", on); s.setAttribute("aria-hidden", on ? "false" : "true");
+      if (on) { s.classList.remove("settled"); s.addEventListener("animationend", () => s.classList.add("settled"), { once: true }); }
+    });
+    count.textContent = (i + 1) + " / " + slides.length;
+    if (write) history.replaceState(null, "", "#" + (i + 1));
+  }
+  const fromHash = () => { const n = parseInt(location.hash.slice(1), 10); return Number.isFinite(n) ? n - 1 : 0; };
+  addEventListener("resize", fit); fit();
+  go(fromHash(), false);
+  addEventListener("hashchange", () => go(fromHash(), false));
+  addEventListener("keydown", (e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    const k = e.key;
+    if (k === "ArrowRight" || k === "PageDown" || k === " " || k === "Enter" && e.target === document.body) { e.preventDefault(); go(i + 1); }
+    else if (k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); go(i - 1); }
+    else if (k === "Home") { e.preventDefault(); go(0); }
+    else if (k === "End") { e.preventDefault(); go(slides.length - 1); }
+    else if (k === "p" || k === "P") document.body.classList.toggle("show-notes");
+  });
+  document.getElementById("prev").addEventListener("click", (e) => { e.stopPropagation(); go(i - 1); });
+  document.getElementById("next").addEventListener("click", (e) => { e.stopPropagation(); go(i + 1); });
+  document.getElementById("viewport").addEventListener("click", (e) => {
+    if (e.target.closest("a,button,summary,input")) return;
+    const r = stage.getBoundingClientRect();
+    if (e.clientX < r.left + r.width * .35) go(i - 1); else go(i + 1);
+  });
+  addEventListener("beforeprint", () => slides.forEach((s) => s.classList.add("settled")));
+})();
+</script>
+</body>
+</html>
