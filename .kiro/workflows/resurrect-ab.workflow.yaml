@@ -1,0 +1,56 @@
+# One experiment's two arms in parallel, then an aggregator (kiro-plan item 16; docs/EXPERIMENTS.md).
+# Each arm step only RUNS the eval harness: real kiro-cli sessions through scripts/record-run.mjs, where code computes
+# every verdict (the C64 run + the checksum gate + the contract). No step judges a run itself; the aggregator copies
+# the harness's own "result" fields into a table.
+# Example inputs: case "6", armA "shipped", armB "error-line", n "2".  Arms: shipped | haiku | stop-hook | error-line |
+# no-basic-steering (scripts/eval-agents.mjs). Every run is capped at 15 iterations / 8 credits / 600 s (runner/budget.ts).
+name: resurrect-ab
+description: Run two resurrector experiment arms on the same eval case in parallel, then tabulate their measured results.
+inputs:
+  case: string
+  armA: string
+  armB: string
+  n: string
+steps:
+  - type: parallel
+    id: arms
+    joinPolicy: allSettled
+    branches:
+      - type: step
+        id: armA
+        agent: wf-coder
+        prompt: |
+          Run exactly this command from the workspace root. Do not edit, create or commit any file, and do not run
+          anything else:
+
+            node scripts/eval-agents.mjs --model --case {{case}} --arm {{armA}} --n {{n}}
+
+          When it exits, reply with only the lines it printed that contain "kind":"model", unchanged, then its final
+          "summary" line.
+      - type: step
+        id: armB
+        agent: wf-coder
+        prompt: |
+          Run exactly this command from the workspace root. Do not edit, create or commit any file, and do not run
+          anything else:
+
+            node scripts/eval-agents.mjs --model --case {{case}} --arm {{armB}} --n {{n}}
+
+          When it exits, reply with only the lines it printed that contain "kind":"model", unchanged, then its final
+          "summary" line.
+  - type: step
+    id: aggregate
+    agent: wf-planner
+    prompt: |
+      Two arms of one experiment ran on eval case {{case}}. Their JSON rows, as the harness printed them:
+
+      Arm {{armA}}:
+      {{armA.output}}
+
+      Arm {{armB}}:
+      {{armB.output}}
+
+      Write one Markdown table with a row per arm: arm, runs, RESURRECTED count, BOOTED — PARTIAL count,
+      NOT RESURRECTED count, iterations p50, credits p50, wall seconds p50. Copy each run's "result" field exactly;
+      never re-judge a run. Under the table, state N per arm and that N this small shows a direction, not a rate.
+      Do not edit any file.
