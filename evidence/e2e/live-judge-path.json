@@ -1,13 +1,13 @@
 {
  "base": "https://ready.edycu.dev",
- "date": "2026-11-25T16:05:34.420Z",
+ "date": "2026-11-25T18:57:54.246Z",
  "ok": true,
  "checks": [
   {
    "name": "first playable paint ≤ 60 s, no install, clean profile",
    "pass": true,
    "detail": {
-    "ms": 2106
+    "ms": 245
    }
   },
   {
@@ -54,6 +54,11 @@
    "name": ".PRG download works",
    "pass": true,
    "detail": "line20-recorded.prg"
+  },
+  {
+   "name": "judge path page: 0 console errors, 0 failed or 4xx/5xx requests",
+   "pass": true,
+   "detail": []
   },
   {
    "name": "/kiro lists ≥ 1 real hook firing from the recorded run",
