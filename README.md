@@ -43,7 +43,7 @@ The 60-second judge path:
 | 50–60 | Open [`/kiro`](https://ready.edycu.dev/kiro) | The Kiro hook rows and tool calls of that run, grouped as they happened |
 
 Then try [`/scan`](https://ready.edycu.dev/scan): pick a page of the June 1984 Gazette on archive.org, or upload a scan. Tesseract.js
-(self-hosted, in your tab) reads it and the per-line checksum flags each line whose recomputed sum differs from the printed one. The repair is withheld there (see Honest limits).
+(self-hosted, in your tab) reads it and each line's recomputed sum is checked against the printed one and the mismatches are flagged. The repair is withheld there (see Honest limits).
 
 ## 💡 The Problem & Solution
 
@@ -52,8 +52,9 @@ COMPUTE!'s Gazette (1984) printed programs for you to type in, and every line ca
 those pages are OCR'd with errors, and a single wrong character gives `?SYNTAX  ERROR IN 20` on a machine nobody owns
 any more. An LLM asked to "fix the listing" will happily invent a line that runs and is wrong.
 
-**Who it is for:** anyone typing a listing back in from a scan. [`/scan`](https://ready.edycu.dev/scan) already flags each
-line of a Gazette page or your own scan whose recomputed checksum differs from its printed `:rem`, in the browser (no install, no ROM); the gated repair is proven on recorded
+**Who it is for:** anyone typing a listing back in from a scan. [`/scan`](https://ready.edycu.dev/scan) already checks
+each line of a Gazette page or your own scan against its printed `:rem` and flags the mismatches (a sum that fits only a
+misread printed digit is marked "digits misread" instead), in the browser (no install, no ROM); the gated repair is proven on recorded
 runs (Engineering Rigor) and withheld on live pages (Honest limits, 4).
 
 ### The Solution
@@ -124,7 +125,7 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the rem
 1. The live site is **recorded playback**; no C64 ROM is hosted (rights), so "IT LIVES" there is captioned "as recorded".
 2. The 1984 magazine page and its OCR output are not in this repository (rights); that run cannot be reproduced from a clone.
 3. On the real 1984 page the title-path result is `19/28` lines source-exact against a vision-read reference; the other lines are checksum-consistent, not proven identical.
-4. `/scan` flags misread lines but withholds the repair on live pages.
+4. `/scan` flags checksum mismatches but withholds the repair on live pages.
 5. Evals: N=3 per model case on one machine; cases 5 and 6 are not run.
 6. The MEGA65 Open ROMs spike failed (5/5 syntax probes unimplemented), so the C64 core is the one `c64-ready` ships.
 

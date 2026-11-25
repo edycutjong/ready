@@ -626,7 +626,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   <div class="wrap">
     <h2 id="who-h">For anyone typing a listing back in from a scan.</h2>
     <dl>
-      <div><dt>Today, in your tab</dt><dd><a href="/scan">/scan</a> flags each line of a 1984 Gazette page, or your own scan, whose checksum disagrees with its printed <code>:rem</code>. No install, no ROM.</dd></div>
+      <div><dt>Today, in your tab</dt><dd><a href="/scan">/scan</a> checks each line of a 1984 Gazette page, or your own scan, against its printed <code>:rem</code> and flags the mismatches. No install, no ROM.</dd></div>
       <div><dt>Proven on recorded runs</dt><dd>The gated repair: 6 of 6 model runs RESURRECTED, 0 mismatches on re-judge.</dd></div>
       <div><dt>Not yet</dt><dd>The repair on live pages (README limit 4); any outside user's listing.</dd></div>
     </dl>
@@ -637,11 +637,11 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   <div class="wrap">
     <p class="eyebrow">Recorded 2026-11-24 · 19:56 UTC</p>
     <h2 id="run-h" style="margin-top:18px">The page shows the run. The log proves it.</h2>
-    <p class="lede2">Above, the live site. Below, the run typed from its log; two hook rows are the recorder running the hook scripts.</p>
+    <p class="lede2">Above, the live site. Below, the run typed from its log; two hook rows are the recorder running hook scripts.</p>
     <figure class="shot wide">
       <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>ready.edycu.dev</span></div>
-      <picture><source media="(max-width:600px)" srcset="/landing/img/desk-m.webp" width="716" height="860"><img src="/landing/img/desk.webp" width="1800" height="616" loading="lazy" decoding="async" alt="The live site after the recorded run (on phones, its own phone layout, lines 10 to 40): line 20 struck in red with the blue patch beneath it and every checksum ticked; on wide screens all twelve lines, and the C64 pane shows the recorded post-title screen: THE SPIRITS ANSWER, THE PAGE, THE CHECKSUM, THE MACHINE, THE AGENT, IT LIVES, READY TO RISE."></picture>
-      <figcaption>Captured from the live site, 2026-11-25; the C64 pane shows the recorded screen as text.</figcaption>
+      <picture><source media="(max-width:480px)" srcset="/landing/img/desk-m.webp" width="716" height="860"><img src="/landing/img/desk.webp" width="1800" height="616" loading="lazy" decoding="async" alt="The live site after the recorded run (on phones, its own phone layout, lines 10 to 40): line 20 struck in red with the blue patch beneath it and every checksum ticked; on wide screens all twelve lines, and the C64 pane shows the recorded post-title screen: THE SPIRITS ANSWER, THE PAGE, THE CHECKSUM, THE MACHINE, THE AGENT, IT LIVES, READY TO RISE."></picture>
+      <figcaption>Captured from the live site, 2026-11-25; the wide view's C64 pane shows the recorded screen as text.</figcaption>
     </figure>
     <div class="term wide" id="term">
       <div class="term-bar"><span>kiro-cli 3.6.0 · agent resurrector</span><span>claude-sonnet-5.5 · 2026-11-24</span></div>
@@ -694,7 +694,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
 <section class="band" id="how" aria-labelledby="how-h">
   <div class="wrap">
     <h2 id="how-h">The model chooses where to look. Code decides what is true.</h2>
-    <p class="lede2">Every stage from scan to verdict; the model's cannot say yes.</p>
+    <p class="lede2">Every stage from scan to verdict; the model never gets to say yes.</p>
     <div class="bento">
       <article class="card c1">
         <p class="k"><svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5z M8 10h8 M8 14h5 M8 18h7"/><path class="r" d="M15 14l3 3"/></svg>I · READ</p><h3>The page is read</h3>
@@ -724,13 +724,13 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
       </article>
       <article class="card c4">
         <p class="k"><svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18v13H3z M6 7h9 M6 10h6 M9 21h6 M12 17v4"/></svg>IV · RUN</p><h3>The machine confirms</h3>
-        <p>The patched listing is re-RUN on an emulated C64; RESURRECTED needs the title on screen, every checksum matching, memory equal to the listing.</p>
+        <p>The patched listing is re-RUN on a C64 emulator; RESURRECTED needs the title, the post-title text, every line checksum-consistent and memory equal to the listing.</p>
         <div class="mini-crt"><svg class="scr" viewBox="14 16 356 240" role="img" aria-label="Recorded screen: ?SYNTAX  ERROR IN 20 / READY."><rect class="bord" width="384" height="272"/><rect class="face" x="32" y="36" width="320" height="200"/><g class="txt" transform="translate(38 42) scale(1.55)" filter="url(#phos)"><path d="M2 40h4v1h-4zM1 41h2v1h-2zM5 41h2v1h-2zM5 42h2v1h-2zM4 43h2v1h-2zM3 44h2v1h-2zM3 46h2v1h-2zM10 40h4v1h-4zM9 41h2v1h-2zM13 41h2v1h-2zM9 42h2v1h-2zM10 43h4v1h-4zM13 44h2v1h-2zM9 45h2v1h-2zM13 45h2v1h-2zM10 46h4v1h-4zM17 40h2v1h-2zM21 40h2v1h-2zM17 41h2v1h-2zM21 41h2v1h-2zM17 42h2v1h-2zM21 42h2v1h-2zM18 43h4v1h-4zM19 44h2v1h-2zM19 45h2v1h-2zM19 46h2v1h-2zM25 40h2v1h-2zM29 40h2v1h-2zM25 41h3v1h-3zM29 41h2v1h-2zM25 42h6v1h-6zM25 43h6v1h-6zM25 44h2v1h-2zM28 44h3v1h-3zM25 45h2v1h-2zM29 45h2v1h-2zM25 46h2v1h-2zM29 46h2v1h-2zM33 40h6v1h-6zM35 41h2v1h-2zM35 42h2v1h-2zM35 43h2v1h-2zM35 44h2v1h-2zM35 45h2v1h-2zM35 46h2v1h-2zM42 40h4v1h-4zM41 41h2v1h-2zM45 41h2v1h-2zM41 42h2v1h-2zM45 42h2v1h-2zM41 43h6v1h-6zM41 44h2v1h-2zM45 44h2v1h-2zM41 45h2v1h-2zM45 45h2v1h-2zM41 46h2v1h-2zM45 46h2v1h-2zM49 40h2v1h-2zM53 40h2v1h-2zM49 41h2v1h-2zM53 41h2v1h-2zM50 42h4v1h-4zM51 43h2v1h-2zM50 44h4v1h-4zM49 45h2v1h-2zM53 45h2v1h-2zM49 46h2v1h-2zM53 46h2v1h-2zM73 40h6v1h-6zM73 41h2v1h-2zM73 42h2v1h-2zM73 43h4v1h-4zM73 44h2v1h-2zM73 45h2v1h-2zM73 46h6v1h-6zM81 40h5v1h-5zM81 41h2v1h-2zM85 41h2v1h-2zM81 42h2v1h-2zM85 42h2v1h-2zM81 43h5v1h-5zM81 44h4v1h-4zM81 45h2v1h-2zM84 45h2v1h-2zM81 46h2v1h-2zM85 46h2v1h-2zM89 40h5v1h-5zM89 41h2v1h-2zM93 41h2v1h-2zM89 42h2v1h-2zM93 42h2v1h-2zM89 43h5v1h-5zM89 44h4v1h-4zM89 45h2v1h-2zM92 45h2v1h-2zM89 46h2v1h-2zM93 46h2v1h-2zM98 40h4v1h-4zM97 41h2v1h-2zM101 41h2v1h-2zM97 42h2v1h-2zM101 42h2v1h-2zM97 43h2v1h-2zM101 43h2v1h-2zM97 44h2v1h-2zM101 44h2v1h-2zM97 45h2v1h-2zM101 45h2v1h-2zM98 46h4v1h-4zM105 40h5v1h-5zM105 41h2v1h-2zM109 41h2v1h-2zM105 42h2v1h-2zM109 42h2v1h-2zM105 43h5v1h-5zM105 44h4v1h-4zM105 45h2v1h-2zM108 45h2v1h-2zM105 46h2v1h-2zM109 46h2v1h-2zM122 40h4v1h-4zM123 41h2v1h-2zM123 42h2v1h-2zM123 43h2v1h-2zM123 44h2v1h-2zM123 45h2v1h-2zM122 46h4v1h-4zM129 40h2v1h-2zM133 40h2v1h-2zM129 41h3v1h-3zM133 41h2v1h-2zM129 42h6v1h-6zM129 43h6v1h-6zM129 44h2v1h-2zM132 44h3v1h-3zM129 45h2v1h-2zM133 45h2v1h-2zM129 46h2v1h-2zM133 46h2v1h-2zM146 40h4v1h-4zM145 41h2v1h-2zM149 41h2v1h-2zM149 42h2v1h-2zM148 43h2v1h-2zM146 44h2v1h-2zM145 45h2v1h-2zM145 46h6v1h-6zM154 40h4v1h-4zM153 41h2v1h-2zM157 41h2v1h-2zM153 42h2v1h-2zM156 42h3v1h-3zM153 43h3v1h-3zM157 43h2v1h-2zM153 44h2v1h-2zM157 44h2v1h-2zM153 45h2v1h-2zM157 45h2v1h-2zM154 46h4v1h-4zM1 50h5v1h-5zM1 51h2v1h-2zM5 51h2v1h-2zM1 52h2v1h-2zM5 52h2v1h-2zM1 53h5v1h-5zM1 54h4v1h-4zM1 55h2v1h-2zM4 55h2v1h-2zM1 56h2v1h-2zM5 56h2v1h-2zM9 50h6v1h-6zM9 51h2v1h-2zM9 52h2v1h-2zM9 53h4v1h-4zM9 54h2v1h-2zM9 55h2v1h-2zM9 56h6v1h-6zM18 50h4v1h-4zM17 51h2v1h-2zM21 51h2v1h-2zM17 52h2v1h-2zM21 52h2v1h-2zM17 53h6v1h-6zM17 54h2v1h-2zM21 54h2v1h-2zM17 55h2v1h-2zM21 55h2v1h-2zM17 56h2v1h-2zM21 56h2v1h-2zM25 50h4v1h-4zM25 51h2v1h-2zM28 51h2v1h-2zM25 52h2v1h-2zM29 52h2v1h-2zM25 53h2v1h-2zM29 53h2v1h-2zM25 54h2v1h-2zM29 54h2v1h-2zM25 55h2v1h-2zM28 55h2v1h-2zM25 56h4v1h-4zM33 50h2v1h-2zM37 50h2v1h-2zM33 51h2v1h-2zM37 51h2v1h-2zM33 52h2v1h-2zM37 52h2v1h-2zM34 53h4v1h-4zM35 54h2v1h-2zM35 55h2v1h-2zM35 56h2v1h-2zM43 55h2v1h-2zM43 56h2v1h-2z"/><rect class="cur" x="0" y="60" width="8" height="8"/></g></svg></div>
         <span class="pill">c64-ready@3.4.0 · boot p50 829 ms in node</span>
       </article>
       <article class="card c5">
         <p class="k"><svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10 M7 21h10 M8 3c0 5 8 5 8 9s-8 4-8 9 M16 3c0 5-8 5-8 9"/></svg>V · HOLD</p><h3>The Stop hook holds it</h3>
-        <p>It sends the agent back once per prompt (kiro-cli 3.5.0, measured); the recorder resumes each cycle until RESURRECTED, only unfixable lines remain, or a cap hits.</p>
+        <p>It sends the agent back once per prompt (kiro-cli 3.5.0, measured); the recorder resumes until RESURRECTED, only unfixable lines remain, or a cap hits.</p>
         <div class="caps"><div>15<small>fix attempts</small></div><div>8<small>credits</small></div><div>600<small>seconds</small></div></div>
         <p class="stderr">19:57:10 until-title (kiro-stop) exit 0 · allow · RESURRECTED · 12/12 checksum-consistent</p>
         <span class="pill">hook until-title · Agent Stop</span>
@@ -839,7 +839,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
       <a href="/kiro">/kiro</a>
       <a href="https://kiroween.devpost.com/">Kiroween 2026</a>
     </nav>
-    <p class="stampline">Resurrection · MIT · build hash 175d794 · 2026-11-25 · no trackers</p>
+    <p class="stampline">Resurrection · MIT · build hash 69ed136 · 2026-11-25 · no trackers</p>
   </div>
 </footer>
 

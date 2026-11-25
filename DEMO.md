@@ -13,7 +13,7 @@ Live: https://ready.edycu.dev · No account, no install, no key.
 4. Press **Cheat**: it empties the error line while the C64 shows one (line 20; after the run, line 10). The gate refuses it.
 5. Open `/kiro`: the Pre Tool Use / Agent Stop / Session Start hook rows of the recorded run.
 6. Open `/scan`: pick an archive.org Gazette page (fetched through `/api/page`) or upload a scan. Self-hosted tesseract.js reads it in
-   your tab and the magazine's per-line checksum flags the misread lines. No Kiro call, 0 credits, repair withheld.
+   your tab; each line is checked against its printed checksum and the mismatches are flagged. No Kiro call, 0 credits, repair withheld.
 
 ## From a clone
 
