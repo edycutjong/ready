@@ -40,7 +40,7 @@ export function untypeableLines(listing: CanonicalListing): Untypeable[] {
  * NEW + type every typeable canonical line in number order. Returns the lines it refused to type.
  * With `expectedLines` (every verdict path passes it), a line outside the page's inventory (an orphan) is never typed:
  * clause 6 compares memory with the image of the in-scope lines only, and the agent has no delete op, so a typed
- * orphan would make RESURRECTED unreachable (a2a arch-01; make-run-input already excludes orphans by the same rule).
+ * orphan would make RESURRECTED unreachable (arch review 01; make-run-input already excludes orphans by the same rule).
  */
 export function loadCanonical(core: C64Core, listing: CanonicalListing, expectedLines?: readonly number[]): Untypeable[] {
   const inScope = expectedLines ? listing.filter((l) => expectedLines.includes(l.n)) : listing;
@@ -87,7 +87,7 @@ export function runListing(core: C64Core, listing: CanonicalListing, spec: Listi
   let postScreen: string | undefined;
   if (titleSeen && titleScreen === undefined) titleScreen = run.latched ?? readScreenText(core); // capture the title BEFORE the post-title press (P1b smoke test)
   if (titleSeen) {
-    // Clause 2 is evidence the press PRODUCED the text (a2a arch-01): read only the program's own output (below the last
+    // Clause 2 is evidence the press PRODUCED the text (arch review 01): read only the program's own output (below the last
     // RUN, never the typed listing above it, which usually contains the very PRINT), and fail closed when the text was
     // already on the screen before the press.
     // `titleScreen` may be the LATCHED frame (a title shown for fewer frames than a check): the program kept running after

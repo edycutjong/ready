@@ -116,7 +116,7 @@ export function asciiToPetscii(text: string): number[] {
 /**
  * A program is still running when BASIC is in program mode (MSGFLG $9D = $00; $80 in direct mode) and the screen does
  * not end at `READY.` (a defensive second check). Measured on c64-ready@3.4.0: READY $80; GET wait $00; INPUT wait $00;
- * after END $80; after an error $80 (a2a arch-01).
+ * after END $80; after an error $80 (arch review 01).
  */
 export function programRunning(core: C64Core): boolean {
   if (core.peek(0x9d) !== 0) return false;
@@ -128,7 +128,7 @@ export function programRunning(core: C64Core): boolean {
  * NEW + type every line. If a program is still running (a GET or INPUT wait after a run), the typed keys would go to
  * the program instead of the screen editor, so the machine is reset to READY. first. Without this a load right after
  * a run that left the title's GET loop waiting depended on history: REPLAY of a recorded run typed once into the loop
- * and stored the wrong program, where the live session had happened to type twice (a2a arch-01).
+ * and stored the wrong program, where the live session had happened to type twice (arch review 01).
  */
 export function loadProgram(core: C64Core, lines: readonly (readonly number[])[]): number {
   if (programRunning(core)) core.reset();
