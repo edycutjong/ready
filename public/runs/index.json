@@ -7,6 +7,22 @@
       "title": "The Last Seance",
       "meta": "authored 2026 page \u00b7 typeset by us, read by real OCR \u00b7 recorded real Kiro run",
       "cod": "?SYNTAX  ERROR IN 20"
+    },
+    {
+      "id": "knock-case5",
+      "file": "/runs/knock-2026-11-25T16-53-39Z.jsonl",
+      "label": "The Ninth Knock \u2014 authored 2026 page: OCR broke line 40, and a planted DATA misprint in line 80 would run silently and print IT NIVES (recorded real Kiro run, eval case 5 run 1)",
+      "title": "The Ninth Knock",
+      "meta": "authored 2026 page \u00b7 eval case 5 \u00b7 two faults: OCR broke line 40; a planted DATA misprint in line 80 runs silently (IT NIVES) \u00b7 recorded real Kiro run",
+      "cod": "?UNDEF'D STATEMENT  ERROR IN 40"
+    },
+    {
+      "id": "ossuary-case6",
+      "file": "/runs/ossuary-2026-11-25T16-55-07Z.jsonl",
+      "label": "The Ossuary \u2014 authored 2026 page, the C64 blames line 19, the misprint is in line 890 (recorded real Kiro run, eval case 6 run 1)",
+      "title": "The Ossuary",
+      "meta": "authored 2026 page \u00b7 eval case 6 \u00b7 the error names line 19, the fault is in DATA line 890 \u00b7 recorded real Kiro run",
+      "cod": "?OUT OF DATA  ERROR IN 19"
     }
   ]
 }

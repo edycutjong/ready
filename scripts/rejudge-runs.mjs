@@ -10,6 +10,7 @@
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { bootNodeCore, c64ReadyWasmSha256 } from "../src/emu/node.ts";
 import { replay } from "../src/replay/replay.ts";
@@ -17,7 +18,10 @@ import { replay } from "../src/replay/replay.ts";
 const argv = process.argv.slice(2);
 const out = argv.includes("--out") ? argv[argv.indexOf("--out") + 1] : null;
 const dirs = [["public/runs", "public"], ["evidence/evals/runs", "public"], ["runs/gazette", "tier-c"]];
-const files = dirs.flatMap(([d, tier]) => (existsSync(d) ? readdirSync(d).filter((f) => f.endsWith(".jsonl")).sort().map((f) => ({ path: `${d}/${f}`, tier })) : []));
+const listed = dirs.flatMap(([d, tier]) => (existsSync(d) ? readdirSync(d).filter((f) => f.endsWith(".jsonl")).sort().map((f) => ({ path: `${d}/${f}`, tier })) : []));
+// public/runs/ serves byte-identical copies of two eval recordings on / (a2a judge r01): count each recording once.
+const seen = new Map(), copies = [];
+const files = listed.filter((f) => { const h = createHash("sha256").update(readFileSync(f.path)).digest("hex"); if (seen.has(h)) { copies.push({ kept: seen.get(h), duplicate: f.path }); return false; } seen.set(h, f.path); return true; });
 const core = await bootNodeCore();
 const sha = c64ReadyWasmSha256();
 const rows = [];
@@ -31,7 +35,7 @@ for (const f of files) {
   rows.push({ file: f.tier === "public" ? f.path : "(tier C)", tier: f.tier, recorded, recomputed, mismatches: r.mismatches.length, refused: r.refused, ok: same && r.mismatches.length === 0 && !r.refused, _path: f.path, _mm: [...(same ? [] : [`verdict: recorded ${recorded}, recomputed ${recomputed}`]), ...r.mismatches].slice(0, 4) });
 }
 const judged = rows.filter((x) => !x.skipped);
-const summary = { runs: judged.length, ok: judged.filter((x) => x.ok).length, mismatches: judged.reduce((a, x) => a + x.mismatches, 0), skipped: rows.length - judged.length, byTier: { public: judged.filter((x) => x.tier === "public").length, tierC: judged.filter((x) => x.tier === "tier-c").length } };
+const summary = { runs: judged.length, ok: judged.filter((x) => x.ok).length, mismatches: judged.reduce((a, x) => a + x.mismatches, 0), skipped: rows.length - judged.length, byTier: { public: judged.filter((x) => x.tier === "public").length, tierC: judged.filter((x) => x.tier === "tier-c").length }, identicalCopiesNotCounted: copies };
 if (out) { mkdirSync(dirname(out), { recursive: true }); writeFileSync(out, JSON.stringify({ t: new Date().toISOString(), commit: execFileSync("git", ["rev-parse", "--short", "HEAD"]).toString().trim(), codeClean: execFileSync("git", ["status", "--porcelain", "src", "mcp"]).toString().trim() === "", summary, rows: rows.map(({ _path, _mm, ...x }) => (x.tier === "public" ? { ...x, mismatchText: _mm } : x)) }, null, 1) + "\n"); }
 console.log(JSON.stringify(summary));
 for (const x of judged.filter((y) => !y.ok)) console.log("NOT OK (console only)", x._path, JSON.stringify(x._mm).slice(0, 600));
