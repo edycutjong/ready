@@ -63,6 +63,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.6 var(--font
 ::selection{background:var(--before);color:var(--bg)}
 :focus-visible{outline:2px solid var(--after);outline-offset:3px}
 a{color:inherit;text-underline-offset:.2em;text-decoration-thickness:1px}
+.lede2 a,.proof a,.gate p a,.term-bar a{transition:color .2s,text-decoration-color .2s}
+.lede2 a:hover,.proof a:hover{color:var(--paper);text-decoration-color:var(--before)}
+.gate p a:hover{color:var(--before-on-paper);text-decoration-thickness:2px}
+.brand{transition:color .2s}.brand:hover{color:var(--paper)}
 p,h1,h2,h3,figure,blockquote{margin:0}
 h1,h2,h3{font-family:var(--font-display);font-weight:800;line-height:.98;letter-spacing:-.005em;text-wrap:balance}
 code,kbd,samp,time,.mono{font-family:var(--font-data);font-variant-ligatures:none}
@@ -514,7 +518,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
     <div class="rc"><p class="num"><span data-count="27.1" data-dec="1">27.1</span><small>s</small></p><p class="lab">one recorded Kiro run, error to RESURRECTED</p><p class="prv">run log · wallMs 27084</p></div>
     <div class="rc"><p class="num"><span data-count="0.85" data-dec="2">0.85</span></p><p class="lab">Kiro credits for that run, metered by kiro-cli</p><p class="prv">run log · credits total</p></div>
     <div class="rc"><p class="num"><span data-count="6">6</span><small>/ 6</small></p><p class="lab">model runs RESURRECTED (2 cases × 3), re-judged, 0 mismatches</p><p class="prv">README · Engineering Rigor · docs/EVALS.md</p></div>
-    <div class="rc"><p class="num"><span data-count="492">492</span></p><p class="lab">tests passing on <code>2b4fadd</code>, 41 files</p><p class="prv">npm test · evidence/tests</p></div>
+    <div class="rc"><p class="num"><span data-count="492">492</span></p><p class="lab">tests passing on <code>c7e1641</code>, 41 files</p><p class="prv">npm test · evidence/tests</p></div>
   </div>
 </section>
 
@@ -721,7 +725,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
       <a href="/kiro">/kiro</a>
       <a href="https://kiroween.devpost.com/">Kiroween 2026</a>
     </nav>
-    <p class="stampline">Kiroween 2026 · Resurrection · MIT · page built 2026-11-25 from 2b4fadd · no trackers</p>
+    <p class="stampline">Kiroween 2026 · Resurrection · MIT · page built 2026-11-25 from c7e1641 · no trackers</p>
   </div>
 </footer>
 

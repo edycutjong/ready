@@ -63,6 +63,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.6 var(--font
 ::selection{background:var(--before);color:var(--bg)}
 :focus-visible{outline:2px solid var(--after);outline-offset:3px}
 a{color:inherit;text-underline-offset:.2em;text-decoration-thickness:1px}
+.lede2 a,.proof a,.gate p a,.term-bar a{transition:color .2s,text-decoration-color .2s}
+.lede2 a:hover,.proof a:hover{color:var(--paper);text-decoration-color:var(--before)}
+.gate p a:hover{color:var(--before-on-paper);text-decoration-thickness:2px}
+.brand{transition:color .2s}.brand:hover{color:var(--paper)}
 p,h1,h2,h3,figure,blockquote{margin:0}
 h1,h2,h3{font-family:var(--font-display);font-weight:800;line-height:.98;letter-spacing:-.005em;text-wrap:balance}
 code,kbd,samp,time,.mono{font-family:var(--font-data);font-variant-ligatures:none}
