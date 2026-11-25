@@ -1,4 +1,4 @@
-# Prompt/steering/gate freeze #2 — after /a2a arch round 01 (P1d), 2026-11-24T21:35:02Z
+# Prompt/steering/gate freeze #2 — after the P1d outside-review round, 2026-11-24T21:35:02Z
 git HEAD: 3e2be513f1802dbcde00391c79772ef705fb2481
 
 Supersedes freeze-2026-11-25.txt for every run recorded from now on (held-out runs, evals release 2). The 9 runs
@@ -8,7 +8,7 @@ recorded verdict (Node REPLAY on the real core; the published hero also in a bro
 At freeze #1's code, eval case 1 run 3 did NOT: REPLAY typed the next program into the title's still-running GET loop
 (BOOTED-PARTIAL, clause 6). Fixed here: a load resets a still-running program to READY. first.
 
-Changed since freeze #1 (a2a arch-01 commits): checkLine refuses characters no C64 key types; clause 4 recomputes
+Changed since freeze #1 (P1d review commits): checkLine refuses characters no C64 key types; clause 4 recomputes
 checksums; clause 2 needs text produced by the post-title press; the loader never types a line outside the
 inventory, and never types into a running program; c64_run records maxFrames; listing-context labels orphans as never typed.
 

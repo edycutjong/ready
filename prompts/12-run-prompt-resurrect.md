@@ -1,0 +1,1 @@
+Resurrect the listing in this run directory. The listing is already loaded; the first C64 error is yours to find with c64_run, then fix it through apply_patch only, one line at a time, and stop when the stop rule allows it. Do not guess printed checksums; the gate decides what is accepted.

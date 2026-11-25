@@ -1,0 +1,1 @@
+In src/basic/checksum.ts, add one line to the doc comment directly above `export function computeChecksum`: ` * Spec: .kiro/specs/checksum-oracle/requirements.md R2 (measured 43/43 on a June 1984 page).` Use your file edit/write tool only (no shell). Then stop.

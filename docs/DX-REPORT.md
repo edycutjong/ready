@@ -168,7 +168,7 @@ runs on, so they are listed here:
 - **REPLAY** re-runs each `c64_run` with the frame budget the run event records (`maxFrames`).
 - **Certificate.** Provenance and errata follow line identity through renumbers, and say what each change rests on
   (verified / digit-misread / unverified / FORCED).
-- **Freeze #2.** `evidence/freeze/freeze-2026-11-25-a2a-arch-01.txt` pins the gate/agent files for every later
+- **Freeze #2.** `evidence/freeze/freeze-2026-11-25-2.txt` pins the gate/agent files for every later
   recording. All 9 earlier recordings re-judge with 0 mismatches under it.
 Tests: 492 at HEAD.
 
