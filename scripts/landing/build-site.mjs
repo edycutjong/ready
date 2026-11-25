@@ -5,7 +5,8 @@
 // Nothing on either page is typed by hand if it can be read from a file: the C64 screens are the recorded screens
 // (drawn with our own 8x8 alphabet, not the ROM), the terminal rows are the run's own events, the numbers are read
 // from the jsonl, bench JSON, README and the test-run note. Run: node scripts/landing/build-site.mjs
-import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync, readdirSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 import { execFileSync } from "node:child_process";
 import vm from "node:vm";
@@ -40,9 +41,11 @@ const SCREENS = { error: block(runs[0].text, "AFTER RUN"), title: block(runs[1].
 ok(SCREENS.error.some((r) => r.trim() === "?SYNTAX  ERROR IN 20"), "error screen prints ?SYNTAX  ERROR IN 20 (two spaces, ROM string)");
 ok(SCREENS.title.some((r) => r.includes("** THE LAST SEANCE **")), "title screen");
 ok(SCREENS.post.some((r) => r.includes("IT LIVES")) && SCREENS.post.some((r) => r.includes("READY TO RISE.")), "post-title screen");
-const screenPath = (rows) => rows.map((r, i) => (r.trim() ? pf.path(r.replace(/\s+$/, ""), 0, i * 8, 1) : "")).join("");
+// row pitch 9: the C64 cell is 8 rows; one extra unit of leading keeps adjacent rows apart at small display sizes
+const ROW = 9;
+const screenPath = (rows) => rows.map((r, i) => (r.trim() ? pf.path(r.replace(/\s+$/, ""), 0, i * ROW, 1) : "")).join("");
 // the blinking cursor sits on the row after the last READY. (a screen waiting in GET has none)
-const cursorRow = (rows) => { const i = rows.map((r) => r.trim()).lastIndexOf("READY."); return i < 0 ? "" : `<rect class="cur" x="0" y="${(i + 1) * 8}" width="8" height="8"/>`; };
+const cursorRow = (rows) => { const i = rows.map((r) => r.trim()).lastIndexOf("READY."); return i < 0 ? "" : `<rect class="cur" x="0" y="${(i + 1) * ROW}" width="8" height="8"/>`; };
 const screenText = (rows) => rows.map((r) => r.trim()).filter(Boolean).join(" / ");
 
 const firstLine = (t) => t.split("\n")[0];
@@ -74,11 +77,15 @@ const ocrSum = G.checkLine(20, L20.body, L20.printed).computed;
 const gateKb = (statSync(ROOT + "public/landing/gate.js").size / 1024).toFixed(1);
 
 // ---------- evidence numbers ----------
-const bench = JSON.parse(rd("evidence/bench/bench-2026-11-24.json"));
+const BENCH_FILE = "evidence/bench/" + readdirSync(ROOT + "evidence/bench").filter((f) => /^bench-\d{4}-\d\d-\d\d\.json$/.test(f)).sort().at(-1);
+const bench = JSON.parse(rd(BENCH_FILE));
 const bRow = (re) => { const r = bench.rows.find((x) => re.test(x.name)); ok(r, `bench row ${re}`); return r; };
 const gateB = bRow(/^gate: applyPatch/), bootB = bRow(/^emulator boot/), ocrB = bRow(/^OCR: tesseract/), repB = bRow(/^REPLAY/);
 const testNote = rd("evidence/tests/npm-test-2026-11-25.txt");
 const tests = +testNote.match(/Tests\s+(\d+) passed/)[1], testFiles = +testNote.match(/Test Files\s+(\d+) passed/)[1];
+const testsCommit = testNote.match(/on HEAD ([0-9a-f]{7})/)[1], noteDate = testNote.match(/(\d{4}-\d\d-\d\d)/)[1];
+const evals = rd("docs/EVALS.md"), c1 = evals.match(/^\| 1 \| Random Number Test[^\n]*\*\*(\d+)\/(\d+)\*\* TITLE-PATH RESURRECTED/m);
+ok(c1, "EVALS.md case 1 tally");
 const README = rd("README.md");
 for (const s of ["6 of 6 `RESURRECTED`", "19/28", "search fixed 3 of 18 failing lines", "made all 18 checksum-consistent",
   "51.26 of 50", "68.71 of 70", `${tests} passing, ${testFiles} files`])
@@ -92,7 +99,10 @@ const gates = ev.filter((e) => e.k === "gate"), nv = (v) => gates.filter((g) => 
 const spikeG = JSON.parse(rd("evidence/spikes/spike-G.json"));
 ok(/^PASS .*TITLE-PATH RESURRECTED in both attempts/.test(spikeG.verdict) && spikeG.attempts.length === 2, "spike G: title path raised in both attempts");
 ok(/Measured 43\/43 on a real June 1984 page/.test(rd("src/basic/checksum.ts")), "checksum.ts carries the 43/43 measurement");
-const head = execFileSync("git", ["-C", ROOT, "rev-parse", "--short", "HEAD"]).toString().trim();
+// reproducible version stamp: a hash of every input the pages are built from (not git HEAD, which moves on each commit)
+const siteVer = createHash("sha256").update(["scripts/landing/landing.html", "scripts/landing/deck.html", "scripts/landing/build-site.mjs", RUN_FILE, BENCH_FILE,
+  "evidence/tests/npm-test-2026-11-25.txt", "README.md", "docs/EVALS.md"].filter((f) => existsSync(ROOT + f)).map((f) => rd(f)).join("\u0000")).digest("hex").slice(0, 7);
+const head = siteVer;
 
 const V = {
   wall_s: (end.wallMs / 1000).toFixed(1), wall_ms: String(end.wallMs), credits: creditsTotal.toFixed(2),
@@ -108,7 +118,10 @@ const V = {
   ocr_body: esc(L20.body), fix_body: esc(patch.new_body), tm_only: esc(TM_ONLY), reason_ocr: esc(vOcr.reason),
   reason_agent: esc(vAgent.reason), reason_agent_s: esc(vAgent.reason.replace(/^ACCEPTED: /, "")), cap_iter: String(start.runner.caps.iterations), cap_credits: String(start.runner.caps.credits),
   n_acc: String(nv("accepted")), n_ref: String(nv("refused")), n_forced: String(nv("forced")), g_attempts: String(spikeG.attempts.length),
-  build_date: new Date().toISOString().slice(0, 10),
+  build_date: noteDate, site_ver: siteVer, tests_commit: testsCommit, bench_date: bench.date.slice(0, 10), bench_file: BENCH_FILE,
+  case1: `${c1[1]} of ${c1[2]}`, err_at: "+" + (off(runs[0].t) / 1000).toFixed(1), res_at: "+" + (off(runs[1].t) / 1000).toFixed(1),
+  stop_row: esc((() => { const h = ev.find((e) => e.k === "hook" && e.via === "kiro-stop"); return `${hms(h.t)} until-title (kiro-stop) exit ${h.exit} · ${h.decision} · ${h.reason}`; })()),
+  gate_p95_ms: String(gateB.p95),
   cap_s: String(start.runner.caps.wallMs / 1000), patch_reason: esc(patch.reason ?? ev.find((e) => e.k === "proposal").reason),
 };
 
@@ -116,7 +129,7 @@ const V = {
 const TICK = '<svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg>';
 const CROSS = '<svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 2.5 9.5 9.5M9.5 2.5 2.5 9.5"/></svg>';
 const listing = lines.map((l) => {
-  if (l.n !== 20) return `<div class="ln"><span class="no">${l.n}</span><span class="bd">${esc(l.body)}</span><span class="rem">:rem ${l.printed}</span><span class="st ok" role="img" aria-label="checksum verified">${TICK}</span></div>`;
+  if (l.n !== 20) return `<div class="ln${l.n > 60 ? " more" : ""}"><span class="no">${l.n}</span><span class="bd">${esc(l.body)}</span><span class="rem">:rem ${l.printed}</span><span class="st ok" role="img" aria-label="checksum verified">${TICK}</span></div>`;
   const bad = l.body.slice(0, 6), rest = l.body.slice(6);
   return `<div class="ln l20"><span class="no">20</span><span class="bd"><span class="mis">${esc(bad)}<svg class="ring" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M8 22C6 9 32 3 54 4s42 5 40 18-30 15-52 14S10 34 8 22Z"/></svg><span class="fix" aria-hidden="true">${esc(patch.new_body.slice(0, 6))}</span></span>${esc(rest)}</span><span class="rem">:rem ${l.printed}</span><span class="st" role="img" aria-label="line 20: checksum gate verdict"><span class="x">${CROSS}</span><span class="v">${TICK}</span></span></div>`;
 }).join("\n");
@@ -149,7 +162,7 @@ const TL = [
   { ms: off(end.t), ph: 6, text: `end · RESURRECTED · ${V.iterations} iteration · ${V.wall_s} s · ${V.credits} Kiro credits` },
 ];
 const rundata = JSON.stringify({ speed: 3, total: off(end.t), tl: TL, listing: lines, expected, l20: { printed: L20.printed, ocr: L20.body, agent: patch.new_body, tm: TM_ONLY } }).replace(/</g, "\\u003c");
-const ticks = TL.map((x, i) => `<button class="tick" type="button" data-i="${i}" style="--x:${(x.ms / off(end.t) * 100).toFixed(2)}%" aria-label="jump to ${esc(x.text)}"><span>+${(x.ms / 1000).toFixed(1)} s</span></button>`).join("");
+const ticks = TL.map((x, i) => `<button class="tick" type="button" data-i="${i}" style="--x:${(x.ms / off(end.t) * 100).toFixed(2)}%" aria-label="+${(x.ms / 1000).toFixed(1)} s: ${esc(x.text)}"><span>+${(x.ms / 1000).toFixed(1)} s</span></button>`).join("");
 
 function fill(tpl, name) {
   let h = tpl;
