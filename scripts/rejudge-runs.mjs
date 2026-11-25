@@ -19,7 +19,7 @@ const argv = process.argv.slice(2);
 const out = argv.includes("--out") ? argv[argv.indexOf("--out") + 1] : null;
 const dirs = [["public/runs", "public"], ["evidence/evals/runs", "public"], ["runs/gazette", "tier-c"]];
 const listed = dirs.flatMap(([d, tier]) => (existsSync(d) ? readdirSync(d).filter((f) => f.endsWith(".jsonl")).sort().map((f) => ({ path: `${d}/${f}`, tier })) : []));
-// public/runs/ serves byte-identical copies of two eval recordings on / (a2a judge r01): count each recording once.
+// public/runs/ serves byte-identical copies of two eval recordings on / (judge review 01): count each recording once.
 const seen = new Map(), copies = [];
 const files = listed.filter((f) => { const h = createHash("sha256").update(readFileSync(f.path)).digest("hex"); if (seen.has(h)) { copies.push({ kept: seen.get(h), duplicate: f.path }); return false; } seen.set(h, f.path); return true; });
 const core = await bootNodeCore();

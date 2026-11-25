@@ -163,7 +163,7 @@ input[type="file"]::file-selector-button { font: inherit; font-weight: 700; back
 input[type="file"]::file-selector-button:hover { border-color: var(--ink); transform: translateY(-1px); }
 input[type="file"]:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
-/* "Fix it yourself" (a2a judge r01): one line through the agent's gate. */
+/* "Fix it yourself" (judge review 01): one line through the agent's gate. */
 .c64 form.mine { display: grid; gap: 0.4rem; margin-top: 1rem; }
 .c64 form.mine label { font-size: 0.92rem; }
 .c64 form.mine input[type=text] { width: 100%; font-family: var(--font-data), monospace; }

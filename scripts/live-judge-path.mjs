@@ -34,7 +34,7 @@ check("C64 pane shows the program's own screen, not the tool report", /THE SPIRI
 await page.click("[data-testid=cheat]");
 const cheat = await page.textContent("[data-testid=cheat-out]");
 check("Cheat is refused by the gate", /REFUSED/.test(cheat), cheat);
-// a2a judge r01: "fix it yourself" runs the visitor's line through the agent's gate (no C64): the agent's fix passes, a guess does not
+// judge review 01: "fix it yourself" runs the visitor's line through the agent's gate (no C64): the agent's fix passes, a guess does not
 await page.fill("[data-testid=mine]", '20 PRINT"   ** THE LAST SEANCE **"');
 await page.click("[data-testid=mine-judge]");
 const mineOk = await page.textContent("[data-testid=mine-out]");
@@ -70,7 +70,7 @@ check("judge path page: 0 console errors, 0 failed or 4xx/5xx requests", console
   check("/ autoplay: 0 console errors, 0 failed or 4xx/5xx requests", autoErr.length === 0, autoErr.slice(0, 5));
   await auto.close();
 }
-// a2a judge r01: the two harder public authored runs (eval cases 5 and 6) play to their certificates on the same page
+// judge review 01: the two harder public authored runs (eval cases 5 and 6) play to their certificates on the same page
 for (const [id, post, blamed] of [["knock-case5", /THE WALL SAYS: IT LIVES/, null], ["ossuary-case6", /24 BONES, SUM 115/, /^19 /]]) {
   const pg = await ctx.newPage(), errs = [];
   pg.on("console", (m) => { if (m.type() === "error") errs.push(m.text()); });

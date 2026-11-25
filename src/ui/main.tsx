@@ -1,7 +1,8 @@
 import { render } from "preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { createC64ReadyCore, type C64Core } from "../emu/core.ts";
-import { cheat, judgePatch, replay, type ReplayResult, type RunEvent } from "../replay/replay.ts";
+import { cheat, replay, type ReplayResult, type RunEvent } from "../replay/replay.ts";
+import { judgePatch } from "../replay/judge-patch.ts";
 import { certificateHeading, errata, errataText, lineOrigins, prgBytes, provenance, type RecoveryEvent } from "../replay/certificate.ts";
 import type { CanonicalLine } from "../basic/types.ts";
 import { screenOf } from "../replay/screens.ts";
@@ -71,7 +72,7 @@ function Desk() {
   const [err, setErr] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const [cheatOut, setCheatOut] = useState<string | null>(null);
-  // "Fix it yourself" (a2a judge r01): the visitor types one line; the agent's gate judges it against the page as read.
+  // "Fix it yourself" (judge review 01): the visitor types one line; the agent's gate judges it against the page as read.
   const [mine, setMine] = useState("");
   const [mineOut, setMineOut] = useState<{ text: string; ok: boolean } | null>(null);
   const [playing, setPlaying] = useState(false);

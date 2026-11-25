@@ -1,9 +1,10 @@
-// The desk's "fix it yourself" box (a2a judge round 01) and the three public recordings it sits on.
+// The desk's "fix it yourself" box (judge review 01) and the three public recordings it sits on.
 // judgePatch must be the SAME gate as the agent's apply_patch: the agent's accepted bodies pass, edits that break the
 // printed checksum, deletions and inserts are refused, and no C64 is needed (the public URL has none).
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { judgePatch, replay, type RunEvent } from "../../src/replay/replay.ts";
+import { replay, type RunEvent } from "../../src/replay/replay.ts";
+import { judgePatch } from "../../src/replay/judge-patch.ts";
 
 const runs = JSON.parse(readFileSync("public/runs/index.json", "utf8")).runs as { id: string; file: string }[];
 const load = (id: string) => {
