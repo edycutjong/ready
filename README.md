@@ -117,13 +117,13 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 
 | Metric | Value | Source |
 |---|---|---|
-| Tests | 520 passing, 45 files, plus 1 expected fail (the known-limitation marker, Honest limits 7) (`npm test` on 887de9f) | `tests/`, `evidence/tests/npm-test-2026-11-26b.txt` |
+| Tests | 520 passing, 45 files, plus 1 expected fail (the known-limitation marker, Honest limits 7) (`npm test` on 8d26d13) | `tests/`, `evidence/tests/npm-test-2026-11-26-p7.txt` |
 | Agent evals, release 2 | 9 of 9 cases run and passing; cases 5 (silent DATA fault) and 6 (`?OUT OF DATA`) are original 2026 pages | [`docs/EVALS.md`](docs/EVALS.md) |
 | Model runs | 12 of 12 `RESURRECTED` with the shipped profile (4 model cases × N=3; the E1–E4 ablation arms are not counted here and include failures). Every recording on disk (35: 20 public, 15 local tier-C) re-judges with 0 mismatches, a run counting only when its recorded and recomputed verdicts are both present and equal | `scripts/rejudge-runs.mjs`, `evidence/boot-detect/rejudge-p6d.json`; the case-3, 5 and 6 runs are in `evidence/evals/runs/`; the case-1 recordings are withheld (rights) and cannot be reproduced from a clone |
-| Gate `applyPatch` | p50 0.01 ms, p95 0.03 ms (N=2000, node) | `evidence/bench/bench-2026-11-25.json` (re-run on the current gate; the 11-24 file predates the P1d changes; the boot and REPLAY rows below were measured on 2026-11-25, before the 2026-11-26 boot-detect changes in `src/emu`) |
-| Emulator boot | p50 829 ms (N=10, node) | same file |
-| REPLAY of the recorded run in node (incl. a core boot) | p50 2295 ms, range 2.3–2.8 s (N=10) | same file |
-| OCR, tesseract.js 7 on the authored page | p50 842 ms (N=5, warm worker, node) | same file |
+| Gate `applyPatch` | p50 0.01 ms, p95 0.05 ms (N=2000, node) | `evidence/bench/bench-2026-11-26-p7.json` (re-run on HEAD 8d26d13 on 2026-11-26; the 11-24 and 11-25 files predate later gate and `src/emu` changes) |
+| Emulator boot | p50 807 ms (N=10, node) | same file |
+| REPLAY of the recorded run in node (incl. a core boot) | p50 2730 ms, range 2.6–3.0 s (N=10) | same file |
+| OCR, tesseract.js 7 on the authored page | p50 1199 ms (N=5, warm worker, node) | same file |
 | Experiment E0 (does search beat the model?) | On the real 1984 page search fixed 3 of 18 failing lines; the agent made all 18 checksum-consistent (N=2) | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) |
 
 ### Attacks defeated

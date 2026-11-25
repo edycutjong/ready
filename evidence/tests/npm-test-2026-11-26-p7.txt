@@ -1,0 +1,10 @@
+
+ RUN  v5.1.1 /Users/edycu/Hackathon/devpost/devpost-kiroween/ready/build
+
+
+ Test Files  45 passed (45)
+      Tests  520 passed | 1 expected fail (521)
+   Start at  04:00:46
+   Duration  60.79s (tests 99%, transform 1%, import 1%)
+
+VITEST_EXIT=

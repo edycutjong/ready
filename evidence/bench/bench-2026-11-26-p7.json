@@ -1,0 +1,65 @@
+{
+ "date": "2026-11-25T21:02:41.357Z",
+ "machine": "darwin arm64 node v22.22.0",
+ "emulator": "c64-ready@3.4.0 dad5965346c0…",
+ "rows": [
+  {
+   "name": "gate: applyPatch (authored line-20 fix)",
+   "n": 2000,
+   "unit": "ms",
+   "p50": 0.01,
+   "p95": 0.048,
+   "min": 0.009,
+   "max": 1.704
+  },
+  {
+   "name": "emulator boot (c64-ready WASM, node)",
+   "n": 10,
+   "unit": "ms",
+   "p50": 806.663,
+   "p95": 1024.184,
+   "p95Note": "p95 = max at this N",
+   "min": 668.804,
+   "max": 1024.184
+  },
+  {
+   "name": "type listing + RUN to the first screen (12 lines)",
+   "n": 10,
+   "unit": "ms",
+   "p50": 602.141,
+   "p95": 793.362,
+   "p95Note": "p95 = max at this N",
+   "min": 552.033,
+   "max": 793.362
+  },
+  {
+   "name": "REPLAY of the recorded run (gate re-judge + C64 re-run)",
+   "n": 10,
+   "unit": "ms",
+   "p50": 2730.467,
+   "p95": 3025.337,
+   "p95Note": "p95 = max at this N",
+   "min": 2590.593,
+   "max": 3025.337
+  },
+  {
+   "name": "OCR: tesseract.js 7 on the authored page image (node, warm worker)",
+   "n": 5,
+   "unit": "ms",
+   "p50": 1199.358,
+   "p95": 1272.352,
+   "p95Note": "p95 = max at this N",
+   "min": 1122.622,
+   "max": 1272.352
+  }
+ ],
+ "modelCallTimingsFromRecordedRuns": [
+  {
+   "file": "line20-2026-11-24T19-56-44Z.jsonl",
+   "result": "RESURRECTED",
+   "wallMs": 27084,
+   "iterations": 1
+  }
+ ],
+ "note": "Browser OCR on the deployed site is measured separately (spike-P-ocr-live.json). Model timings are read from the recorded run, not re-run."
+}
