@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SYNTAX ERROR IN 20 — the dead listing rises only when the checksum agrees</title>
-<meta name="description" content="A Kiro agent repairs OCR'd 1984 type-in listings. A deterministic gate checks every patch against the magazine's printed checksum, and an emulated Commodore 64 runs it. Kiroween 2026, Resurrection.">
+<meta name="description" content="A Kiro agent repairs OCR-misread magazine type-in listings. A deterministic gate checks every patch against the magazine's printed checksum, and an emulated Commodore 64 runs it. Kiroween 2026, Resurrection.">
 <meta name="theme-color" content="#110C0A">
 <link rel="icon" href="/landing/icon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://ready.edycu.dev/landing/">
@@ -16,7 +16,7 @@
 <meta property="og:image" content="https://ready.edycu.dev/landing/og.jpg?v=p4">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="brand frame: the error this project is named after. A singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen.">
+<meta property="og:image:alt" content="brand frame: the error this project is named after. A singed listing slip under one candle, a blood-red proof mark on line 20 and a blue C64 screen.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SYNTAX ERROR IN 20 — the dead listing rises only when the checksum agrees">
 <meta name="twitter:description" content="A Kiro agent proposes the fix, a checksum gate decides, an emulated C64 runs it.">
@@ -173,8 +173,8 @@ code.in{font-size:.9em;color:var(--ink);background:color-mix(in srgb,var(--rule)
 .candlelight{position:absolute;left:50%;bottom:105%;width:1500%;aspect-ratio:1;translate:-50% 50%;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,color-mix(in srgb,var(--candle) 24%,transparent),color-mix(in srgb,var(--candle) 7%,transparent) 46%,transparent 72%);mix-blend-mode:screen;animation:breathe 3.3s ease-in-out infinite}
 @keyframes breathe{0%,100%{opacity:.92}30%{opacity:.78}60%{opacity:1}}
 
-.stamp{position:absolute;z-index:4;left:8.5%;bottom:clamp(122px,10.4vw,146px);display:grid;justify-items:center;font:800 clamp(24px,2.5vw,36px)/1 var(--font-display);letter-spacing:.09em;color:var(--after);padding:.2em .5em .16em;border:.11em double currentColor;transform:rotate(-8deg);filter:url(#ink);text-shadow:0 0 .35em color-mix(in srgb,var(--after) 55%,transparent)}
-.stamp small{font:700 max(13.5px,.36em)/1.2 var(--font-data);letter-spacing:.16em;margin-top:.34em;color:color-mix(in srgb,var(--after) 60%,var(--ink))}
+.stamp{position:absolute;z-index:4;left:8.5%;bottom:clamp(122px,10.4vw,146px);display:grid;justify-items:center;font:800 clamp(24px,2.5vw,36px)/1 var(--font-display);letter-spacing:.09em;color:var(--after-on-paper);padding:.2em .5em .16em;border:.11em double currentColor;transform:rotate(-8deg);filter:url(#ink);mix-blend-mode:multiply}
+.stamp small{font:700 max(13.5px,.36em)/1.2 var(--font-data);letter-spacing:.16em;margin-top:.34em;color:var(--after-on-paper)}
 .hero:is([data-ph="0"],[data-ph="1"],[data-ph="2"],[data-ph="3"],[data-ph="4"]) .stamp{opacity:0}
 .hero.playing:is([data-ph="5"],[data-ph="6"]) .stamp{animation:land .55s cubic-bezier(.2,1.5,.4,1) both}
 @keyframes land{0%{opacity:0;transform:rotate(-15deg) scale(1.8)}60%{opacity:1;transform:rotate(-7deg) scale(.95)}100%{opacity:1;transform:rotate(-8deg) scale(1)}}
@@ -212,6 +212,20 @@ code.in{font-size:.9em;color:var(--ink);background:color-mix(in srgb,var(--rule)
 .prv{margin-top:8px;font:500 12px/1.4 var(--font-data);color:var(--muted);overflow-wrap:anywhere}
 .prv a{color:var(--muted)}
 .prv a:hover{color:var(--ink)}
+
+/* ---------- E0: outcome against a baseline ---------- */
+.e0{padding:clamp(48px,6.4vw,88px) 0;border-bottom:1px solid var(--rule)}
+.e0-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,4.4vw,72px);align-items:center}
+.e0 h2{font-size:clamp(28px,3vw,44px)}
+.e0-rows{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px 18px;align-items:center}
+.e0-l{font:700 12.5px/1 var(--font-data);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.marks{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:4px}
+.marks i{height:clamp(30px,3.4vw,46px);border:1.5px solid var(--rule);background:transparent}
+.marks i.on{background:var(--before);border-color:var(--before)}
+.marks.a i.on{background:var(--after);border-color:var(--after)}
+.e0-n{font:800 clamp(28px,2.8vw,42px)/1 var(--font-display);min-width:3.4ch;text-align:right}
+.e0-n small{font-size:.45em;color:var(--muted)}
+.e0-src{grid-column:1/-1;font:500 12px/1.4 var(--font-data);color:var(--muted)}
 
 /* ---------- seen twice ---------- */
 section.band{padding:clamp(64px,9vw,128px) 0}
@@ -369,13 +383,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justif
 footer .fb{display:flex;align-items:center;gap:10px;font:800 18px/1 var(--font-display);color:var(--ink)}
 footer .fb img{width:24px;height:24px}
 footer nav{display:flex;flex-wrap:wrap;gap:8px 18px}
-footer a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
+footer a{display:inline-block;padding:5px 0;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
 footer a:hover{border-bottom-color:var(--before)}
 footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
 
 /* ---------- small screens ---------- */
 @media (max-width:980px){
-  .hero .wrap,.gate-grid,.kgrid,.stet-grid,.qgrid,.pair{grid-template-columns:minmax(0,1fr)}
+  .hero .wrap,.gate-grid,.kgrid,.stet-grid,.qgrid,.pair,.e0-grid{grid-template-columns:minmax(0,1fr)}
   .hero .wrap{grid-template-rows:auto;grid-template-areas:"a" "c" "x" "b" "d"}
   .hero .exhibit{margin-top:8px}
   .cb .l2{margin-top:26px}
@@ -393,14 +407,16 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   .l1{font-size:17px}
   .ctas{margin:18px 0 20px}
   .ctas .btn{padding:12px 14px;font-size:15px}
-  .seance{padding-bottom:78px}
-  .slip{width:100%;padding-bottom:92px}
-  .ln{font-size:12.5px}
+  .seance{padding-bottom:62px}
+  .slip{width:100%;padding-bottom:122px}
+  .ln{font-size:12.5px;column-gap:8px}
   .crt{width:60%}
-  .candle{left:6%;bottom:22px}
-  .stamp{left:auto;right:3%;top:1.5%;bottom:auto;font-size:21px}
-  .src{max-width:58%}
-  .prog{max-width:62%}
+  .candle{left:6%;bottom:20px}
+  .stamp{left:auto;right:1%;top:1.5%;bottom:auto;font-size:17px}
+  .src{max-width:56%}
+  .prog{max-width:56%;font-size:15px}
+  .tick:nth-of-type(2),.tick:nth-of-type(4),.tick:nth-of-type(7){display:none}
+  .marks{gap:2px}
   .tr{grid-template-columns:8.6ch minmax(0,1fr)}
   .tr b{display:none}
   .brand{font-size:16px;gap:8px}
@@ -424,6 +440,10 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   .rc:first-child{border-top:0}
   .limits blockquote{padding-left:0;padding-top:44px}
   .chrome span{display:none}
+}
+@media (max-width:400px){
+  .stamp{font-size:15px}
+  .prog{font-size:14px}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -481,7 +501,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
     <div class="ca">
       <p class="eyebrow reveal" style="--d:.05s">Kiroween 2026 · Resurrection</p>
       <h1 id="h1" class="reveal" style="--d:.15s">The dead listing <span class="verb">rises</span> only when the checksum agrees.</h1>
-      <p class="lede l1 reveal" style="--d:.28s">A 1984 magazine program, misread by OCR, comes back to life, and a checksum decides when.</p>
+      <p class="lede l1 reveal" style="--d:.28s">A magazine type-in, misread by OCR, comes back to life, and a checksum decides when.</p>
     </div>
     <div class="cb"><p class="lede l2 reveal" style="--d:.36s">A Kiro agent proposes the fix, a gate checks it against the magazine's printed <code class="in">:rem</code>, and an emulated Commodore 64 runs it. One recorded run: <b>1 patch</b>, <b>{{ok_after}} of {{n_lines}} lines</b> consistent, <b>{{wall_s}} s</b>, <b>{{credits}} Kiro credits</b>.</p></div>
     <div class="cc"><div class="ctas reveal" style="--d:.44s">
@@ -489,15 +509,15 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
         <a class="btn" href="/deck/"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M2.5 3.5h15v10h-15zM10 13.5v3M6.5 16.5h7"/></svg>Pitch deck</a>
         <a class="btn" href="/"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M4 10h11M11 5.5 15.5 10 11 14.5"/></svg>Open the live site</a>
       </div></div>
-    <div class="cd"><p class="proof reveal" style="--d:.52s">Recorded playback of a real Kiro run · no C64 ROM served · its patch re-judged in your tab by the real gate · <a href="{{run_file}}">the raw run log</a></p></div>
+    <div class="cd"><p class="proof reveal" style="--d:.52s">Recorded playback of a real Kiro run · no C64 ROM served · its patch re-judged here by the real gate · <a href="{{run_file}}">the raw run log</a></p></div>
     <div class="exhibit reveal" style="--d:.25s">
       <div class="seance">
         <div class="slip">
           <div class="slip-paper" aria-hidden="true"></div>
           <p class="prog">Program 1: The Last Seance</p>
-          <p class="src">authored 2026 · typeset by us · read by real OCR · lines 10–60 of 120</p>
+          <p class="src">authored 2026 · typeset by us · read by real OCR · first 6 of its 12 lines</p>
           <div class="listing" role="group" aria-label="The listing as OCR read it, with the checksum gate's mark on line 20">
-<!--@listing-->
+<!--@listing60-->
           </div>
         </div>
         <div class="candle" aria-hidden="true"><span class="candlelight"></span><span class="flame"></span></div>
@@ -519,9 +539,10 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
       </div>
       <div class="replay">
         <button class="btn" type="button" id="play" aria-controls="ticker">Replay the run</button>
-        <p class="ticker" id="ticker" aria-live="polite"><b>{{run_end}}</b> end · RESURRECTED · {{iterations}} iteration · {{wall_s}} s · {{credits}} Kiro credits</p>
+        <p class="ticker" id="ticker"><b>{{run_end}}</b> end · RESURRECTED · {{iterations}} iteration · {{wall_s}} s wall · {{credits}} Kiro credits</p>
+        <p class="sr" id="ticker-live" aria-live="polite"></p>
         <div class="track" role="group" aria-label="the run's events, by the run's own clock"><span class="fill"></span><!--@ticks--></div>
-        <p class="replay-note">Timed by the run's own clock ({{kiro_cli}}, {{model}}): waits sped up, the last 3.5 s in real time.</p>
+        <p class="replay-note">Timed by the run's own clock ({{kiro_cli}}, {{model}}): waits sped up, the last 3.5 s real time.</p>
       </div>
     </div>
   </div>
@@ -536,15 +557,30 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   </div>
 </section>
 
+<section class="e0" aria-labelledby="e0-h">
+  <div class="wrap e0-grid">
+    <div>
+      <p class="eyebrow">Experiment E0 · the real June 1984 page · N=2</p>
+      <h2 id="e0-h" style="margin-top:16px">Search fixed 3 of 18 failing lines. The agent made all 18 consistent.</h2>
+      <p class="lede2">The same 18 lines, failing their checksum after OCR. A deterministic search with no model fixed 3; the gated Kiro agent made all 18 checksum-consistent (consistent, not proven identical). On the authored page, search alone fixes its one line.</p>
+    </div>
+    <div class="e0-rows" role="img" aria-label="Two rows of 18 marks. Search: 3 of 18 fixed. Agent: 18 of 18 checksum-consistent.">
+      <p class="e0-l">search</p><div class="marks"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p class="e0-n">3<small>/18</small></p>
+      <p class="e0-l">agent</p><div class="marks a"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><p class="e0-n">18<small>/18</small></p>
+      <p class="e0-src">README · Engineering Rigor · docs/EXPERIMENTS.md · page withheld (rights)</p>
+    </div>
+  </div>
+</section>
+
 <section class="band" id="run" aria-labelledby="run-h">
   <div class="wrap">
     <p class="eyebrow">Recorded {{run_date}} · {{run_hm}} UTC</p>
     <h2 id="run-h" style="margin-top:18px">The page shows the run. The log proves it.</h2>
-    <p class="lede2">Above, the live site after the recorded run settles. Below, the same run typed from its log, failed skill load included. Hook rows come from the hook scripts, not the model; two of them are the recorder running the same scripts.</p>
+    <p class="lede2">Above, the live site. Below, the same run typed from its log; hook rows come from the hook scripts, and two are the recorder running them.</p>
     <figure class="shot wide">
       <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>ready.edycu.dev</span></div>
       <img src="/landing/img/desk.webp" width="1800" height="616" loading="lazy" decoding="async" alt="The live site after the recorded run: all twelve lines of the galley, line 20 struck in red with the blue patch beneath it and every checksum ticked; the C64 pane shows the recorded post-title screen: THE SPIRITS ANSWER, THE PAGE, THE CHECKSUM, THE MACHINE, THE AGENT, IT LIVES, READY TO RISE.">
-      <figcaption>Captured from the live site, 2026-11-25. The C64 pane is the recorded screen, shown as text; no C64 runs in the tab.</figcaption>
+      <figcaption>Captured from the live site, 2026-11-25. The C64 pane shows the recorded screen as text.</figcaption>
     </figure>
     <div class="term wide" id="term">
       <div class="term-bar"><span>{{kiro_cli}} · agent {{agent}}</span><span>{{model}} · {{run_date}}</span></div>
@@ -560,7 +596,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
     <div>
       <p class="eyebrow">Line 20 · printed :rem {{printed20}}</p>
       <h2 id="gate-h" style="margin-top:18px">Try to fool the gate.</h2>
-      <p class="body">Type any line 20. This page runs the project's own gate, <code class="in">src/gate/checksum-gate.ts</code>, bundled as <a href="/landing/gate.js">gate.js</a> ({{gate_kb}} KB): the code the Kiro Pre Tool Use hook runs before <code class="in">apply_patch</code>. No model. p95 {{gate_p95}} ms in node (N={{gate_n}}).</p>
+      <p class="body">Type any line 20. This page runs the project's own gate (<code class="in">src/gate/checksum-gate.ts</code>, bundled as <a href="/landing/gate.js">gate.js</a>, {{gate_kb}} KB), the code the Kiro Pre Tool Use hook runs. No model. p95 {{gate_p95}} ms in node (N={{gate_n}}).</p>
       <div class="presets" role="group" aria-label="Try a line 20">
         <button class="chip" type="button" data-try="ocr" aria-pressed="true">What the OCR read</button>
         <button class="chip" type="button" data-try="tm" aria-pressed="false">Fix only the M</button>
@@ -575,18 +611,18 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
       <div class="verdict" id="verdict" data-v="refused"><span class="vstamp" id="vstamp">REFUSED</span><p class="why" id="why" aria-live="polite">{{reason_ocr}}</p></div>
     </div>
   </div>
-  <div class="wrap"><p class="trap"><b>The ™ trap.</b> OCR read the opening quote as ™, code 8482, which is 34 mod 256: a quote. Fix only the M and a raw sum matches ({{tm_naive}} = {{printed20}}). The gate sums the line as written, then refuses any line holding a character no C64 key types, because the loader would drop it.</p></div>
+  <div class="wrap"><p class="trap"><b>The ™ trap.</b> OCR read the opening quote as ™ (code 8482, 34 mod 256: a quote). Fix only the M and a raw sum matches ({{tm_naive}} = {{printed20}}), yet the gate refuses: no C64 key types ™.</p></div>
 </section>
 
 <section class="band" id="how" aria-labelledby="how-h">
   <div class="wrap">
     <h2 id="how-h">The model chooses where to look. Code decides what is true.</h2>
-    <p class="lede2">Five hands touch line 20. Only the last three can say yes. None of them is the model.</p>
+    <p class="lede2">Five hands touch line 20; the model's cannot say yes.</p>
     <div class="bento">
       <article class="card c1">
         <p class="k"><svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5z M8 10h8 M8 14h5 M8 18h7"/><path class="r" d="M15 14l3 3"/></svg>I · READ</p><h3>The page is read</h3>
         <div class="mini-scan"><img src="/landing/img/scan.webp" width="1600" height="824" loading="lazy" decoding="async" alt="The live /scan page after reading the authored page in the tab: 9 of 12 lines match their printed checksum, 3 are flagged as mismatches."></div>
-        <p>Tesseract reads the scan in your tab; each line's sum is checked against its printed <code>:rem</code>. Above: a browser read of the authored page.</p>
+        <p>Tesseract reads the scan in your tab and checks each line's sum against its printed <code>:rem</code>. Above: a browser read.</p>
         <span class="pill">tesseract.js 7 · p50 {{ocr_p50}} ms in node</span>
       </article>
       <article class="card c2">
@@ -605,8 +641,8 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
           <div><b>REFUSED</b><span>more than 40% of the line rewritten (R4.7)</span></div>
           <div><b>ACCEPTED</b><span>{{reason_agent_s}}, the recorded patch</span></div>
         </div>
-        <p class="k2">exit 2 · what the agent would read for the OCR's own line 20</p>
-        <p class="stderr">{{reason_ocr}}</p>
+        <p class="k2">exit 2 · the hook's stderr for the OCR's line 20</p>
+        <p class="stderr">{{reason_ocr_s}}</p>
         <span class="pill">hook checksum-gate · Pre Tool Use · exit 2</span>
       </article>
       <article class="card c4">
@@ -617,7 +653,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
       </article>
       <article class="card c5">
         <p class="k"><svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10 M7 21h10 M8 3c0 5 8 5 8 9s-8 4-8 9 M16 3c0 5-8 5-8 9"/></svg>V · HOLD</p><h3>The Stop hook holds it</h3>
-        <p>It sends the agent back once per prompt; the recorder resumes the session each cycle until RESURRECTED, only unfixable lines remain, or a cap hits.</p>
+        <p>It sends the agent back once per prompt (measured on kiro-cli 3.5.0); the recorder resumes the session each cycle until RESURRECTED, only unfixable lines remain, or a cap hits.</p>
         <div class="caps"><div>{{cap_iter}}<small>fix attempts</small></div><div>{{cap_credits}}<small>credits</small></div><div>{{cap_s}}<small>seconds</small></div></div>
         <p class="stderr">{{stop_row}}</p>
         <span class="pill">hook until-title · Agent Stop</span>
@@ -639,7 +675,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
       <dl>
         <dt>Cause of death</dt><dd><code class="bad">?SYNTAX&nbsp;&nbsp;ERROR IN 20</code><small>the run's own first error, verbatim</small></dd>
         <dt>Treatment</dt><dd>{{n_acc}} patch accepted · {{n_ref}} refused · {{n_forced}} forced<small>line 20: <code>PRIMT™</code> → <code>PRINT"</code>, checksum {{printed20}} = printed {{printed20}}</small></dd>
-        <dt>Time of revival</dt><dd>{{run_date}} {{revival}} UTC<small>the last accepted patch, from the gate's log line</small></dd>
+        <dt>Time of revival</dt><dd>{{run_date}} {{revival}} UTC<small>the last accepted patch (gate log)</small></dd>
         <dt>Examined by</dt><dd>the checksum gate<small>Pre Tool Use hook, then apply_patch</small></dd>
         <dt>Pronounced alive by</dt><dd>the C64 re-RUN at {{alive_at}} UTC<small>title seen, post-title pass, {{ok_after}}/{{n_lines}} checksum-consistent</small></dd>
       </dl>
@@ -653,8 +689,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
     <div>
       <p class="eyebrow">Kiro is the engine</p>
       <h2 id="kiro-h" style="margin-top:18px">What Kiro did, file by file.</h2>
-      <p class="lede2">Specs built the parts that must be exact. Hooks guard every patch. The agent is a Kiro profile with one MCP server.</p>
-      <p class="credit">Written claude-direct and labelled so in commits and <code>docs/DX-REPORT.md</code>: the gate and contract (<code>src/gate</code>), the recorder, REPLAY, the UI, the hook scripts, and the tasks left after two spec lines reached or neared their credit cap (51.26 of 50, 68.71 of 70).</p>
+      <p class="credit">Claude-direct, labelled in commits and <code>docs/DX-REPORT.md</code>: the gate and contract (<code>src/gate</code>), the recorder, REPLAY, the UI, the hook scripts, and the tasks left after two spec lines reached or neared their credit cap (51.26 of 50, 68.71 of 70).</p>
     </div>
     <div class="tree">
       <div><code>.kiro/specs/checksum-oracle/</code><p>7 properties, 12 tasks. Kiro built the tokenizer and checksum (tasks 1–6) and caught three spec errors against the real C64.</p></div>
@@ -677,10 +712,11 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   <div class="wrap stet-grid">
     <div>
       <h2 id="honest-h"><span class="stetmark">stet</span>What we will not claim.</h2>
-      <p class="lede2">Stet is the proofreader's mark for "let it stand". These stand, word for word from the README.</p>
+      <p class="lede2">Stet: the proofreader's "let it stand". Four of the README's six limits, word for word.</p>
     </div>
     <div class="limits">
       <blockquote>The live site is recorded playback; no C64 ROM is hosted (rights), so "IT LIVES" there is captioned "as recorded".<cite>README · Honest limits 1</cite></blockquote>
+      <blockquote>The 1984 magazine page and its OCR output are not in this repository (rights); that run cannot be reproduced from a clone.<cite>README · Honest limits 2</cite></blockquote>
       <blockquote>On the real 1984 page the title-path result is 19/28 lines source-exact against a vision-read reference; the other lines are checksum-consistent, not proven identical.<cite>README · Honest limits 3</cite></blockquote>
       <blockquote>Evals: N=3 per model case on one machine; cases 5 and 6 are not run.<cite>README · Honest limits 5</cite></blockquote>
     </div>
@@ -691,11 +727,10 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   <div class="wrap qgrid">
     <h2 id="q-h">Questions a judge would ask.</h2>
     <div class="qs">
-      <details><summary>Is the C64 on this page real?</summary><p>The screens are recorded from {{emulator}}'s screen memory during the run. This site serves no C64 ROM (rights not cleared), so nothing here runs on a C64 live; the stamp says "as recorded". The gate panel is live.</p></details>
-      <details><summary>Can the agent cheat its way to IT LIVES?</summary><p>Not by the shortcuts we tested: an emptied line, an untypeable character and a rewrite are refused, and a forced patch is never certified (eval cases 4 and 9). A wrong line whose sum still matches and still runs would pass, so results say checksum-consistent, not identical.</p></details>
-      <details><summary>Does it work on a real 1984 page?</summary><p>On the June 1984 Gazette's Random Number Test the title path reached TITLE-PATH RESURRECTED in {{case1}} eval runs; 19 of 28 lines are source-exact against a vision-read reference. Those recordings are withheld (rights).</p></details>
-      <details><summary>Why trust a 1984 checksum?</summary><p>It sums the line number's digits and the body's codes, mod 256, spaces counting 0; ours reproduces it on 43 of 43 lines of a real June 1984 page (withheld, rights). A match is evidence, never proof: sums collide. So the C64 must run the line too.</p></details>
-      <details><summary>What is not measured yet?</summary><p>As of {{build_date}}: eval cases 5 and 6, the held-out runs, and any outside user's listing. Everything here comes from recorded runs on one machine.</p></details>
+      <details><summary>Is the C64 on this page real?</summary><p>The screens were recorded from {{emulator}}'s screen memory. No C64 ROM is served here (rights), so the stamp says "as recorded". The gate panel is live.</p></details>
+      <details><summary>Can the agent cheat its way to IT LIVES?</summary><p>Not by the shortcuts we tested: an emptied line, an untypeable character and a rewrite are refused; a forced patch is never certified (eval cases 4 and 9, unit tests). A wrong line whose sum matches and still runs would pass, so results say consistent, not identical.</p></details>
+      <details><summary>Does it work on a real 1984 page?</summary><p>On the June 1984 Gazette's Random Number Test the title path reached TITLE-PATH RESURRECTED in {{case1}} eval runs. In two earlier spike runs, 19 of 28 lines matched a vision-read reference exactly. The recordings are withheld (rights).</p></details>
+      <details><summary>What is not measured yet?</summary><p>As of {{build_date}}: eval cases 5 and 6, and any outside user's listing. Everything here comes from recorded runs on one machine.</p></details>
     </div>
   </div>
 </section>
@@ -704,7 +739,6 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   <div class="wrap">
     <div class="head">
       <h2 id="raise-h">Raise one yourself.</h2>
-      <p class="lede2" style="margin-inline:auto">Press Resurrect, then Cheat. The hooks are at /kiro; your own scan goes to /scan.</p>
       <div class="ctas">
         <a class="btn primary" href="/">Open ready.edycu.dev</a>
         <a class="btn" href="/kiro">See the hooks at /kiro</a>
@@ -729,7 +763,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
       <a href="/kiro">/kiro</a>
       <a href="https://kiroween.devpost.com/">Kiroween 2026</a>
     </nav>
-    <p class="stampline">Kiroween 2026 · Resurrection · MIT · page {{site_ver}} · {{build_date}} · no trackers</p>
+    <p class="stampline">Kiroween 2026 · Resurrection · MIT · build hash {{site_ver}} · {{build_date}} · no trackers</p>
   </div>
 </footer>
 
@@ -770,7 +804,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
     const v = now - t0, ms = runMs(v);
     show(ms);
     if (v < vTotal) raf = requestAnimationFrame(frame);
-    else { hero.classList.remove("playing"); delete hero.dataset.ph; hero.classList.remove("post"); show(total); delete hero.dataset.ph; play.textContent = "Replay the run"; }
+    else { const lv = document.getElementById("ticker-live"); if (lv) lv.textContent = "Replay finished: RESURRECTED, " + D.tl[D.tl.length - 1].text; hero.classList.remove("playing"); delete hero.dataset.ph; hero.classList.remove("post"); show(total); delete hero.dataset.ph; play.textContent = "Replay the run"; }
   }
   function start() {
     cancelAnimationFrame(raf); hero.classList.add("playing"); hero.classList.remove("post");

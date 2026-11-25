@@ -97,13 +97,13 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the rem
 
 | Metric | Value | Source |
 |---|---|---|
-| Tests | 492 passing, 41 files (`npm test` on HEAD) | `tests/` |
+| Tests | 492 passing, 41 files (`npm test` on 2b4fadd) | `tests/`, `evidence/tests/npm-test-2026-11-25.txt` |
 | Agent evals, release 1 | 7 of 9 cases run and passing; cases 5 and 6 **not run** | [`docs/EVALS.md`](docs/EVALS.md) |
 | Model runs | 6 of 6 `RESURRECTED` (2 cases × N=3); all 6 re-judge with 0 mismatches (recorded in the freeze note; the case-1 runs are not reproducible from a clone). The live site replays 1 recording; the 3 case-3 runs are in `evidence/evals/runs/`, the 3 case-1 recordings are withheld (rights) | `evidence/evals/` |
-| Gate `applyPatch` | p50 0.009 ms, p95 0.021 ms (N=2000) | `evidence/bench/bench-2026-11-24.json` (measured before the P1d gate/REPLAY changes) |
-| Emulator boot | p50 641 ms (N=10) | same file |
-| REPLAY of the recorded run in node (incl. a core boot) | p50 2485 ms, range 2.3–7.7 s (N=10) | same file |
-| OCR, tesseract.js 7 on the authored page | p50 903 ms (N=5, warm worker) | same file |
+| Gate `applyPatch` | p50 0.01 ms, p95 0.03 ms (N=2000, node) | `evidence/bench/bench-2026-11-25.json` (re-run on the current gate; the 11-24 file predates the P1d changes) |
+| Emulator boot | p50 829 ms (N=10, node) | same file |
+| REPLAY of the recorded run in node (incl. a core boot) | p50 2295 ms, range 2.3–2.8 s (N=10) | same file |
+| OCR, tesseract.js 7 on the authored page | p50 842 ms (N=5, warm worker, node) | same file |
 | Experiment E0 (does search beat the model?) | On the real 1984 page search fixed 3 of 18 failing lines; the agent made all 18 checksum-consistent (N=2) | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) |
 
 ### Attacks defeated

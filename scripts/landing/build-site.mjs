@@ -116,6 +116,7 @@ const V = {
   emulator: start.emulator.id, agent: start.runner.agent, run_file: RUN_FILE.replace(/^public/, ""), head,
   err_screen: esc(screenText(SCREENS.error)), title_screen: esc(screenText(SCREENS.title)), post_screen: esc(screenText(SCREENS.post)),
   ocr_body: esc(L20.body), fix_body: esc(patch.new_body), tm_only: esc(TM_ONLY), reason_ocr: esc(vOcr.reason),
+  reason_ocr_s: esc(vOcr.reason.split(". ")[0] + "."),
   reason_agent: esc(vAgent.reason), reason_agent_s: esc(vAgent.reason.replace(/^ACCEPTED: /, "")), cap_iter: String(start.runner.caps.iterations), cap_credits: String(start.runner.caps.credits),
   n_acc: String(nv("accepted")), n_ref: String(nv("refused")), n_forced: String(nv("forced")), g_attempts: String(spikeG.attempts.length),
   build_date: noteDate, site_ver: siteVer, tests_commit: testsCommit, bench_date: bench.date.slice(0, 10), bench_file: BENCH_FILE,
@@ -159,7 +160,7 @@ const TL = [
   { ms: off(gateRow.t), ph: 3, text: `hook checksum-gate (Pre Tool Use) exit 0 → ${vAgent.reason}` },
   { ms: off(runs[1].t), ph: 4, text: `@c64/c64_run → RESURRECTED · ${V.ok_after}/${V.n_lines} · title seen · post-title pass` },
   { ms: at((e) => e.k === "hook" && e.via === "kiro-stop"), ph: 5, text: "hook until-title (Agent Stop) exit 0 → allow · RESURRECTED" },
-  { ms: off(end.t), ph: 6, text: `end · RESURRECTED · ${V.iterations} iteration · ${V.wall_s} s · ${V.credits} Kiro credits` },
+  { ms: off(end.t), ph: 6, text: `end · RESURRECTED · ${V.iterations} iteration · ${V.wall_s} s wall · ${V.credits} Kiro credits` },
 ];
 const rundata = JSON.stringify({ speed: 3, total: off(end.t), tl: TL, listing: lines, expected, l20: { printed: L20.printed, ocr: L20.body, agent: patch.new_body, tm: TM_ONLY } }).replace(/</g, "\\u003c");
 const ticks = TL.map((x, i) => `<button class="tick" type="button" data-i="${i}" style="--x:${(x.ms / off(end.t) * 100).toFixed(2)}%" aria-label="+${(x.ms / 1000).toFixed(1)} s: ${esc(x.text)}"><span>+${(x.ms / 1000).toFixed(1)} s</span></button>`).join("");
@@ -167,6 +168,7 @@ const ticks = TL.map((x, i) => `<button class="tick" type="button" data-i="${i}"
 function fill(tpl, name) {
   let h = tpl;
   for (const k of ["error", "title", "post"]) h = h.split(`<!--@screen:${k}-->`).join(`<path d="${screenPath(SCREENS[k])}"/>${cursorRow(SCREENS[k])}`);
+  h = h.split("<!--@listing60-->").join(listing.split("\n").filter((r) => !r.includes('class="ln more"')).join("\n"))
   h = h.split("<!--@listing-->").join(listing).split("<!--@terminal-->").join(terminal).split("<!--@ticks-->").join(ticks)
        .split("<!--@rundata-->").join(rundata);
   h = h.replace(/\{\{(\w+)\}\}/g, (m, k) => { ok(k in V, `${name}: unknown placeholder ${m}`); return V[k]; });
