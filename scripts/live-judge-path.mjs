@@ -4,7 +4,7 @@
  * run plays to its end, the certificate + stamp appear, Cheat is refused, /kiro lists real hook rows, the page logs no console error or failed request, and no ROM WASM is served.
  *   node scripts/live-judge-path.mjs <baseUrl> [out.json]
  */
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { chromium } from "playwright";
 const [base, out] = process.argv.slice(2);
 const browser = await chromium.launch();
@@ -36,7 +36,32 @@ const cheat = await page.textContent("[data-testid=cheat-out]");
 check("Cheat is refused by the gate", /REFUSED/.test(cheat), cheat);
 const [dl] = await Promise.all([page.waitForEvent("download"), page.click("[data-testid=dl-prg]")]);
 check(".PRG download works", /\.prg$/.test(dl.suggestedFilename()), dl.suggestedFilename());
+// arch review 02: the .PRG holds exactly the page-inventory lines (the ones typed and compared by clause 6), in order
+{
+  const prg = readFileSync(await dl.path()), nums = [];
+  for (let at = 2; at + 4 <= prg.length;) { const link = prg[at] | (prg[at + 1] << 8); if (link === 0) break; nums.push(prg[at + 2] | (prg[at + 3] << 8)); at = link - 0x0801 + 2; }
+  const runFile = (await (await fetch(base + "/runs/index.json")).json()).runs.find((r) => r.id === "line20-hero").file;
+  const start = (await (await fetch(base + runFile)).text()).trim().split("\n").map((l) => JSON.parse(l)).find((e) => e.k === "start");
+  const want = [...start.input.spec.expectedLines].sort((a, b) => a - b);
+  check(".PRG loads at $0801 and holds exactly the page-inventory lines", prg[0] === 0x01 && prg[1] === 0x08 && JSON.stringify(nums) === JSON.stringify(want), { lines: nums.length, want: want.length });
+}
 check("judge path page: 0 console errors, 0 failed or 4xx/5xx requests", consoleErrors.length === 0, consoleErrors.slice(0, 5));
+// arch review 02: the URL a judge actually opens (no ?still=1) autoplays: says it is playing, reaches the certificate, logs nothing
+{
+  const auto = await ctx.newPage(), autoErr = [];
+  auto.on("console", (m) => { if (m.type() === "error") autoErr.push(m.text()); });
+  auto.on("requestfailed", (r) => autoErr.push(`requestfailed ${r.url()}`));
+  auto.on("response", (r) => { if (r.status() >= 400) autoErr.push(`${r.status()} ${r.url()}`); });
+  await auto.goto(base + "/");
+  await auto.waitForFunction(() => window.__ready && window.__ready.steps > 0, null, { timeout: 60_000 });
+  await auto.waitForTimeout(1200);
+  const cap = await auto.textContent("[data-testid=screen-caption]");
+  check("/ autoplays: the caption never asks to press Resurrect while the run plays", !/Press Resurrect/.test(cap), cap);
+  await auto.waitForFunction(() => window.__ready.step === window.__ready.steps, null, { timeout: 90_000 });
+  check("/ autoplay reaches the RESURRECTED certificate", /RESURRECTED/.test(await auto.textContent("[data-testid=certificate]")), null);
+  check("/ autoplay: 0 console errors, 0 failed or 4xx/5xx requests", autoErr.length === 0, autoErr.slice(0, 5));
+  await auto.close();
+}
 await page.goto(base + "/kiro");
 await page.waitForFunction(() => document.querySelectorAll("[data-testid=kiro-rows] tbody tr").length > 0, null, { timeout: 30_000 });
 const hook = await page.$$eval("[data-testid=kiro-rows] tbody tr", (t) => t.map((r) => r.textContent).filter((x) => /hook /.test(x)));

@@ -1,13 +1,13 @@
 {
  "base": "https://ready.edycu.dev",
- "date": "2026-11-25T18:57:54.246Z",
+ "date": "2026-11-25T19:39:13.952Z",
  "ok": true,
  "checks": [
   {
    "name": "first playable paint ≤ 60 s, no install, clean profile",
    "pass": true,
    "detail": {
-    "ms": 245
+    "ms": 2702
    }
   },
   {
@@ -56,7 +56,30 @@
    "detail": "line20-recorded.prg"
   },
   {
+   "name": ".PRG loads at $0801 and holds exactly the page-inventory lines",
+   "pass": true,
+   "detail": {
+    "lines": 12,
+    "want": 12
+   }
+  },
+  {
    "name": "judge path page: 0 console errors, 0 failed or 4xx/5xx requests",
+   "pass": true,
+   "detail": []
+  },
+  {
+   "name": "/ autoplays: the caption never asks to press Resurrect while the run plays",
+   "pass": true,
+   "detail": "No C64 is running here. Playing the recorded run."
+  },
+  {
+   "name": "/ autoplay reaches the RESURRECTED certificate",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "name": "/ autoplay: 0 console errors, 0 failed or 4xx/5xx requests",
    "pass": true,
    "detail": []
   },
