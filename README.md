@@ -1,7 +1,7 @@
 <div align="center">
   <img src="docs/icon.svg" alt="SYNTAX ERROR IN 20 icon" width="144">
   <h1>SYNTAX ERROR IN 20 🕯️</h1>
-  <p><em>Resurrect 1984 magazine type-in programs: the magazine's own printed checksums flag the lines OCR misread, a Kiro agent proposes fixes, a deterministic gate accepts a fix only when it is typeable on a C64 and matches its printed checksum, and a real C64 core then runs the program and decides the verdict.</em></p>
+  <p><em>Resurrect 1984 magazine type-in programs: the magazine's own printed checksums flag the lines OCR misread, a Kiro agent proposes fixes, a deterministic gate accepts a fix only when it is typeable on a C64 and matches its printed checksum (allowing for OCR misreads of the printed digits), and a real C64 core then runs the program and decides the verdict.</em></p>
   <img src="docs/readme-hero.png" alt="SYNTAX ERROR IN 20: a singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen" width="100%">
 
   <br/>
@@ -26,8 +26,8 @@
 > **The problem.** A 1984 type-in listing read back from a scan dies on one wrong character (`?SYNTAX  ERROR IN 20`), and an
 > LLM asked to fix it will invent a line that runs and is wrong.
 >
-> **What this is.** A Kiro agent that may only change a line through a gate: typeable on a C64 keyboard, checksum equal to the
-> one printed, within a 40% edit cap. The C64 then runs the patched program, and its screen and memory decide the verdict.
+> **What this is.** A Kiro agent that may only change a line through a gate: typeable on a C64 keyboard, within the 40% edit cap, and its checksum
+> equals the printed one (or fits only a misread printed digit). The C64 then runs the patched program, and its screen and memory decide the verdict.
 > "True" here means exactly that: consistent with the magazine's printed sums and the machine's own output, not proven
 > identical to the 1984 text.
 >
@@ -46,13 +46,13 @@ The 60-second judge path:
 
 | Seconds | Do | You see |
 |---|---|---|
-| 0–20 | Open [ready.edycu.dev](https://ready.edycu.dev) | A 2026-typeset listing (our own page, read by real OCR) under candle light; the recorded run plays itself once (`?still=1` keeps it still): the C64 pane reports `?SYNTAX  ERROR IN 20`, the agent's patch is struck in red, then re-inked in blue only once the gate accepts it. **Resurrect** replays it |
+| 0–20 | Open [ready.edycu.dev](https://ready.edycu.dev) | A 2026-typeset listing (our own page, read by real OCR) under candle light; the recorded run plays itself once (`?still=1` keeps it still): the C64 pane reports `?SYNTAX  ERROR IN 20`, the misread line is struck in red; the agent's patch appears beneath it and re-inks to blue once the gate accepts it. **Resurrect** replays it |
 | 20–30 | Press **Cheat** (empties the error line), then edit the line in **fix it yourself** and press **Judge my line** | The gate refuses the deletion; your line is ACCEPTED only if it is typeable, within the 40% edit cap, and its checksum equals the printed one (or fits only a misread printed digit); no C64 runs it |
 | 30–40 | Pick **The Ossuary** or **The Ninth Knock** | Harder recorded runs: the C64 blames line 19 while the misprint sits in DATA line 890; a DATA misprint that runs silently is caught by its checksum alone |
 | 40–50 | Read the certificate | The certificate of resurrection, then the **IT LIVES** stamp, captioned as recorded, not re-run |
 | 50–60 | Open [`/kiro`](https://ready.edycu.dev/kiro) | The Kiro hook rows and tool calls of the three recorded runs, in time order |
 
-Then try [`/scan`](https://ready.edycu.dev/scan): pick a page of the June 1984 Gazette on archive.org, or upload a scan. Tesseract.js
+Then try [`/scan`](https://ready.edycu.dev/scan): pick one of two June 1984 Gazette pages on archive.org (n177, n178), or upload a scan. Tesseract.js
 (self-hosted, in your tab) reads it and each line's recomputed sum is checked against the printed one and the mismatches are flagged. Fix a flagged line by hand and its checksum is rechecked on every keystroke; export the result as `.bas` (unverified lines commented out) plus an errata sheet. The agent's repair is withheld there (see Honest limits).
 
 ## 💡 The Problem & Solution
@@ -60,7 +60,7 @@ Then try [`/scan`](https://ready.edycu.dev/scan): pick a page of the June 1984 G
 ### The Problem
 COMPUTE!'s Gazette (1984) printed programs for you to type in, and most of its program lines carried a checksum (`:rem NNN`). Scans of
 those pages are OCR'd with errors, and a single wrong character gives `?SYNTAX  ERROR IN 20` on a machine nobody owns
-any more. An LLM asked to "fix the listing" will happily invent a line that runs and is wrong.
+any more. Nothing stops an LLM asked to "fix the listing" from inventing a line that runs and is wrong.
 
 **Who it is for:** anyone typing a listing back in from a scan. [`/scan`](https://ready.edycu.dev/scan) already checks
 each line of a Gazette page or your own scan against its printed `:rem` and flags the mismatches (a sum that fits only a
@@ -120,7 +120,7 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 | Tests | 520 passing, 45 files, plus 1 expected fail (the known-limitation marker, Honest limits 7) (`npm test` on 887de9f) | `tests/`, `evidence/tests/npm-test-2026-11-26b.txt` |
 | Agent evals, release 2 | 9 of 9 cases run and passing; cases 5 (silent DATA fault) and 6 (`?OUT OF DATA`) are original 2026 pages | [`docs/EVALS.md`](docs/EVALS.md) |
 | Model runs | 12 of 12 `RESURRECTED` with the shipped profile (4 model cases × N=3; the E1–E4 ablation arms are not counted here and include failures). Every recording on disk (35: 20 public, 15 local tier-C) re-judges with 0 mismatches, a run counting only when its recorded and recomputed verdicts are both present and equal | `scripts/rejudge-runs.mjs`, `evidence/boot-detect/rejudge-p6d.json`; the case-3, 5 and 6 runs are in `evidence/evals/runs/`; the case-1 recordings are withheld (rights) and cannot be reproduced from a clone |
-| Gate `applyPatch` | p50 0.01 ms, p95 0.03 ms (N=2000, node) | `evidence/bench/bench-2026-11-25.json` (re-run on the current gate; the 11-24 file predates the P1d changes) |
+| Gate `applyPatch` | p50 0.01 ms, p95 0.03 ms (N=2000, node) | `evidence/bench/bench-2026-11-25.json` (re-run on the current gate; the 11-24 file predates the P1d changes; the boot and REPLAY rows below were measured on 2026-11-25, before the 2026-11-26 boot-detect changes in `src/emu`) |
 | Emulator boot | p50 829 ms (N=10, node) | same file |
 | REPLAY of the recorded run in node (incl. a core boot) | p50 2295 ms, range 2.3–2.8 s (N=10) | same file |
 | OCR, tesseract.js 7 on the authored page | p50 842 ms (N=5, warm worker, node) | same file |

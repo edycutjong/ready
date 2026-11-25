@@ -7,7 +7,7 @@ Live: https://ready.edycu.dev · No account, no install, no key.
 1. Open `/`. The recorded run starts by itself once (`/?still=1` and reduced-motion keep it still). Press **Resurrect** to
    play it again.
 2. Watch the C64 pane: the authored 2026 page has a planted misprint on line 20 and the C64 reports
-   `?SYNTAX  ERROR IN 20`. The agent's patch is struck in red until the gate accepts it, then re-inked in blue.
+   `?SYNTAX  ERROR IN 20`. The misread line is struck in red; the agent's patch appears beneath it and re-inks to blue once the gate accepts it.
 3. The certificate of resurrection and the **IT LIVES** stamp appear at the end. The stamp is captioned "as recorded, not re-run on a
    C64 here" because no ROM is hosted (rights). In `vite dev` on your machine the same page can re-run on the C64 core.
 4. Press **Cheat**: it empties the error line while the C64 shows one (line 20; after the run, line 10). The gate refuses it.
@@ -23,7 +23,7 @@ Live: https://ready.edycu.dev · No account, no install, no key.
    `IT NIVES`; the agent fixes both, two accepted patches. Both are byte copies of `evidence/evals/runs/eval-case5-1-1795625618995.jsonl`
    and `eval-case6-1-1795625707333.jsonl` (`evidence/boot-detect/rejudge-p6d.json`, `identicalCopiesNotCounted`).
 5. Open `/kiro`: the Pre Tool Use / Agent Stop / Session Start hook rows of the three recorded runs, in time order.
-6. Open `/scan`: pick an archive.org Gazette page (fetched through `/api/page`) or upload a scan. Self-hosted tesseract.js reads it in
+6. Open `/scan`: pick one of two June 1984 Gazette pages on archive.org (n177, n178; fetched through `/api/page`) or upload a scan. Self-hosted tesseract.js reads it in
    your tab; each line is checked against its printed checksum and the mismatches are flagged. No Kiro call, 0 credits, repair withheld.
    Or press **Read our authored page** (our typeset line-20 page, not a 1984 scan): in Chrome 158 it flags 2 of 12 lines, line 20 (the
    planted `PRIMT`) and line 60 (the OCR's own misread, `THEN5®`); Playwright's bundled Chromium 147 also flags line 90. Both builds
