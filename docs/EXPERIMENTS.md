@@ -20,7 +20,7 @@ Same input, the `resurrector` agent (spike G, `evidence/spikes/spike-G.json`): 1
 consistent, TITLE-PATH RESURRECTED in both attempts (N = 2), 19/28 source-exact against the reference transcript.
 On an easy page, search is enough; on the real 1984 page it is not.
 
-## E1–E4 — what changes the outcome? (2026-11-26, 18 new runs + reused shipped rows, 68.89 credits — a lower bound: one Haiku run was unmetered)
+## E1–E4 — what changes the outcome? (2026-11-26, 18 new runs, 68.89 credits — a lower bound: one Haiku run was unmetered; the `shipped` case-6 row reuses release 2's 3 runs, so the `credits total` column sums to 71.596 = 68.89 + 2.709)
 **Protocol** (harness `scripts/eval-agents.mjs --model --case <1|6> --arm <arm> --n 2`): every arm
 runs eval case 1 (the June 1984 Random Number Test title path, tier-C input kept local) and case 6 (the authored
 `?OUT OF DATA IN 19` page), N=2 per case. One thing changes per arm against `shipped` (Sonnet 5.5, whole-listing
