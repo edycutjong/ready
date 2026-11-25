@@ -5,3 +5,7 @@ it("names the scope, adds source-exact and the listing note; a whole-listing sco
   expect(certificateHeading({ verdict: "RESURRECTED", counts }, "title-path", 28, { sourceExact: 19, note: "DATA not executed" })).toBe("TITLE-PATH RESURRECTED · 28/28 checksum-consistent · 19/28 source-exact · DATA not executed");
   expect(certificateHeading({ verdict: "BOOTED-PARTIAL", counts: { ...counts, verified: 11 } }, "whole listing", 12)).toBe("BOOTED — PARTIAL · 11/12 checksum-consistent");
 });
+it("uses the contract's recomputed checksum-consistent count, not the stored-status sum (arch review 02)", () => {
+  const c = { verdict: "BOOTED-PARTIAL" as const, counts, heading: "BOOTED — PARTIAL · 27/28 checksum-consistent" };
+  expect(certificateHeading(c, "whole listing", 28)).toBe("BOOTED — PARTIAL · 27/28 checksum-consistent");
+});

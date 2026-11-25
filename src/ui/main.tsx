@@ -164,7 +164,7 @@ function Desk() {
         <p class="kicker">Kiroween 2026 · Resurrection</p>
         {errText && <p class="err" data-testid="first-error">{errText}</p>}
         <h1>Syntax error in 20</h1>
-        <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A 1984 type-in listing refuses to run. The magazine printed a checksum on most program lines; a Kiro agent proposes the fix, a deterministic gate decides, and an emulated Commodore 64 runs the result. Below: one recorded real run, played back.</p>
+        <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A type-in listing in the 1984 magazine format refuses to run. Those magazines printed a checksum on most program lines; a Kiro agent proposes the fix, a deterministic gate decides, and an emulated Commodore 64 runs the result. Below: one recorded real run, played back.</p>
         <p class="mode" data-testid="mode">
           {mode === "replay" && <><b>REPLAY</b> — a recorded real Kiro run, re-executed now: the gate re-judges every patch and this browser's C64 re-runs the program (replaying recorded OCR input).</>}
           {mode === "recorded" && <><b>RECORDED PLAYBACK</b> — captured screens of a recorded real Kiro run. The gate re-judges every patch in your browser; nothing runs on a C64 here (Commodore ROM rights not cleared).</>}
@@ -213,7 +213,7 @@ function Desk() {
             </section>
             <section class="c64" aria-label="C64 screen">
               <pre data-testid="screen">{view.screen}</pre>
-              <p class="note" data-testid="screen-caption">{mode === "replay" ? "A real C64 (c64-ready) re-ran the program in this tab." : step === 0 ? "No C64 is running here. Press Resurrect to play the recorded run." : `Recorded screen from ${String(start?.t ?? "").slice(0, 10)}'s run, shown as text. No C64 is running in this tab (ROM rights not cleared).`}</p>
+              <p class="note" data-testid="screen-caption">{mode === "replay" ? "A real C64 (c64-ready) re-ran the program in this tab." : step === 0 ? (playing ? "No C64 is running here. Playing the recorded run." : "No C64 is running here. Press Resurrect to play the recorded run.") : `Recorded screen from ${String(start?.t ?? "").slice(0, 10)}'s run, shown as text. No C64 is running in this tab (ROM rights not cleared).`}</p>
               <button data-testid="cheat" onClick={() => { const c = cheat(view.listing, result.input.spec.expectedLines, view.errLine); const V = c.verdict.verdict.toUpperCase(), r = c.verdict.reason; setCheatOut(`Cheat: empty line ${c.line} → ${r.startsWith(V) ? r : `${V} — ${r}`}`); }}>Cheat: delete the error line</button>
               <p class="note">Cheat runs the same gate code as the Kiro Pre Tool Use hook, in your browser. It does not call Kiro.</p>
               {cheatOut && <p data-testid="cheat-out" class="refused">{cheatOut}</p>}
@@ -265,7 +265,7 @@ function Desk() {
               </div>
             )}
             <p class="downloads">
-              <button data-testid="dl-prg" onClick={() => download(`${result.input.listingId}-${(result.contract?.verdict ?? "recorded").toLowerCase()}.prg`, prgBytes(result.final), "application/octet-stream")}>download .PRG (loads at $0801)</button>
+              <button data-testid="dl-prg" onClick={() => download(`${result.input.listingId}-${(result.contract?.verdict ?? "recorded").toLowerCase()}.prg`, prgBytes(result.final, result.input.spec.expectedLines), "application/octet-stream")}>download .PRG (loads at $0801)</button>
               <button data-testid="dl-errata" disabled={errataRows.length === 0} onClick={() => download(`${result.input.listingId}-errata.txt`, errataText(result.input.listingId, result.contract?.heading ?? String(result.recordedEnd?.result ?? "recorded"), errataRows), "text/plain")}>download errata ({errataRows.length} line{errataRows.length === 1 ? "" : "s"})</button>
             </p>
             {result.refused && <p class="refused" data-testid="replay-refused">{result.refused} — showing recorded screens; the gate still re-judges every patch.</p>}

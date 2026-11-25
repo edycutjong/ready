@@ -7,9 +7,12 @@ import type { ContractResult } from "../gate/contract.ts";
 import type { CanonicalLine, CanonicalListing } from "../basic/types.ts";
 import { BASIC_START, tokenizeProgram } from "../basic/tokenizer.ts";
 
-export function certificateHeading(c: Pick<ContractResult, "verdict" | "counts">, scope: string, total: number, extra: { sourceExact?: number; sourceTotal?: number; note?: string } = {}): string {
+export function certificateHeading(c: Pick<ContractResult, "verdict" | "counts"> & { heading?: string }, scope: string, total: number, extra: { sourceExact?: number; sourceTotal?: number; note?: string } = {}): string {
   const state = c.verdict === "RESURRECTED" ? "RESURRECTED" : c.verdict === "BOOTED-PARTIAL" ? "BOOTED — PARTIAL" : "NOT RESURRECTED";
-  const k = c.counts.verified + c.counts.digitMisread + c.counts.eyeVerified;
+  // The checksum-consistent count is the contract's own RECOMPUTED one (it re-checks every line's checksum), read from the
+  // heading it computed (arch review 02); the stored-status sum is only a fallback for callers that pass no heading.
+  const recomputed = c.heading?.match(/(\d+)\/\d+ checksum-consistent/);
+  const k = recomputed ? Number(recomputed[1]) : c.counts.verified + c.counts.digitMisread + c.counts.eyeVerified;
   const parts = [`${scope === "title-path" ? "TITLE-PATH " : ""}${state}`, `${k}/${total} checksum-consistent`];
   if (extra.sourceExact !== undefined) parts.push(`${extra.sourceExact}/${extra.sourceTotal ?? total} source-exact`);
   if (extra.note) parts.push(extra.note);
@@ -106,8 +109,11 @@ export function errataText(title: string, heading: string, rows: readonly Erratu
 }
 
 /** A loadable .PRG: the 2-byte load address $0801 + the same tokenized image contract clause 6 compares with C64 memory. */
-export function prgBytes(final: CanonicalListing): Uint8Array {
-  const image = tokenizeProgram([...final].sort((a, b) => a.n - b.n).map((l) => ({ n: l.n, body: l.body })));
+export function prgBytes(final: CanonicalListing, expectedLines: readonly number[]): Uint8Array {
+  // Same scope as clause 6 (arch review 02): only lines in the page inventory were typed and compared with C64 memory;
+  // an orphan kept in the listing never enters the .PRG.
+  const expected = new Set(expectedLines);
+  const image = tokenizeProgram(final.filter((l) => expected.has(l.n)).sort((a, b) => a.n - b.n).map((l) => ({ n: l.n, body: l.body })));
   const out = new Uint8Array(image.length + 2);
   out[0] = BASIC_START & 0xff; out[1] = BASIC_START >> 8; out.set(image, 2);
   return out;

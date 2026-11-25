@@ -78,9 +78,12 @@ describe("replay", () => {
     expect(e).toEqual([{ n: 10, printed: computeChecksum(10, 'PRINT"{CLR}IT LIVES"'), ocr: 'PR1NT"{CLR}IT LIVES"', final: 'PRINT"{CLR}IT LIVES"', reason: "1 misread as I", renumberedFrom: null, forced: false, status: "verified" }]);
     expect(errataText("t", "h", e)).toMatch(/OCR read : PR1NT/);
     expect(errataText("t", "h", e)).toMatch(/Every change passed the checksum gate/);
-    const prg = prgBytes(r.final);
+    const prg = prgBytes(r.final, r.input.spec.expectedLines);
     expect([prg[0], prg[1]]).toEqual([0x01, 0x08]);
     expect(Array.from(prg.slice(2))).toEqual(Array.from(tokenizeProgram(r.final)));
+    // arch review 02: an orphan kept in the listing (not in the page inventory, never typed) never enters the .PRG
+    const withOrphan = [...r.final, { n: 99, body: 'PRINT"ORPHAN"', printed: null, status: "unverified" as const, source: "ocr" }];
+    expect(Array.from(prgBytes(withOrphan, r.input.spec.expectedLines))).toEqual(Array.from(prg));
   });
   it("Cheat empties the error line and is refused by the same gate", () => {
     const c = cheat(lines, spec.expectedLines, 10);
