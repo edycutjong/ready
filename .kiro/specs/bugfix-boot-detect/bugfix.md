@@ -43,3 +43,10 @@ Measured probes. `{CLR}` is the clear-screen control inside the quotes. Title te
 ## Known Limitation (not fixed here)
 
 Probe b: `10 PRINT"{CLR}THE CRYPT"` / `20 PRINT"RUN"` / `30 GETK$:IFK$=""THEN30` / `40 PRINT"OPENED"`. Measured `titleSeen:false`. The program prints a row that is exactly `RUN`, and `afterLastRun` anchors on the last such row, so it treats the program's own output as the RUN echo and cuts the title away. A correct fix has to track the real RUN echo row through screen scrolling. That is separate work. Probe b is committed as an `it.fails`-style known-limitation test (design.md, test K1) so nobody assumes it is fixed, and so it flips loudly when someone fixes it.
+
+## Review findings after the fix (P6b, 2026-11-26, claude-direct — measured, `evidence/boot-detect/`)
+
+- **R1 (new defect in the first fix, now fixed).** On a reused core the rows below the new `RUN` echo still held the previous run's output, and the per-frame latch caught that stale title in the first frames after `RUN`; its stale post-title text then made clause 2 fail closed. Probe a failed the post-title press for delays 1–300 on a reused core, and one local recording re-judged with 4 per-run fact mismatches. Fix: `runProgram` types CLR/HOME (PETSCII 147) before `RUN`, so only this run's output is ever on screen below the RUN row. New Unchanged item **U11**: output of an earlier run on the same core never counts as this run's title or post-title text.
+- **R2 (C3 f1 reproduced, now fixed).** With CLR/HOME queued, a budget spent before `RUN` is even typed left the typed listing on screen, and `parseError` matched error-shaped text inside it while the machine was in direct mode (so `realError` alone could not help). Fix: no error is reported at the budget-end return while keys are still queued. C3 is fixed at both sites (f1, f2); nothing moved to Unchanged.
+- **U8 holds:** every recording on disk re-judges with 0 mismatches before and after (33/33; `scripts/rejudge-runs.mjs`).
+
