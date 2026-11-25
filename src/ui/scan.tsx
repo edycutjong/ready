@@ -71,7 +71,7 @@ export function ScanView() {
       <Nav here="scan" />
       <p class="kicker">ASSISTED · no Kiro call · 0 credits</p>
       <h1>Check a page against its own checksum</h1>
-      <p class="mode">Every 1984 Gazette line ends in <b>:rem NNN</b>, a checksum of the characters above it. Read a page in your tab, and each line is marked <b>✓</b> only if its recomputed sum equals the printed one. Nothing is uploaded: the OCR engine, its worker and its language data are served from this site.</p>
+      <p class="mode">Most 1984 Gazette program lines end in <b>:rem NNN</b>, a checksum of the characters above it. Read a page in your tab, and each line is marked <b>✓</b> only if its recomputed sum equals the printed one. Nothing is uploaded: the OCR engine, its worker and its language data are served from this site.</p>
       <section class="scan" aria-label="scan source">
         <div class="controls">
           <label>Scan quality <select value={stop} onChange={(e) => setStop(Number((e.target as HTMLSelectElement).value) as ScanStop)} data-testid="stop">{STOPS.map((s) => <option value={s}>{s} px wide</option>)}</select></label>

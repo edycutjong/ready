@@ -96,7 +96,7 @@ Kiro is the engine, not the decoration. What each `.kiro/` artefact did, and who
 | `.kiro/skills/petscii-notation` | PETSCII control-code notation the agent must use | `.kiro/skills/` |
 
 Credits are metered by `kiro-cli` and logged per session in [`docs/DX-REPORT.md`](docs/DX-REPORT.md), including two spec lines
-that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the remaining tasks were written `claude-direct` and labelled as such.
+that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tasks we then completed were written `claude-direct` and labelled as such (c64-mcp-server task 8 is still open).
 
 ## 📊 Engineering Rigor
 
