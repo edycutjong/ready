@@ -53,14 +53,14 @@ those pages are OCR'd with errors, and a single wrong character gives `?SYNTAX  
 any more. An LLM asked to "fix the listing" will happily invent a line that runs and is wrong.
 
 **Who it is for:** anyone typing a listing back in from a scan. [`/scan`](https://ready.edycu.dev/scan) already flags each
-misread line of a Gazette page or your own scan in the browser (no install, no ROM); the gated repair is proven on recorded
+line of a Gazette page or your own scan whose recomputed checksum differs from its printed `:rem`, in the browser (no install, no ROM); the gated repair is proven on recorded
 runs (Engineering Rigor) and withheld on live pages (Honest limits, 4).
 
 ### The Solution
 The model chooses where to look; code decides what is true. A line is only accepted when (1) it is typeable on a real
 C64 keyboard, (2) its Gazette checksum matches the printed one (or the patch is marked `forced`, which can never be
 certified), and (3) the emulated C64 then runs it. The verdict (`RESURRECTED`, `BOOTED-PARTIAL`, `NOT-RESURRECTED`) is
-computed from the machine's screen memory, not from the model's say-so.
+computed from the machine's screen and memory plus the listing's checksums, not from the model's say-so.
 
 ## 🏗️ Architecture & Tech Stack
 

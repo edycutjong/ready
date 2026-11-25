@@ -455,6 +455,8 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   .tick:first-of-type span,.tick:last-of-type span{display:block}
   .bento{grid-template-columns:minmax(0,1fr)}
   .who dl{grid-template-columns:minmax(0,1fr)}
+  .sheet .row{grid-template-columns:minmax(0,1fr) auto;row-gap:8px}
+  .sheet .row input{grid-column:1/-1;grid-row:2}
   .who dl>div{border-left:0;padding:16px 0;border-top:1px solid var(--rule)}
   .who dl>div:first-child{border-top:0;padding-top:0}
   .c3{grid-column:auto}
@@ -477,10 +479,15 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   .btn .narrow{display:inline}
 }
 @media (max-width:400px){
+  .sheet{padding:14px}
+  .sheet input{font-size:13px;padding:8px 4px}
   .stamp{font-size:14px;bottom:calc(38.4vw + 36px)}
   .slip{padding-bottom:calc(38.4vw + 42px)}
   .crt{width:57%}
   .prog{font-size:14px}
+}
+@media (max-width:360px){
+  .sheet input{font-size:12px}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -625,11 +632,11 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
   <div class="wrap">
     <p class="eyebrow">Recorded {{run_date}} · {{run_hm}} UTC</p>
     <h2 id="run-h" style="margin-top:18px">The page shows the run. The log proves it.</h2>
-    <p class="lede2">Above, the live site. Below, the same run typed from its log; two hook rows are the recorder running the hook scripts.</p>
+    <p class="lede2">Above, the live site. Below, the run typed from its log; two hook rows are the recorder running the hook scripts.</p>
     <figure class="shot wide">
       <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>ready.edycu.dev</span></div>
-      <img src="/landing/img/desk.webp" width="1800" height="616" loading="lazy" decoding="async" alt="The live site after the recorded run: all twelve lines of the galley, line 20 struck in red with the blue patch beneath it and every checksum ticked; the C64 pane shows the recorded post-title screen: THE SPIRITS ANSWER, THE PAGE, THE CHECKSUM, THE MACHINE, THE AGENT, IT LIVES, READY TO RISE.">
-      <figcaption>Captured from the live site, 2026-11-25; its C64 pane shows the recorded screen as text.</figcaption>
+      <picture><source media="(max-width:600px)" srcset="/landing/img/desk-m.webp" width="716" height="860"><img src="/landing/img/desk.webp" width="1800" height="616" loading="lazy" decoding="async" alt="The live site after the recorded run (on phones, its own phone layout, lines 10 to 40): line 20 struck in red with the blue patch beneath it and every checksum ticked; on wide screens all twelve lines, and the C64 pane shows the recorded post-title screen: THE SPIRITS ANSWER, THE PAGE, THE CHECKSUM, THE MACHINE, THE AGENT, IT LIVES, READY TO RISE."></picture>
+      <figcaption>Captured from the live site, 2026-11-25; the C64 pane shows the recorded screen as text.</figcaption>
     </figure>
     <div class="term wide" id="term">
       <div class="term-bar"><span>{{kiro_cli}} · agent {{agent}}</span><span>{{model}} · {{run_date}}</span></div>
@@ -666,7 +673,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
 <section class="band" id="how" aria-labelledby="how-h">
   <div class="wrap">
     <h2 id="how-h">The model chooses where to look. Code decides what is true.</h2>
-    <p class="lede2">Each hand that touches line 20, in order; the model's cannot say yes.</p>
+    <p class="lede2">Every stage from scan to verdict; the model's cannot say yes.</p>
     <div class="bento">
       <article class="card c1">
         <p class="k"><svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5z M8 10h8 M8 14h5 M8 18h7"/><path class="r" d="M15 14l3 3"/></svg>I · READ</p><h3>The page is read</h3>
@@ -676,7 +683,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
       </article>
       <article class="card c2">
         <p class="k"><svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z M14 7l3 3"/></svg>II · PROPOSE</p><h3>The agent proposes</h3>
-        <p>The Kiro agent <code>{{agent}}</code> gets the flagged listing and {{tools}} MCP tools. No files, shell or web.</p>
+        <p>Kiro agent <code>{{agent}}</code> gets the flagged listing and {{tools}} MCP tools: no files, shell or web.</p>
         <div class="tools"><code>c64_reload</code><code>c64_run</code><code>c64_read_screen</code><code>c64_press</code><code>checksum_line</code><code>apply_patch</code></div>
         <span class="pill">.kiro/agents/{{agent}}.json</span>
       </article>
@@ -696,7 +703,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
       </article>
       <article class="card c4">
         <p class="k"><svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18v13H3z M6 7h9 M6 10h6 M9 21h6 M12 17v4"/></svg>IV · RUN</p><h3>The machine confirms</h3>
-        <p>The patched listing is re-RUN on an emulated C64; RESURRECTED is certified only from that run's screen memory.</p>
+        <p>The patched listing is re-RUN on an emulated C64; RESURRECTED needs the title on screen, every checksum matching, memory equal to the listing.</p>
         <div class="mini-crt"><svg class="scr" viewBox="14 16 356 240" role="img" aria-label="Recorded screen: {{err_screen}}"><rect class="bord" width="384" height="272"/><rect class="face" x="32" y="36" width="320" height="200"/><g class="txt" transform="translate(38 42) scale(1.55)" filter="url(#phos)"><!--@screen:error--></g></svg></div>
         <span class="pill">{{emulator}} · boot p50 {{boot_p50}} ms in node</span>
       </article>
