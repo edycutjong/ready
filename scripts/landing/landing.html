@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYNTAX ERROR IN 20 — the dead listing rises only when the checksum agrees</title>
+<meta name="description" content="A Kiro agent repairs OCR'd 1984 type-in listings. A deterministic gate checks every patch against the magazine's printed checksum, and an emulated Commodore 64 runs it. Kiroween 2026, Resurrection.">
+<meta name="theme-color" content="#110C0A">
+<link rel="icon" href="/landing/icon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://ready.edycu.dev/landing/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SYNTAX ERROR IN 20">
+<meta property="og:title" content="SYNTAX ERROR IN 20 — the dead listing rises only when the checksum agrees">
+<meta property="og:description" content="A Kiro agent proposes the fix, a checksum gate decides, an emulated C64 runs it. One recorded run: 1 patch, {{wall_s}} s, {{credits}} Kiro credits.">
+<meta property="og:url" content="https://ready.edycu.dev/landing/">
+<meta property="og:image" content="https://ready.edycu.dev/landing/og.jpg?v=p4">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="brand frame: the error this project is named after. A singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SYNTAX ERROR IN 20 — the dead listing rises only when the checksum agrees">
+<meta name="twitter:description" content="A Kiro agent proposes the fix, a checksum gate decides, an emulated C64 runs it.">
+<meta name="twitter:image" content="https://ready.edycu.dev/landing/og.jpg?v=p4">
+<link rel="preload" href="/fonts/rokkitt-latin-800-normal.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="/fonts/atkinson-hyperlegible-next-latin-400-normal.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="/fonts/atkinson-hyperlegible-mono-latin-500-normal.woff" as="font" type="font/woff" crossorigin>
+<script>document.documentElement.classList.add("js")</script>
+<style>
+@font-face{font-family:"Rokkitt";font-weight:800;font-display:swap;src:url(/fonts/rokkitt-latin-800-normal.woff) format("woff")}
+@font-face{font-family:"Rokkitt";font-weight:500;font-display:swap;src:url(/fonts/rokkitt-latin-500-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:400;font-display:swap;src:url(/fonts/atkinson-hyperlegible-next-latin-400-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:700;font-display:swap;src:url(/fonts/atkinson-hyperlegible-next-latin-700-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Mono";font-weight:500;font-display:swap;src:url(/fonts/atkinson-hyperlegible-mono-latin-500-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Mono";font-weight:700;font-display:swap;src:url(/fonts/atkinson-hyperlegible-mono-latin-700-normal.woff) format("woff")}
+:root {
+  --bg:      #110C0A;
+  --ink:     #EFE4CC;
+  --muted:   #A3937C;
+  --before:  #EC4A34;
+  --after:   #9D8FF2;
+  --rule:    #3A2A22;
+  --screen:  #352879;
+  --stamp:   #EC4A34;
+  --candle:  #F4A13A;
+  --paper:   #E6D5B0;
+  --paper-ink: #1E1611;
+  --before-on-paper: #A32A1E;
+  --after-on-paper:  #4A3CA0;
+  --stone:   #2A211C;
+  --font-display: "Rokkitt", "Rockwell", "Roboto Slab", serif;
+  --font-body:    "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --font-data:    "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  /* derived only from the tokens above */
+  --border64: #6C5EB5; /* the C64 border light blue (Pepto), named in design.md §4 */
+  --soot-2: color-mix(in srgb, var(--stone) 55%, var(--bg));
+  --paper-dim: color-mix(in srgb, var(--paper-ink) 66%, var(--paper));
+  --w: 1240px;
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{color-scheme:dark;overflow-x:clip;scroll-behavior:smooth;scroll-padding-top:76px;scrollbar-color:var(--rule) var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.6 var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip}
+::selection{background:var(--before);color:var(--bg)}
+:focus-visible{outline:2px solid var(--after);outline-offset:3px}
+a{color:inherit;text-underline-offset:.2em;text-decoration-thickness:1px}
+p,h1,h2,h3,figure,blockquote{margin:0}
+h1,h2,h3{font-family:var(--font-display);font-weight:800;line-height:.98;letter-spacing:-.005em;text-wrap:balance}
+code,kbd,samp,time,.mono{font-family:var(--font-data);font-variant-ligatures:none}
+img{display:block;max-width:100%;height:auto}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 clamp(20px,4.4vw,64px)}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;z-index:50;background:var(--ink);color:var(--bg);padding:10px 14px;font-weight:700}
+.skip:focus{top:10px}
+.eyebrow{display:flex;align-items:center;gap:12px;font:500 12.5px/1.3 var(--font-data);letter-spacing:.22em;text-transform:uppercase;color:var(--before)}
+.eyebrow::before{content:"";flex:none;width:26px;height:2px;background:currentColor}
+h2{font-size:clamp(32px,3.7vw,54px)}
+.lede2{max-width:38em;color:color-mix(in srgb,var(--ink) 82%,var(--muted));margin-top:16px}
+.btn{display:inline-flex;align-items:center;gap:10px;font:700 16px/1 var(--font-body);padding:14px 18px;border:1px solid var(--rule);background:color-mix(in srgb,var(--bg) 70%,transparent);color:var(--ink);text-decoration:none;cursor:pointer;transition:transform .16s var(--ease),border-color .2s,background-color .2s,color .2s}
+.btn:hover{border-color:var(--ink);transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary:hover{background:var(--paper);border-color:var(--paper)}
+.btn svg{width:18px;height:18px;flex:none}
+code.in{font-size:.9em;color:var(--ink);background:color-mix(in srgb,var(--rule) 55%,transparent);padding:1px 6px;border-radius:3px}
+
+/* ---------- nav ---------- */
+.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid color-mix(in srgb,var(--rule) 70%,transparent)}
+.top nav{display:flex;align-items:center;gap:clamp(14px,2.2vw,30px);height:64px}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;text-decoration:none;font:800 20px/1 var(--font-display);letter-spacing:.01em}
+.brand img{width:28px;height:28px}
+.top nav a.nl{font:500 12px/1 var(--font-data);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:8px 0;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+.top nav a.nl:hover{color:var(--ink);border-bottom-color:var(--before)}
+.top .gh{padding:10px 14px;font-size:14px}
+@media (max-width:900px){.top nav a.nl{display:none}}
+
+/* ---------- hero: the séance table ---------- */
+.hero{position:relative;isolation:isolate;overflow:clip;padding:clamp(30px,5.4vw,70px) 0 clamp(40px,5vw,72px)}
+.hero::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(130% 90% at 50% -20%,var(--soot-2),var(--bg) 68%)}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.2;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:clamp(28px,4.4vw,72px);align-items:center}
+.hero h1{font-size:clamp(40px,4.7vw,70px);line-height:.94;margin:22px 0 24px;letter-spacing:-.012em}
+.verb{color:var(--after);text-decoration:underline solid var(--after);text-decoration-thickness:.06em;text-underline-offset:.12em;transition:color .7s var(--ease),text-decoration-color .7s}
+.lede{max-width:35em;color:color-mix(in srgb,var(--ink) 84%,var(--muted));font-size:clamp(17px,1.28vw,19px)}
+.lede b{color:var(--ink)}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin:30px 0 18px}
+.proof{font:500 13px/1.55 var(--font-data);color:var(--muted);max-width:38em}
+.proof a{color:var(--ink)}
+.hero .reveal{animation:rise .8s var(--ease) both;animation-delay:var(--d,0s)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+.settled .reveal{animation:none}
+
+.exhibit{position:relative}
+.seance{position:relative;aspect-ratio:1.08;width:100%}
+.slip{position:absolute;left:0;top:1%;width:88%;padding:clamp(14px,2vw,26px) clamp(14px,2vw,28px) clamp(16px,2.2vw,30px);color:var(--paper-ink);transform:rotate(-1.6deg);transform-origin:40% 60%;z-index:1}
+.slip-paper{position:absolute;inset:0;z-index:-1;background:radial-gradient(85% 65% at 6% 106%,color-mix(in srgb,var(--candle) 34%,transparent),transparent 64%),linear-gradient(172deg,color-mix(in srgb,var(--paper) 90%,var(--ink)),var(--paper) 46%,color-mix(in srgb,var(--paper) 86%,var(--paper-ink)));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--paper-ink) 80%,var(--candle)),inset 0 0 30px 9px color-mix(in srgb,var(--paper-ink) 60%,transparent),0 28px 50px rgb(0 0 0 / .55);filter:url(#burn)}
+.prog{font:800 clamp(15px,1.45vw,21px)/1.1 var(--font-display)}
+.src{max-width:62%;font:500 clamp(10px,.82vw,12px)/1.35 var(--font-data);color:var(--paper-dim);margin:3px 0 clamp(6px,.9vw,12px)}
+.ln{display:grid;grid-template-columns:3.2ch minmax(0,1fr) 7ch 13px;gap:0 clamp(6px,.8vw,10px);align-items:center;font:500 clamp(9.5px,.92vw,13.2px)/1.72 var(--font-data);white-space:nowrap;font-variant-ligatures:none}
+.ln .no,.ln .rem{text-align:right;color:var(--paper-dim)}
+.ln .bd{overflow:hidden;text-overflow:ellipsis}
+.st{display:grid;place-items:center}
+.g{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.st.ok{color:var(--paper-dim)}
+.l20{position:relative;margin:0 -8px;padding:1.05em 8px 0;background:color-mix(in srgb,var(--after-on-paper) 9%,transparent);transition:background-color .5s}
+.l20 .bd{overflow:visible}
+.mis{position:relative;display:inline-block;text-decoration:line-through solid var(--after-on-paper) 2px;transition:color .5s,text-decoration-color .5s}
+.ring{position:absolute;left:-14%;top:-36%;width:128%;height:172%;overflow:visible;pointer-events:none}
+.ring path{fill:none;stroke:var(--after-on-paper);stroke-width:3.2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0;vector-effect:non-scaling-stroke;transition:stroke .5s}
+.fix{position:absolute;left:0;bottom:84%;font:800 1.18em/1 var(--font-display);color:var(--after-on-paper);transform:rotate(-5deg);transform-origin:0 100%;white-space:nowrap;transition:color .5s,opacity .35s}
+.st .x{display:none;color:var(--before-on-paper)}
+.st .v{color:var(--after-on-paper)}
+/* replay states (JS sets data-ph on .hero; no attribute = the settled, recorded end state) */
+.hero[data-ph="0"] .l20{background:transparent}
+.hero[data-ph="0"] .mis{text-decoration-color:transparent}
+.hero[data-ph="0"] .ring path{stroke-dashoffset:1}
+.hero[data-ph="0"] .fix,.hero[data-ph="1"] .fix{opacity:0}
+.hero[data-ph="0"] .st .v{display:none}
+.hero:is([data-ph="1"],[data-ph="2"]) .l20{background:color-mix(in srgb,var(--before-on-paper) 11%,transparent)}
+.hero:is([data-ph="1"],[data-ph="2"]) .mis{color:var(--before-on-paper);text-decoration-color:var(--before-on-paper)}
+.hero:is([data-ph="1"],[data-ph="2"]) .ring path{stroke:var(--before-on-paper);transition:stroke-dashoffset .7s var(--ease)}
+.hero:is([data-ph="1"],[data-ph="2"]) .fix{color:var(--before-on-paper)}
+.hero:is([data-ph="1"],[data-ph="2"]) .st .x{display:block}
+.hero:is([data-ph="1"],[data-ph="2"]) .st .v{display:none}
+
+.crt{position:absolute;right:0;bottom:0;width:58%;z-index:2;padding:clamp(9px,1.25vw,17px);border-radius:clamp(14px,1.6vw,22px);background:linear-gradient(158deg,color-mix(in srgb,var(--stone) 78%,var(--ink)),var(--stone) 34%,color-mix(in srgb,var(--stone) 50%,var(--bg)));box-shadow:0 34px 60px rgb(0 0 0 / .62),inset 0 1px 0 color-mix(in srgb,var(--ink) 16%,transparent)}
+.crt::before{content:"";position:absolute;z-index:-1;left:-75%;right:-8%;top:-25%;bottom:-45%;pointer-events:none;background:radial-gradient(46% 50% at 66% 46%,color-mix(in srgb,var(--after) 19%,transparent),transparent 72%);transition:opacity .9s}
+.hero:is([data-ph="0"],[data-ph="1"],[data-ph="2"],[data-ph="3"]) .crt::before{opacity:.55}
+.scr{display:block;width:100%;height:auto;border-radius:clamp(5px,.7vw,9px)}
+.scr .bord{fill:var(--border64)}
+.scr .face{fill:var(--screen)}
+.scr .txt{fill:var(--after)}
+.scr .s{display:none}
+.scr .s-post{display:inline}
+.hero[data-ph="0"] .scr .s-post{display:none}
+.hero:is([data-ph="1"],[data-ph="2"],[data-ph="3"]) .scr .s-post{display:none}
+.hero:is([data-ph="1"],[data-ph="2"],[data-ph="3"]) .scr .s-err{display:inline}
+.hero[data-ph="4"]:not(.post) .scr .s-post{display:none}
+.hero[data-ph="4"]:not(.post) .scr .s-title{display:inline}
+.cur{animation:blink 1.06s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.scr-cap{margin-top:8px;font:500 clamp(9.5px,.78vw,11px)/1.3 var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right}
+
+.candle{position:absolute;left:4%;bottom:-3%;z-index:3;width:clamp(20px,2.3vw,32px);aspect-ratio:1/3.3;border-radius:5px 5px 3px 3px;background:linear-gradient(90deg,color-mix(in srgb,var(--paper) 72%,var(--paper-ink)),color-mix(in srgb,var(--paper) 88%,var(--ink)) 44%,color-mix(in srgb,var(--paper) 66%,var(--paper-ink)));box-shadow:0 16px 26px rgb(0 0 0 / .5)}
+.candle::before{content:"";position:absolute;left:50%;top:-7%;width:2px;height:9%;translate:-50% 0;background:var(--paper-ink)}
+.flame{position:absolute;left:50%;bottom:99%;width:72%;aspect-ratio:1/2.1;translate:-50% 0;border-radius:50% 50% 45% 45%/62% 62% 38% 38%;background:radial-gradient(46% 56% at 50% 74%,var(--ink),var(--candle) 54%,transparent 76%);transform-origin:50% 100%;animation:flick 3.3s ease-in-out infinite}
+@keyframes flick{0%,100%{transform:scale(1,1) skewX(0)}22%{transform:scale(.94,1.07) skewX(2deg)}48%{transform:scale(1.04,.95) skewX(-1.5deg)}71%{transform:scale(.97,1.05) skewX(1deg)}}
+.candlelight{position:absolute;left:50%;bottom:105%;width:1500%;aspect-ratio:1;translate:-50% 50%;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,color-mix(in srgb,var(--candle) 24%,transparent),color-mix(in srgb,var(--candle) 7%,transparent) 46%,transparent 72%);mix-blend-mode:screen;animation:breathe 3.3s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.92}30%{opacity:.78}60%{opacity:1}}
+
+.stamp{position:absolute;z-index:4;right:-3%;top:-6%;display:grid;justify-items:center;font:800 clamp(24px,3vw,46px)/1 var(--font-display);letter-spacing:.09em;color:var(--after);padding:.2em .5em .16em;border:.11em double currentColor;transform:rotate(-8deg);filter:url(#ink);text-shadow:0 0 .35em color-mix(in srgb,var(--after) 60%,transparent)}
+.stamp small{font:700 max(11px,.26em)/1.2 var(--font-data);letter-spacing:.24em;margin-top:.32em}
+.hero:is([data-ph="0"],[data-ph="1"],[data-ph="2"],[data-ph="3"],[data-ph="4"]) .stamp{opacity:0}
+.hero.playing:is([data-ph="5"],[data-ph="6"]) .stamp{animation:land .55s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes land{0%{opacity:0;transform:rotate(-15deg) scale(1.8)}60%{opacity:1;transform:rotate(-7deg) scale(.95)}100%{opacity:1;transform:rotate(-8deg) scale(1)}}
+.hero:is([data-ph="0"],[data-ph="1"],[data-ph="2"],[data-ph="3"],[data-ph="4"]) .verb{color:var(--ink);text-decoration-color:transparent}
+
+.replay{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 16px;align-items:center;margin-top:clamp(18px,2.2vw,30px)}
+.replay .btn{padding:11px 15px;font-size:14px}
+.ticker{font:500 13px/1.45 var(--font-data);color:var(--muted);min-height:2.9em;overflow-wrap:anywhere}
+.ticker b{color:var(--ink);font-weight:700}
+.track{grid-column:1/-1;position:relative;height:34px;margin:0 10px}
+.track::before,.track .fill{content:"";position:absolute;left:0;top:9px;height:2px}
+.track::before{right:0;background:var(--rule)}
+.track .fill{width:100%;background:var(--after);transition:background-color .4s}
+.hero:is([data-ph="0"],[data-ph="1"],[data-ph="2"]) .track .fill{background:var(--before)}
+.tick{position:absolute;left:var(--x);top:2px;translate:-50% 0;width:16px;height:16px;padding:0;border-radius:50%;border:2px solid var(--rule);background:var(--bg);cursor:pointer;transition:border-color .2s,background-color .2s,transform .15s}
+.tick:hover{transform:scale(1.25);border-color:var(--ink)}
+.tick.on{border-color:var(--ink);background:var(--ink)}
+.tick span{position:absolute;top:19px;left:50%;translate:-50% 0;font:500 11.5px/1 var(--font-data);color:var(--muted);white-space:nowrap;pointer-events:none}
+.tick:nth-of-type(4) span,.tick:nth-of-type(6) span,.tick:nth-of-type(7) span{display:none}
+.tick:first-of-type span{translate:-15% 0}
+.tick:last-of-type span{translate:-85% 0}
+.replay-note{grid-column:1/-1;font:500 12px/1.45 var(--font-data);color:var(--muted);max-width:52em}
+
+/* ---------- receipts ---------- */
+.receipts{background:linear-gradient(180deg,var(--soot-2),var(--bg));border-block:1px solid var(--rule)}
+.rgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.rc{padding:clamp(24px,3vw,40px) clamp(14px,2vw,28px);border-left:1px solid var(--rule)}
+.rc:first-child{border-left:0;padding-left:0}
+.num{font:800 clamp(44px,5vw,74px)/1 var(--font-display);letter-spacing:-.01em;color:var(--ink)}
+.num small{font-size:.42em;margin-left:.08em;color:var(--muted)}
+.lab{margin-top:10px;font-size:15px;line-height:1.45;color:color-mix(in srgb,var(--ink) 84%,var(--muted))}
+.prv{margin-top:8px;font:500 12px/1.4 var(--font-data);color:var(--muted);overflow-wrap:anywhere}
+.prv a{color:var(--muted)}
+.prv a:hover{color:var(--ink)}
+
+/* ---------- seen twice ---------- */
+section.band{padding:clamp(64px,9vw,128px) 0}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(18px,2.6vw,36px);margin-top:clamp(28px,4vw,48px);align-items:start}
+.shot{border:1px solid var(--rule);background:var(--stone);box-shadow:0 30px 60px rgb(0 0 0 / .45)}
+.chrome{display:flex;align-items:center;gap:7px;padding:10px 14px;border-bottom:1px solid var(--rule);font:500 12px/1 var(--font-data);color:var(--muted)}
+.chrome i{width:9px;height:9px;border-radius:50%;background:var(--rule)}
+.chrome span{margin-left:10px;padding:5px 12px;background:var(--bg);border-radius:3px;flex:1;max-width:340px}
+.shot figcaption,.cap{padding:12px 14px;font-size:14px;line-height:1.5;color:var(--muted)}
+.term{border:1px solid var(--rule);background:color-mix(in srgb,var(--bg) 70%,var(--stone));box-shadow:0 30px 60px rgb(0 0 0 / .45)}
+.term-bar{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--rule);font:500 12px/1.3 var(--font-data);color:var(--muted)}
+.term-body{padding:12px 14px 16px;font:500 12.5px/1.55 var(--font-data);min-height:300px}
+.tr{display:grid;grid-template-columns:8.6ch 6.2ch minmax(0,1fr);gap:0 10px;padding:2px 0;color:color-mix(in srgb,var(--ink) 86%,var(--muted))}
+.tr time{color:var(--muted)}
+.tr b{font-weight:700;color:var(--muted)}
+.tr span{overflow-wrap:anywhere}
+.tr.acc span{color:var(--after)}
+.tr.bad span{color:var(--before)}
+.tr.dim span{color:var(--muted)}
+.js .term.typing .tr{visibility:hidden}
+.js .term.typing .tr.shown{visibility:visible}
+.tr .caret{display:inline-block;width:.6em;height:1.05em;vertical-align:-.15em;background:var(--ink);animation:blink 1s steps(1) infinite}
+
+/* ---------- the gate (paper band) ---------- */
+.gate{position:relative;color:var(--paper-ink);padding:clamp(64px,8vw,112px) 0;isolation:isolate}
+.gate::before{content:"";position:absolute;inset:0 clamp(0px,2vw,28px);z-index:-1;background:radial-gradient(70% 90% at 0% 100%,color-mix(in srgb,var(--candle) 26%,transparent),transparent 60%),linear-gradient(176deg,color-mix(in srgb,var(--paper) 92%,var(--ink)),var(--paper) 40%,color-mix(in srgb,var(--paper) 88%,var(--paper-ink)));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--paper-ink) 78%,var(--candle)),inset 0 0 60px 14px color-mix(in srgb,var(--paper-ink) 55%,transparent);filter:url(#burn)}
+.gate .eyebrow{color:var(--before-on-paper)}
+.gate h2{color:var(--paper-ink)}
+.gate-grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(28px,4vw,64px);align-items:start}
+.gate p.body{margin-top:16px;max-width:34em}
+.gate code.in{color:var(--paper-ink);background:color-mix(in srgb,var(--paper-ink) 10%,transparent)}
+.gate a{color:var(--after-on-paper)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font:700 14px/1 var(--font-body);padding:11px 14px;border:1.5px solid var(--paper-ink);background:transparent;color:var(--paper-ink);cursor:pointer;transition:background-color .2s,color .2s,transform .15s}
+.chip:hover{background:var(--paper-ink);color:var(--paper)}
+.chip:active{transform:translateY(1px)}
+.chip[aria-pressed="true"]{background:var(--paper-ink);color:var(--paper)}
+.sheet{position:relative;padding:clamp(18px,2.4vw,30px);border:2px solid var(--paper-ink);background:color-mix(in srgb,var(--paper) 70%,var(--ink));box-shadow:6px 6px 0 var(--paper-ink)}
+.sheet .row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;font:500 clamp(14px,1.3vw,17px)/1.3 var(--font-data)}
+.sheet label{font-weight:700}
+.sheet input{width:100%;min-width:0;font:500 clamp(14px,1.3vw,17px)/1.3 var(--font-data);font-variant-ligatures:none;color:var(--paper-ink);background:var(--paper);border:0;border-bottom:2px solid var(--paper-ink);padding:8px 6px;caret-color:var(--before-on-paper)}
+.sheet input:focus-visible{outline:2px solid var(--after-on-paper);outline-offset:2px}
+.sum{margin-top:14px;font:500 15px/1.4 var(--font-data)}
+.sum b{font-weight:700}
+.verdict{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;margin-top:18px;min-height:86px}
+.vstamp{font:800 clamp(22px,2.2vw,30px)/1 var(--font-display);letter-spacing:.08em;padding:.22em .45em .16em;border:.12em double currentColor;color:var(--before-on-paper);transform:rotate(-6deg);filter:url(#ink)}
+.verdict[data-v="accepted"] .vstamp{color:var(--after-on-paper)}
+.verdict.thump .vstamp{animation:thump .35s cubic-bezier(.2,1.6,.4,1)}
+@keyframes thump{0%{transform:rotate(-12deg) scale(1.35);opacity:.2}100%{transform:rotate(-6deg) scale(1);opacity:1}}
+.why{font:500 14px/1.5 var(--font-data);color:var(--paper-ink)}
+.trap{margin-top:clamp(28px,3vw,40px);padding-top:18px;border-top:1px dashed color-mix(in srgb,var(--paper-ink) 50%,transparent);font-size:16px;max-width:44em}
+.trap b{color:var(--before-on-paper)}
+
+/* ---------- five hands (bento) ---------- */
+.bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(12px,1.4vw,18px);margin-top:clamp(28px,4vw,48px)}
+.card{position:relative;display:flex;flex-direction:column;gap:12px;padding:clamp(18px,2vw,26px);border:1px solid var(--rule);background:linear-gradient(180deg,color-mix(in srgb,var(--stone) 70%,var(--bg)),var(--bg));transition:border-color .25s,transform .25s var(--ease)}
+.card:hover{border-color:color-mix(in srgb,var(--ink) 40%,var(--rule));transform:translateY(-2px)}
+.card .k{font:700 12px/1 var(--font-data);letter-spacing:.2em;color:var(--muted)}
+.card h3{font-size:clamp(22px,2vw,30px)}
+.card p{font-size:16px;line-height:1.5;color:color-mix(in srgb,var(--ink) 84%,var(--muted))}
+.pill{align-self:flex-start;margin-top:auto;font:500 12px/1 var(--font-data);padding:7px 10px;border:1px solid var(--rule);color:var(--ink)}
+.c1{grid-column:span 2}.c2{grid-column:span 2}.c3{grid-column:span 2;grid-row:span 2}.c4{grid-column:span 2}.c5{grid-column:span 2}
+.c3{border-color:color-mix(in srgb,var(--before) 45%,var(--rule));background:linear-gradient(180deg,color-mix(in srgb,var(--before) 8%,var(--bg)),var(--bg))}
+.mini-scan{border:1px solid var(--rule);overflow:hidden;aspect-ratio:2.5;background:var(--paper)}
+.mini-scan img{width:100%;height:100%;object-fit:cover;object-position:50% 38%}
+.tools{display:flex;flex-wrap:wrap;gap:6px}
+.tools code{font-size:12px;padding:5px 8px;background:color-mix(in srgb,var(--rule) 50%,transparent);color:var(--ink)}
+.refusals{display:grid;gap:10px;margin:4px 0}
+.refusals div{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;font-size:15px;line-height:1.4}
+.refusals b{font:800 13px/1 var(--font-display);letter-spacing:.08em;color:var(--before);padding:6px 8px 5px;border:2px solid currentColor;transform:rotate(-4deg)}
+.refusals div:last-child b{color:var(--after)}
+.mini-crt{width:min(100%,250px);padding:9px;border-radius:12px;background:linear-gradient(158deg,color-mix(in srgb,var(--stone) 78%,var(--ink)),var(--stone) 40%)}
+.caps{display:flex;gap:18px;flex-wrap:wrap}
+.caps div{font:800 30px/1 var(--font-display)}
+.caps small{display:block;margin-top:4px;font:500 11.5px/1.2 var(--font-data);color:var(--muted)}
+
+/* ---------- the crypt ---------- */
+.crypt{position:relative;isolation:isolate;overflow:clip;padding:clamp(70px,9vw,128px) 0 clamp(60px,8vw,110px);background:linear-gradient(180deg,var(--bg),var(--soot-2) 55%,var(--bg))}
+.crypt::after{content:"";position:absolute;left:-10%;right:-10%;top:47%;height:220px;z-index:-1;background:radial-gradient(50% 55% at 50% 60%,color-mix(in srgb,var(--ink) 9%,transparent),transparent 72%);filter:blur(14px);animation:fog 14s ease-in-out infinite alternate;pointer-events:none}
+@keyframes fog{to{transform:translateX(4%)}}
+.yard{display:flex;justify-content:center;align-items:flex-end;gap:clamp(12px,2.6vw,40px);margin:clamp(36px,5vw,64px) 0 clamp(36px,5vw,64px)}
+.stone{position:relative;width:min(29%,280px);padding:clamp(34px,4vw,56px) clamp(12px,1.6vw,22px) clamp(20px,2.4vw,30px);text-align:center;border-radius:999px 999px 6px 6px/150px 150px 6px 6px;background:linear-gradient(180deg,color-mix(in srgb,var(--stone) 70%,var(--ink) 10%),var(--stone) 55%,color-mix(in srgb,var(--stone) 70%,var(--bg)));box-shadow:inset 0 2px 0 color-mix(in srgb,var(--ink) 12%,transparent),0 30px 40px rgb(0 0 0 / .55)}
+.stone h3{font-size:clamp(17px,1.7vw,24px);line-height:1.08;letter-spacing:.05em;text-transform:uppercase;color:color-mix(in srgb,var(--ink) 88%,var(--muted));text-shadow:0 -1px 0 rgb(0 0 0 / .6),0 1px 0 color-mix(in srgb,var(--ink) 14%,transparent)}
+.stone .ep{display:block;margin:10px 0 16px;font:500 12.5px/1.45 var(--font-data);color:var(--ink)}
+.stone .cod{display:block;font:700 12.5px/1.4 var(--font-data);color:var(--before)}
+.stone .note{display:block;margin-top:8px;font-size:13.5px;line-height:1.4;color:var(--ink)}
+.stone.risen{min-height:clamp(300px,30vw,380px);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--after) 70%,transparent),0 -10px 60px color-mix(in srgb,var(--after) 22%,transparent),0 30px 40px rgb(0 0 0 / .55)}
+.stone.risen .cod{text-decoration:line-through 1.5px}
+.stone.risen .note{color:var(--after)}
+.stone:not(.risen){min-height:clamp(250px,25vw,320px)}
+.cert{position:relative;max-width:880px;margin:0 auto;padding:clamp(24px,3.4vw,44px) clamp(20px,3.6vw,52px) clamp(104px,11vw,140px);color:var(--paper-ink);isolation:isolate}
+.cert::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(60% 70% at 100% 0%,color-mix(in srgb,var(--candle) 22%,transparent),transparent 62%),linear-gradient(170deg,color-mix(in srgb,var(--paper) 92%,var(--ink)),var(--paper) 50%,color-mix(in srgb,var(--paper) 86%,var(--paper-ink)));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--paper-ink) 80%,var(--candle)),inset 0 0 38px 8px color-mix(in srgb,var(--paper-ink) 52%,transparent),0 30px 60px rgb(0 0 0 / .6);filter:url(#burn)}
+.cert-h{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;border-bottom:3px double var(--paper-ink);padding-bottom:12px}
+.cert-h h3{font-size:clamp(22px,2.6vw,34px);letter-spacing:.04em;text-transform:uppercase}
+.cert-h span{font:500 12px/1.3 var(--font-data);color:var(--paper-dim)}
+.cert dl{display:grid;grid-template-columns:minmax(0,13em) minmax(0,1fr);gap:0;margin:14px 0 0}
+.cert dt,.cert dd{padding:11px 0;border-bottom:1px solid color-mix(in srgb,var(--paper-ink) 22%,transparent)}
+.cert dt{font:700 12px/1.45 var(--font-data);letter-spacing:.14em;text-transform:uppercase;color:var(--paper-dim);padding-top:14px}
+.cert dd{margin:0;font-size:16.5px;line-height:1.45}
+.cert dd code{font-weight:700}
+.cert dd small{display:block;font-size:13.5px;color:var(--paper-dim)}
+.cert .bad{color:var(--before-on-paper)}
+.cert-stamp{position:absolute;right:clamp(16px,5vw,64px);bottom:clamp(18px,2.4vw,30px);display:grid;justify-items:center;font:800 clamp(30px,4vw,54px)/1 var(--font-display);letter-spacing:.09em;color:var(--after-on-paper);padding:.18em .45em .14em;border:.1em double currentColor;transform:rotate(-9deg);filter:url(#ink);mix-blend-mode:multiply;pointer-events:none}
+.cert-stamp small{font:700 .22em/1.2 var(--font-data);letter-spacing:.24em;margin-top:.3em}
+
+/* ---------- kiro ---------- */
+.kgrid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,4vw,64px);align-items:start}
+.tree{border-top:1px solid var(--rule)}
+.tree div{display:grid;grid-template-columns:minmax(0,15.5em) minmax(0,1fr);gap:4px 22px;padding:14px 0;border-bottom:1px solid var(--rule)}
+.tree code{font-size:14px;color:var(--ink);overflow-wrap:anywhere}
+.tree p{font-size:15.5px;line-height:1.5;color:color-mix(in srgb,var(--ink) 84%,var(--muted))}
+.credit{margin-top:22px;padding:16px 18px;border:1px dashed color-mix(in srgb,var(--before) 60%,var(--rule));font-size:16px;line-height:1.55}
+
+/* ---------- stet ---------- */
+.stet{background:linear-gradient(180deg,var(--bg),color-mix(in srgb,var(--before) 5%,var(--bg)) 50%,var(--bg));border-block:1px solid var(--rule)}
+.stet-grid{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:clamp(28px,4vw,64px)}
+.stetmark{display:inline-block;font:800 .5em/1 var(--font-display);letter-spacing:.08em;color:var(--before);border:2px solid currentColor;padding:.18em .4em .12em;transform:rotate(-6deg) translateY(-.4em);margin-right:.3em}
+.limits{display:grid;gap:0}
+.limits blockquote{position:relative;padding:20px 0 20px 64px;border-bottom:1px solid var(--rule);font-size:clamp(18px,1.5vw,21px);line-height:1.5}
+.limits blockquote::before{content:"stet";position:absolute;left:0;top:24px;font:800 13px/1 var(--font-display);letter-spacing:.1em;color:var(--before);border-bottom:2px dotted var(--before);padding-bottom:3px}
+.limits cite{display:block;margin-top:8px;font:500 12.5px/1.3 var(--font-data);font-style:normal;color:var(--muted)}
+
+/* ---------- questions ---------- */
+.qgrid{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:clamp(28px,4vw,64px)}
+details{border-bottom:1px solid var(--rule)}
+details:first-child{border-top:1px solid var(--rule)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;padding:20px 0;font:800 clamp(19px,1.6vw,23px)/1.2 var(--font-display);transition:color .2s}
+summary::-webkit-details-marker{display:none}
+summary:hover{color:var(--paper)}
+summary::after{content:"+";flex:none;font:500 22px/1 var(--font-data);color:var(--before);transition:transform .25s var(--ease)}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding:0 0 22px;max-width:40em;color:color-mix(in srgb,var(--ink) 86%,var(--muted));font-size:17px}
+
+/* ---------- raise one ---------- */
+.raise{position:relative;isolation:isolate;overflow:clip;padding:clamp(70px,9vw,130px) 0}
+.raise::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(55% 60% at 50% 100%,color-mix(in srgb,var(--candle) 14%,transparent),transparent 70%),radial-gradient(40% 50% at 50% 0%,color-mix(in srgb,var(--after) 8%,transparent),transparent 70%)}
+.raise .head{text-align:center;max-width:46em;margin:0 auto}
+.raise h2{font-size:clamp(40px,5vw,72px)}
+.raise .ctas{justify-content:center}
+.raise .shot{margin-top:clamp(28px,4vw,48px);display:block;text-decoration:none;transition:transform .3s var(--ease),border-color .25s}
+.raise .shot:hover{transform:translateY(-3px);border-color:var(--muted)}
+footer{border-top:1px solid var(--rule);padding:34px 0 44px;font-size:14.5px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between}
+footer .fb{display:flex;align-items:center;gap:10px;font:800 18px/1 var(--font-display);color:var(--ink)}
+footer .fb img{width:24px;height:24px}
+footer nav{display:flex;flex-wrap:wrap;gap:8px 18px}
+footer a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
+footer a:hover{border-bottom-color:var(--before)}
+footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
+
+/* ---------- small screens ---------- */
+@media (max-width:980px){
+  .hero .wrap,.gate-grid,.kgrid,.stet-grid,.qgrid,.pair{grid-template-columns:minmax(0,1fr)}
+  .exhibit{max-width:640px;width:100%;justify-self:center}
+  .bento{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .c1,.c2,.c4,.c5{grid-column:span 1}.c3{grid-column:span 2;grid-row:auto}
+  .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rc:nth-child(3){border-left:0;padding-left:0}
+  .rc:nth-child(n+3){border-top:1px solid var(--rule)}
+}
+@media (max-width:640px){
+  body{font-size:17px}
+  .ctas .btn{flex:1 1 auto;justify-content:center}
+  .seance{aspect-ratio:auto;padding-bottom:4px}
+  .slip{position:relative;width:100%}
+  .crt{position:relative;width:78%;margin:-30px 0 0 auto}
+  .candle{left:8%;bottom:10%}
+  .stamp{right:-1%;top:-5%;font-size:24px}
+  .src{max-width:58%}
+  .tr{grid-template-columns:8.6ch minmax(0,1fr)}
+  .tr b{display:none}
+  .brand{font-size:16px;gap:8px}
+  .brand img{width:24px;height:24px}
+  .top .gh{padding:8px 11px}
+  .ln{grid-template-columns:2.6ch minmax(0,1fr) 6.6ch 11px}
+  .tick span{display:none}
+  .tick:first-of-type span,.tick:last-of-type span{display:block}
+  .bento{grid-template-columns:minmax(0,1fr)}
+  .c3{grid-column:auto}
+  .yard{flex-wrap:wrap}
+  .stone{width:min(100%,300px)}
+  .stone.risen{order:-1}
+  .stone,.stone.risen,.stone:not(.risen){min-height:0}
+  .cert dl{grid-template-columns:minmax(0,1fr)}
+  .cert dt{border-bottom:0;padding-bottom:0}
+  .cert-stamp{position:relative;right:auto;bottom:auto;margin:18px auto 0;width:max-content}
+  .tree div{grid-template-columns:minmax(0,1fr)}
+  .rgrid{grid-template-columns:minmax(0,1fr)}
+  .rc,.rc:nth-child(3){border-left:0;padding-left:0;border-top:1px solid var(--rule)}
+  .rc:first-child{border-top:0}
+  .limits blockquote{padding-left:0;padding-top:44px}
+  .chrome span{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+@media print{
+  .top,.replay,.presets,.skip{display:none}
+  .reveal{animation:none!important;opacity:1!important;transform:none!important}
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the page</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="burn" x="-4%" y="-4%" width="108%" height="108%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".021 .028" numOctaves="4" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="20" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="ink" x="-8%" y="-14%" width="116%" height="128%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="4" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.6 0 0 0 1.75" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in" result="t"/>
+      <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="9" result="w"/>
+      <feDisplacementMap in="t" in2="w" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="phos" x="-6%" y="-6%" width="112%" height="112%">
+      <feGaussianBlur stdDeviation="2.4" result="b"/>
+      <feComponentTransfer in="b" result="g"><feFuncA type="linear" slope=".55"/></feComponentTransfer>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <radialGradient id="glass" cx="50%" cy="45%" r="70%">
+      <stop offset="58%" style="stop-color:var(--bg);stop-opacity:0"/>
+      <stop offset="100%" style="stop-color:var(--bg);stop-opacity:.42"/>
+    </radialGradient>
+    <pattern id="scan" width="4" height="3" patternUnits="userSpaceOnUse"><rect width="4" height="1" style="fill:var(--bg);fill-opacity:.13"/></pattern>
+  </defs>
+</svg>
+
+<header class="top">
+  <nav class="wrap" aria-label="Page">
+    <a class="brand" href="#top"><img src="/landing/icon.svg" alt="" width="28" height="28">SYNTAX ERROR IN 20</a>
+    <a class="nl" href="#run">The run</a>
+    <a class="nl" href="#gate">The gate</a>
+    <a class="nl" href="#kiro">Kiro</a>
+    <a class="nl" href="#honest">Limits</a>
+    <a class="nl" href="#questions">Questions</a>
+    <a class="btn gh" href="https://github.com/edycutjong/ready"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+  </nav>
+</header>
+
+<main id="main">
+<section class="hero" id="top" aria-labelledby="h1">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow reveal" style="--d:.05s">Kiroween 2026 · Resurrection</p>
+      <h1 id="h1" class="reveal" style="--d:.15s">The dead listing <span class="verb">rises</span> only when the checksum agrees.</h1>
+      <p class="lede reveal" style="--d:.3s">COMPUTE!'s Gazette printed programs to type in, and every line carried a checksum. OCR breaks the lines. A Kiro agent proposes the repair, a gate checks it against the printed <code class="in">:rem</code>, and an emulated Commodore 64 runs it. One recorded run: <b>1 patch</b>, <b>{{ok_after}} of {{n_lines}} lines</b> consistent, <b>{{wall_s}} s</b>, <b>{{credits}} Kiro credits</b>.</p>
+      <div class="ctas reveal" style="--d:.42s">
+        <a class="btn primary" href="https://github.com/edycutjong/ready"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+        <a class="btn" href="/deck/"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M2.5 3.5h15v10h-15zM10 13.5v3M6.5 16.5h7"/></svg>Pitch deck</a>
+        <a class="btn" href="/"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M4 10h11M11 5.5 15.5 10 11 14.5"/></svg>Open the live site</a>
+      </div>
+      <p class="proof reveal" style="--d:.52s">Recorded playback of a real Kiro run · no C64 ROM served · every patch re-judged in your tab · <a href="{{run_file}}">the raw run log</a></p>
+    </div>
+
+    <div class="exhibit reveal" style="--d:.25s">
+      <div class="seance">
+        <div class="slip">
+          <div class="slip-paper" aria-hidden="true"></div>
+          <p class="prog">Program 1: The Last Seance</p>
+          <p class="src">authored 2026, typeset by us, read by real OCR</p>
+          <div class="listing" role="group" aria-label="The listing as OCR read it, with the checksum gate's mark on line 20">
+<!--@listing-->
+          </div>
+        </div>
+        <div class="candle" aria-hidden="true"><span class="candlelight"></span><span class="flame"></span></div>
+        <div class="crt">
+          <svg class="scr" viewBox="0 0 384 272" role="img" aria-label="Recorded C64 screens of this run. First: {{err_screen}}. After the patch: {{title_screen}}. Then: {{post_screen}}.">
+            <rect class="bord" width="384" height="272"/>
+            <rect class="face" x="32" y="36" width="320" height="200"/>
+            <g class="txt" transform="translate(42 46) scale(1.3)" filter="url(#phos)">
+              <g class="s s-err"><!--@screen:error--></g>
+              <g class="s s-title"><!--@screen:title--></g>
+              <g class="s s-post"><!--@screen:post--></g>
+            </g>
+            <rect x="32" y="36" width="320" height="200" fill="url(#scan)"/>
+            <rect width="384" height="272" fill="url(#glass)"/>
+          </svg>
+          <p class="scr-cap">recorded screen · {{emulator}}</p>
+        </div>
+        <div class="stamp" role="img" aria-label="IT LIVES, as recorded">IT LIVES<small>AS RECORDED</small></div>
+      </div>
+      <div class="replay">
+        <button class="btn" type="button" id="play" aria-controls="ticker">Replay the run</button>
+        <p class="ticker" id="ticker" aria-live="polite"><b>{{run_end}}</b> end · RESURRECTED · {{iterations}} iteration · {{wall_s}} s · {{credits}} Kiro credits</p>
+        <div class="track" role="group" aria-label="the run's events, by the run's own clock"><span class="fill"></span><!--@ticks--></div>
+        <p class="replay-note">Timed by the run's own clock ({{kiro_cli}}, {{model}}): waits sped up, the last 3.5 s in real time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="receipts" aria-label="Receipts">
+  <div class="wrap rgrid">
+    <div class="rc"><p class="num"><span data-count="{{wall_s}}" data-dec="1">{{wall_s}}</span><small>s</small></p><p class="lab">one recorded Kiro run, error to RESURRECTED</p><p class="prv">run log · wallMs {{wall_ms}}</p></div>
+    <div class="rc"><p class="num"><span data-count="{{credits}}" data-dec="2">{{credits}}</span></p><p class="lab">Kiro credits for that run, metered by kiro-cli</p><p class="prv">run log · credits total</p></div>
+    <div class="rc"><p class="num"><span data-count="6">6</span><small>/ 6</small></p><p class="lab">model runs RESURRECTED (2 cases × 3), re-judged, 0 mismatches</p><p class="prv">README · Engineering Rigor · docs/EVALS.md</p></div>
+    <div class="rc"><p class="num"><span data-count="{{tests}}">{{tests}}</span></p><p class="lab">tests passing on <code>{{head}}</code>, {{test_files}} files</p><p class="prv">npm test · evidence/tests</p></div>
+  </div>
+</section>
+
+<section class="band" id="run" aria-labelledby="run-h">
+  <div class="wrap">
+    <p class="eyebrow">Recorded {{run_date}} · {{run_hm}} UTC</p>
+    <h2 id="run-h" style="margin-top:18px">The site shows the hooks. The log shows the run.</h2>
+    <p class="lede2">Left, <a href="/kiro">/kiro</a> on the live site. Right, the same run typed from its log, failed skill load included. Hook rows come from the hooks, not the model.</p>
+    <div class="pair">
+      <figure class="shot">
+        <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>ready.edycu.dev/kiro</span></div>
+        <img src="/landing/img/kiro.webp" width="1600" height="1023" loading="lazy" decoding="async" alt="The /kiro page on the live site: a table of the recorded run's hook rows and tool calls with times, from listing-context at 19:56:44 to until-title allow and 0.85 credits at 19:57:11.">
+        <figcaption>Captured from the live site, 2026-11-25.</figcaption>
+      </figure>
+      <div class="term" id="term">
+        <div class="term-bar"><span>{{kiro_cli}} · agent {{agent}}</span><span>{{model}}</span></div>
+        <div class="term-body" role="log" aria-label="The run's own events">
+<!--@terminal-->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gate" id="gate" aria-labelledby="gate-h">
+  <div class="wrap gate-grid">
+    <div>
+      <p class="eyebrow">Line 20 · printed :rem {{printed20}}</p>
+      <h2 id="gate-h" style="margin-top:18px">Try to fool the gate.</h2>
+      <p class="body">Type any line 20. This page runs the project's own gate, <code class="in">src/gate/checksum-gate.ts</code>, bundled as <a href="/landing/gate.js">gate.js</a> ({{gate_kb}} KB): the code the Kiro Pre Tool Use hook runs before <code class="in">apply_patch</code>. No model. p95 {{gate_p95}} ms (N={{gate_n}}).</p>
+      <div class="presets" role="group" aria-label="Try a line 20">
+        <button class="chip" type="button" data-try="ocr" aria-pressed="true">What the OCR read</button>
+        <button class="chip" type="button" data-try="tm" aria-pressed="false">Fix only the M</button>
+        <button class="chip" type="button" data-try="agent" aria-pressed="false">What the agent proposed</button>
+        <button class="chip" type="button" data-try="empty" aria-pressed="false">Cheat: empty the line</button>
+        <button class="chip" type="button" data-try="rewrite" aria-pressed="false">Rewrite it</button>
+      </div>
+    </div>
+    <div class="sheet">
+      <div class="row"><label for="l20">20</label><input id="l20" type="text" value="{{ocr_body}}" spellcheck="false" autocomplete="off" autocapitalize="characters" aria-describedby="why"><span>:rem {{printed20}}</span></div>
+      <p class="sum">computed <b id="sum">{{ocr_sum}}</b> · printed <b>{{printed20}}</b></p>
+      <div class="verdict" id="verdict" data-v="refused"><span class="vstamp" id="vstamp">REFUSED</span><p class="why" id="why" aria-live="polite">{{reason_ocr}}</p></div>
+    </div>
+  </div>
+  <div class="wrap"><p class="trap"><b>The ™ trap.</b> OCR read the opening quote as ™, code 8482, which is 34 mod 256: a quote. Fix only the M and a raw sum matches ({{tm_naive}} = {{printed20}}) for a line the C64 never stores. The gate drops untypeable characters before it sums.</p></div>
+</section>
+
+<section class="band" id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <h2 id="how-h">The model chooses where to look. Code decides what is true.</h2>
+    <p class="lede2">Five hands touch line 20. Only the last three can say yes. None of them is the model.</p>
+    <div class="bento">
+      <article class="card c1">
+        <p class="k">I · READ</p><h3>The page is read</h3>
+        <div class="mini-scan"><img src="/landing/img/scan.webp" width="1600" height="824" loading="lazy" decoding="async" alt="The live /scan page after reading the authored page in the tab: 9 of 12 lines match their printed checksum, 3 are flagged as mismatches."></div>
+        <p>Tesseract reads the scan in your tab; each line's sum is checked against its printed <code>:rem</code>.</p>
+        <span class="pill">tesseract.js 7 · p50 {{ocr_p50}} ms in node</span>
+      </article>
+      <article class="card c2">
+        <p class="k">II · PROPOSE</p><h3>The agent proposes</h3>
+        <p>The Kiro agent <code>{{agent}}</code> gets the flagged listing and {{tools}} MCP tools. No files, shell or web.</p>
+        <div class="tools"><code>c64_reload</code><code>c64_run</code><code>c64_read_screen</code><code>c64_press</code><code>checksum_line</code><code>apply_patch</code></div>
+        <span class="pill">.kiro/agents/{{agent}}.json</span>
+      </article>
+      <article class="card c3">
+        <p class="k">III · JUDGE</p><h3>The gate decides</h3>
+        <p>A Kiro Pre Tool Use hook runs the gate before <code>apply_patch</code>. A refusal exits 2; the agent reads the reason verbatim.</p>
+        <div class="refusals">
+          <div><b>REFUSED</b><span>the printed sum does not match (R4.15)</span></div>
+          <div><b>REFUSED</b><span>a character no C64 key types (R4.15)</span></div>
+          <div><b>REFUSED</b><span>an empty line: deletion (R4.4)</span></div>
+          <div><b>REFUSED</b><span>more than 40% of the line rewritten (R4.7)</span></div>
+          <div><b>ACCEPTED</b><span>{{reason_agent_s}}, the recorded patch</span></div>
+        </div>
+        <span class="pill">hook checksum-gate · Pre Tool Use · exit 2</span>
+      </article>
+      <article class="card c4">
+        <p class="k">IV · RUN</p><h3>The machine confirms</h3>
+        <p>Every accepted patch is re-RUN on an emulated C64. The verdict is read from screen memory.</p>
+        <div class="mini-crt"><svg class="scr" viewBox="0 0 384 272" role="img" aria-label="Recorded screen: {{err_screen}}"><rect class="bord" width="384" height="272"/><rect class="face" x="32" y="36" width="320" height="200"/><g class="txt" transform="translate(42 46) scale(1.3)" filter="url(#phos)"><!--@screen:error--></g></svg></div>
+        <span class="pill">{{emulator}} · boot p50 {{boot_p50}} ms in node</span>
+      </article>
+      <article class="card c5">
+        <p class="k">V · HOLD</p><h3>The Stop hook holds it</h3>
+        <p>The agent cannot stop until the contract says RESURRECTED, only unfixable lines remain, or a cap hits.</p>
+        <div class="caps"><div>{{cap_iter}}<small>patches</small></div><div>{{cap_credits}}<small>credits</small></div><div>{{cap_s}}<small>seconds</small></div></div>
+        <span class="pill">hook until-title · Agent Stop</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="crypt" id="crypt" aria-labelledby="crypt-h">
+  <div class="wrap">
+    <h2 id="crypt-h" style="text-align:center">Every listing gets a headstone. One has been raised.</h2>
+    <div class="yard">
+      <div class="stone"><h3>Random Number Test</h3><span class="ep">COMPUTE!'s Gazette · June 1984</span><span class="cod">cause withheld with the recording (rights)</span><span class="note">title path raised in {{g_attempts}} of {{g_attempts}} attempts</span></div>
+      <div class="stone risen"><h3>The Last Seance</h3><span class="ep">authored 2026</span><span class="cod">?SYNTAX&nbsp;&nbsp;ERROR IN 20</span><span class="note">raised {{run_date}} by a recorded Kiro run</span></div>
+      <div class="stone"><h3>Your own page</h3><span class="ep">assisted · in your tab</span><span class="cod">no cause of death: nothing has run</span><span class="note">OCR + checksum flags, 0 credits</span></div>
+    </div>
+    <div class="cert">
+      <div class="cert-h"><h3>Certificate of death, reversed</h3><span>filled in from the run log · run {{run_date}} {{run_start}} UTC</span></div>
+      <dl>
+        <dt>Cause of death</dt><dd><code class="bad">?SYNTAX&nbsp;&nbsp;ERROR IN 20</code><small>the run's own first error, verbatim</small></dd>
+        <dt>Treatment</dt><dd>{{n_acc}} patch accepted · {{n_ref}} refused · {{n_forced}} forced<small>line 20: <code>PRIMT™</code> → <code>PRINT"</code>, checksum {{printed20}} = printed {{printed20}}</small></dd>
+        <dt>Time of revival</dt><dd>{{run_date}} {{revival}} UTC<small>the last accepted patch, from the gate's log line</small></dd>
+        <dt>Examined by</dt><dd>the checksum gate<small>Pre Tool Use hook, then apply_patch</small></dd>
+        <dt>Pronounced alive by</dt><dd>the C64 re-RUN at {{alive_at}} UTC<small>title seen, post-title pass, {{ok_after}}/{{n_lines}} checksum-consistent</small></dd>
+      </dl>
+      <div class="cert-stamp" role="img" aria-label="IT LIVES, as recorded">IT LIVES<small>AS RECORDED</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="kiro" aria-labelledby="kiro-h">
+  <div class="wrap kgrid">
+    <div>
+      <p class="eyebrow">Kiro is the engine</p>
+      <h2 id="kiro-h" style="margin-top:18px">What Kiro did, file by file.</h2>
+      <p class="lede2">Specs built the parts that must be exact. Hooks guard every patch. The agent is a Kiro profile with one MCP server.</p>
+      <p class="credit">Two spec lines hit or neared their credit cap (51.26 of 50, 68.71 of 70). The remaining tasks were written claude-direct and labelled in commits and <code>docs/DX-REPORT.md</code>.</p>
+    </div>
+    <div class="tree">
+      <div><code>.kiro/specs/checksum-oracle/</code><p>7 properties, 12 tasks. Kiro built the tokenizer and checksum (tasks 1–6) and caught three spec errors against the real C64.</p></div>
+      <div><code>.kiro/specs/c64-mcp-server/</code><p>11 properties, 8 tasks. Kiro wrote the schemas, run-dir contract and tools (tasks 1–5).</p></div>
+      <div><code>.kiro/specs/resurrect-loop/</code><p>The agent loop; the profile and steering came from it (T1 done, T2–T6 open).</p></div>
+      <div><code>.kiro/agents/{{agent}}.json</code><p>Only <code>@c64</code>. Hooks: listing-context (Session Start), checksum-gate (Pre Tool Use), until-title (Stop).</p></div>
+      <div><code>.kiro/hooks/prop-tests-on-save.json</code><p>Saves under <code>src/basic</code> or <code>src/gate</code> run the property tests.</p></div>
+      <div><code>.kiro/steering/ ({{steering}} files)</code><p>BASIC V2, Gazette notation, the agent's rules; Kiro wrote <code>resurrector.md</code>.</p></div>
+      <div><code>.kiro/skills/petscii-notation</code><p>Control-code notation. Its load failed in the recorded run (see the log).</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band stet" id="honest" aria-labelledby="honest-h">
+  <div class="wrap stet-grid">
+    <div>
+      <h2 id="honest-h"><span class="stetmark">stet</span>What we will not claim.</h2>
+      <p class="lede2">Stet is the proofreader's mark for "let it stand". These stand, word for word from the README.</p>
+    </div>
+    <div class="limits">
+      <blockquote>The live site is recorded playback; no C64 ROM is hosted (rights), so "IT LIVES" there is captioned "as recorded".<cite>README · Honest limits 1</cite></blockquote>
+      <blockquote>On the real 1984 page the title-path result is 19/28 lines source-exact against a vision-read reference; the other lines are checksum-consistent, not proven identical.<cite>README · Honest limits 3</cite></blockquote>
+      <blockquote>Evals: N=3 per model case on one machine; cases 5 and 6 are not run.<cite>README · Honest limits 5</cite></blockquote>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="questions" aria-labelledby="q-h">
+  <div class="wrap qgrid">
+    <h2 id="q-h">Questions a judge would ask.</h2>
+    <div class="qs">
+      <details><summary>Is the C64 on this page real?</summary><p>The screens are recorded from {{emulator}}'s screen memory during the run. This site serves no C64 ROM (rights not cleared), so nothing here runs on a C64 live; the stamp says "as recorded". The gate panel is live.</p></details>
+      <details><summary>Can the agent cheat its way to IT LIVES?</summary><p>No. An emptied line, an untypeable character or a rewrite is refused; a forced patch is never certified (eval cases 4 and 9). RESURRECTED needs matching checksums and a C64 re-RUN that reaches the title.</p></details>
+      <details><summary>Does it work on a real 1984 page?</summary><p>On the June 1984 Gazette's Random Number Test the agent reached TITLE-PATH RESURRECTED in {{g_attempts}} of {{g_attempts}} attempts; 19 of 28 lines are source-exact against a vision-read reference. The recording stays private until rights clear.</p></details>
+      <details><summary>Why trust a 1984 checksum?</summary><p>It sums the line number's digits and the body's codes, mod 256, spaces counting 0; ours reproduces it on 43 of 43 lines of a real June 1984 page. A match is evidence, never proof: sums collide. So the C64 must run the line too.</p></details>
+      <details><summary>What is not measured yet?</summary><p>As of {{build_date}}: eval cases 5 and 6, the held-out runs, and any outside user's listing. Everything here comes from recorded runs on one machine.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="raise" aria-labelledby="raise-h">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="raise-h">Raise one yourself.</h2>
+      <p class="lede2" style="margin-inline:auto">Press Resurrect, then Cheat. The hooks are at /kiro; your own scan goes to /scan.</p>
+      <div class="ctas">
+        <a class="btn primary" href="/">Open ready.edycu.dev</a>
+        <a class="btn" href="/kiro">See the hooks at /kiro</a>
+        <a class="btn" href="/scan">Check a page at /scan</a>
+      </div>
+    </div>
+    <a class="shot" href="/" aria-label="Open the live site">
+      <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>ready.edycu.dev</span></div>
+      <img src="/landing/img/desk.webp" width="1800" height="652" loading="lazy" decoding="async" alt="The live site after the recorded run: the galley with line 20 struck in red and re-inked in blue, every line's checksum ticked, and the C64 pane showing THE SPIRITS ANSWER, IT LIVES, READY TO RISE.">
+    </a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="fb"><img src="/landing/icon.svg" alt="" width="24" height="24">SYNTAX ERROR IN 20</p>
+    <nav aria-label="Footer">
+      <a href="https://github.com/edycutjong/ready">GitHub</a>
+      <a href="/deck/">Pitch deck</a>
+      <a href="/">Live site</a>
+      <a href="/kiro">/kiro</a>
+      <a href="https://kiroween.devpost.com/">Kiroween 2026</a>
+    </nav>
+    <p class="stampline">Kiroween 2026 · Resurrection · MIT · page built {{build_date}} from {{head}} · no trackers</p>
+  </div>
+</footer>
+
+<script id="run-data" type="application/json"><!--@rundata--></script>
+<script src="/landing/gate.js"></script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById("run-data").textContent);
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches || new URLSearchParams(location.search).has("still");
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const hero = $(".hero");
+  setTimeout(() => hero.classList.add("settled"), 1600);
+
+  /* ---- the hero replay: piecewise clock, the run's own timestamps ---- */
+  const tl = D.tl, total = D.total, ph1 = tl.find((x) => x.ph === 1).ms, ph4 = tl.find((x) => x.ph === 4).ms;
+  const segs = [[0, ph1, 6], [ph1, ph4, 2], [ph4, total, 1]].map(([a, b, s]) => ({ a, b, s, v: (b - a) / s }));
+  const vTotal = segs.reduce((n, s) => n + s.v, 0);
+  const runMs = (v) => { for (const s of segs) { if (v <= s.v) return s.a + v * s.s; v -= s.v; } return total; };
+  const ticker = $("#ticker"), fill = $(".track .fill"), ticks = $$(".tick"), play = $("#play");
+  const POST_AFTER = 900; // run-ms after the title screen; both screens come from one c64_run call
+  let raf = 0, t0 = 0;
+  const esc = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+  function show(ms) {
+    let i = 0; tl.forEach((x, j) => { if (ms >= x.ms) i = j; });
+    const x = tl[i], sp = x.text.indexOf(" ");
+    hero.dataset.ph = x.ph;
+    hero.classList.toggle("post", ms >= ph4 + POST_AFTER);
+    const lead = /^\d\d:/.test(x.text) ? x.text.slice(0, sp) : "+" + (x.ms / 1000).toFixed(1) + " s";
+    ticker.innerHTML = "<b>" + esc(lead) + "</b> " + esc(/^\d\d:/.test(x.text) ? x.text.slice(sp + 1) : x.text);
+    fill.style.width = (ms / total * 100).toFixed(2) + "%";
+    ticks.forEach((t, j) => t.classList.toggle("on", j <= i));
+  }
+  function frame(now) {
+    const v = now - t0, ms = runMs(v);
+    show(ms);
+    if (v < vTotal) raf = requestAnimationFrame(frame);
+    else { hero.classList.remove("playing"); delete hero.dataset.ph; hero.classList.remove("post"); show(total); delete hero.dataset.ph; play.textContent = "Replay the run"; }
+  }
+  function start() {
+    cancelAnimationFrame(raf); hero.classList.add("playing"); hero.classList.remove("post");
+    play.textContent = "Playing…"; t0 = performance.now(); raf = requestAnimationFrame(frame);
+  }
+  play.addEventListener("click", start);
+  ticks.forEach((t, j) => t.addEventListener("click", () => {
+    cancelAnimationFrame(raf); hero.classList.remove("playing"); play.textContent = "Replay the run";
+    const ms = tl[j].ms; show(ms); if (j === tl.length - 1) { delete hero.dataset.ph; hero.classList.remove("post"); }
+  }));
+  if (!still) {
+    hero.dataset.ph = "0";
+    setTimeout(() => { if (scrollY < innerHeight * .6) start(); else { delete hero.dataset.ph; } }, 1300);
+  }
+
+  /* ---- count-ups ---- */
+  const nums = $$("[data-count]");
+  const io = "IntersectionObserver" in window && !still ? new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return; io.unobserve(e.target);
+    const el = e.target, to = parseFloat(el.dataset.count), dec = +(el.dataset.dec || 0), t1 = performance.now();
+    const tick = (n) => { const k = Math.min(1, (n - t1) / 1300), f = 1 - Math.pow(1 - k, 3); el.textContent = (to * f).toFixed(dec); if (k < 1) requestAnimationFrame(tick); else el.textContent = el.dataset.count; };
+    requestAnimationFrame(tick);
+  }), { threshold: .6 }) : null;
+  if (io) nums.forEach((n) => { if (n.getBoundingClientRect().top > innerHeight) { n.textContent = (0).toFixed(+(n.dataset.dec || 0)); io.observe(n); } });
+
+  /* ---- the terminal types the run's own rows ---- */
+  const term = $("#term"), rows = $$(".tr", term);
+  if (!still && "IntersectionObserver" in window && term.getBoundingClientRect().top > innerHeight) {
+    const full = rows.map((r) => r.lastElementChild.textContent);
+    term.classList.add("typing");
+    const tio = new IntersectionObserver((es) => { if (!es[0].isIntersecting) return; tio.disconnect();
+      let r = 0, c = 0; const caret = document.createElement("i"); caret.className = "caret";
+      const step = () => {
+        if (r >= rows.length) { caret.remove(); term.classList.remove("typing"); return; }
+        const row = rows[r], span = row.lastElementChild; row.classList.add("shown");
+        c = Math.min(full[r].length, c + 4); span.textContent = full[r].slice(0, c); span.append(caret);
+        if (c >= full[r].length) { r++; c = 0; setTimeout(step, 70); } else requestAnimationFrame(step);
+      };
+      rows.forEach((row) => (row.lastElementChild.textContent = "")); step();
+    }, { threshold: .25 });
+    tio.observe(term);
+  }
+
+  /* ---- try to fool the gate: the real gate, bundled ---- */
+  const G = window.READY_GATE, inp = $("#l20"), sum = $("#sum"), why = $("#why"), verdict = $("#verdict"), vstamp = $("#vstamp");
+  const TRY = { ocr: D.l20.ocr, tm: D.l20.tm, agent: D.l20.agent, empty: "", rewrite: 'PRINT"   ** IT LIVES **"' };
+  function judge() {
+    if (!G) return;
+    const body = inp.value, v = G.applyPatch(D.listing, [{ type: "replace", lineno: 20, new_body: body }], D.expected);
+    const c = G.checkLine(20, body, D.l20.printed);
+    sum.textContent = c.computed == null ? "none" : String(c.computed);
+    verdict.dataset.v = v.verdict; vstamp.textContent = v.verdict.toUpperCase(); why.textContent = v.reason;
+    verdict.classList.remove("thump"); void verdict.offsetWidth; verdict.classList.add("thump");
+  }
+  inp.addEventListener("input", () => { $$(".chip").forEach((b) => b.setAttribute("aria-pressed", "false")); judge(); });
+  $$(".chip").forEach((b) => b.addEventListener("click", () => {
+    $$(".chip").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+    inp.value = TRY[b.dataset.try]; judge();
+  }));
+})();
+</script>
+</body>
+</html>

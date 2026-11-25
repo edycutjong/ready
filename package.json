@@ -16,6 +16,7 @@
     "test:prop": "vitest run tests/prop",
     "test:watch": "vitest",
     "check:no-rom": "node scripts/check-no-rom.mjs",
+    "site": "node scripts/landing/build-site.mjs",
     "deploy:prod": "vercel build --prod && node scripts/check-no-rom.mjs .vercel/output && vercel deploy --prebuilt --prod",
     "prebuild": "node scripts/vendor-ocr.mjs"
   },

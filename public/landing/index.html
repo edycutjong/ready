@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYNTAX ERROR IN 20 — the dead listing rises only when the checksum agrees</title>
+<meta name="description" content="A Kiro agent repairs OCR'd 1984 type-in listings. A deterministic gate checks every patch against the magazine's printed checksum, and an emulated Commodore 64 runs it. Kiroween 2026, Resurrection.">
+<meta name="theme-color" content="#110C0A">
+<link rel="icon" href="/landing/icon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://ready.edycu.dev/landing/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SYNTAX ERROR IN 20">
+<meta property="og:title" content="SYNTAX ERROR IN 20 — the dead listing rises only when the checksum agrees">
+<meta property="og:description" content="A Kiro agent proposes the fix, a checksum gate decides, an emulated C64 runs it. One recorded run: 1 patch, 27.1 s, 0.85 Kiro credits.">
+<meta property="og:url" content="https://ready.edycu.dev/landing/">
+<meta property="og:image" content="https://ready.edycu.dev/landing/og.jpg?v=p4">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="brand frame: the error this project is named after. A singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SYNTAX ERROR IN 20 — the dead listing rises only when the checksum agrees">
+<meta name="twitter:description" content="A Kiro agent proposes the fix, a checksum gate decides, an emulated C64 runs it.">
+<meta name="twitter:image" content="https://ready.edycu.dev/landing/og.jpg?v=p4">
+<link rel="preload" href="/fonts/rokkitt-latin-800-normal.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="/fonts/atkinson-hyperlegible-next-latin-400-normal.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="/fonts/atkinson-hyperlegible-mono-latin-500-normal.woff" as="font" type="font/woff" crossorigin>
+<script>document.documentElement.classList.add("js")</script>
+<style>
+@font-face{font-family:"Rokkitt";font-weight:800;font-display:swap;src:url(/fonts/rokkitt-latin-800-normal.woff) format("woff")}
+@font-face{font-family:"Rokkitt";font-weight:500;font-display:swap;src:url(/fonts/rokkitt-latin-500-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:400;font-display:swap;src:url(/fonts/atkinson-hyperlegible-next-latin-400-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:700;font-display:swap;src:url(/fonts/atkinson-hyperlegible-next-latin-700-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Mono";font-weight:500;font-display:swap;src:url(/fonts/atkinson-hyperlegible-mono-latin-500-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Mono";font-weight:700;font-display:swap;src:url(/fonts/atkinson-hyperlegible-mono-latin-700-normal.woff) format("woff")}
+:root {
+  --bg:      #110C0A;
+  --ink:     #EFE4CC;
+  --muted:   #A3937C;
+  --before:  #EC4A34;
+  --after:   #9D8FF2;
+  --rule:    #3A2A22;
+  --screen:  #352879;
+  --stamp:   #EC4A34;
+  --candle:  #F4A13A;
+  --paper:   #E6D5B0;
+  --paper-ink: #1E1611;
+  --before-on-paper: #A32A1E;
+  --after-on-paper:  #4A3CA0;
+  --stone:   #2A211C;
+  --font-display: "Rokkitt", "Rockwell", "Roboto Slab", serif;
+  --font-body:    "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --font-data:    "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  /* derived only from the tokens above */
+  --border64: #6C5EB5; /* the C64 border light blue (Pepto), named in design.md §4 */
+  --soot-2: color-mix(in srgb, var(--stone) 55%, var(--bg));
+  --paper-dim: color-mix(in srgb, var(--paper-ink) 66%, var(--paper));
+  --w: 1240px;
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{color-scheme:dark;overflow-x:clip;scroll-behavior:smooth;scroll-padding-top:76px;scrollbar-color:var(--rule) var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.6 var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip}
+::selection{background:var(--before);color:var(--bg)}
+:focus-visible{outline:2px solid var(--after);outline-offset:3px}
+a{color:inherit;text-underline-offset:.2em;text-decoration-thickness:1px}
+p,h1,h2,h3,figure,blockquote{margin:0}
+h1,h2,h3{font-family:var(--font-display);font-weight:800;line-height:.98;letter-spacing:-.005em;text-wrap:balance}
+code,kbd,samp,time,.mono{font-family:var(--font-data);font-variant-ligatures:none}
+img{display:block;max-width:100%;height:auto}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 clamp(20px,4.4vw,64px)}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;z-index:50;background:var(--ink);color:var(--bg);padding:10px 14px;font-weight:700}
+.skip:focus{top:10px}
+.eyebrow{display:flex;align-items:center;gap:12px;font:500 12.5px/1.3 var(--font-data);letter-spacing:.22em;text-transform:uppercase;color:var(--before)}
+.eyebrow::before{content:"";flex:none;width:26px;height:2px;background:currentColor}
+h2{font-size:clamp(32px,3.7vw,54px)}
+.lede2{max-width:38em;color:color-mix(in srgb,var(--ink) 82%,var(--muted));margin-top:16px}
+.btn{display:inline-flex;align-items:center;gap:10px;font:700 16px/1 var(--font-body);padding:14px 18px;border:1px solid var(--rule);background:color-mix(in srgb,var(--bg) 70%,transparent);color:var(--ink);text-decoration:none;cursor:pointer;transition:transform .16s var(--ease),border-color .2s,background-color .2s,color .2s}
+.btn:hover{border-color:var(--ink);transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary:hover{background:var(--paper);border-color:var(--paper)}
+.btn svg{width:18px;height:18px;flex:none}
+code.in{font-size:.9em;color:var(--ink);background:color-mix(in srgb,var(--rule) 55%,transparent);padding:1px 6px;border-radius:3px}
+
+/* ---------- nav ---------- */
+.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid color-mix(in srgb,var(--rule) 70%,transparent)}
+.top nav{display:flex;align-items:center;gap:clamp(14px,2.2vw,30px);height:64px}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;text-decoration:none;font:800 20px/1 var(--font-display);letter-spacing:.01em}
+.brand img{width:28px;height:28px}
+.top nav a.nl{font:500 12px/1 var(--font-data);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:8px 0;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+.top nav a.nl:hover{color:var(--ink);border-bottom-color:var(--before)}
+.top .gh{padding:10px 14px;font-size:14px}
+@media (max-width:900px){.top nav a.nl{display:none}}
+
+/* ---------- hero: the séance table ---------- */
+.hero{position:relative;isolation:isolate;overflow:clip;padding:clamp(30px,5.4vw,70px) 0 clamp(40px,5vw,72px)}
+.hero::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(130% 90% at 50% -20%,var(--soot-2),var(--bg) 68%)}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.2;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:clamp(28px,4.4vw,72px);align-items:center}
+.hero h1{font-size:clamp(40px,4.7vw,70px);line-height:.94;margin:22px 0 24px;letter-spacing:-.012em}
+.verb{color:var(--after);text-decoration:underline solid var(--after);text-decoration-thickness:.06em;text-underline-offset:.12em;transition:color .7s var(--ease),text-decoration-color .7s}
+.lede{max-width:35em;color:color-mix(in srgb,var(--ink) 84%,var(--muted));font-size:clamp(17px,1.28vw,19px)}
+.lede b{color:var(--ink)}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin:30px 0 18px}
+.proof{font:500 13px/1.55 var(--font-data);color:var(--muted);max-width:38em}
+.proof a{color:var(--ink)}
+.hero .reveal{animation:rise .8s var(--ease) both;animation-delay:var(--d,0s)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+.settled .reveal{animation:none}
+
+.exhibit{position:relative}
+.seance{position:relative;aspect-ratio:1.08;width:100%}
+.slip{position:absolute;left:0;top:1%;width:88%;padding:clamp(14px,2vw,26px) clamp(14px,2vw,28px) clamp(16px,2.2vw,30px);color:var(--paper-ink);transform:rotate(-1.6deg);transform-origin:40% 60%;z-index:1}
+.slip-paper{position:absolute;inset:0;z-index:-1;background:radial-gradient(85% 65% at 6% 106%,color-mix(in srgb,var(--candle) 34%,transparent),transparent 64%),linear-gradient(172deg,color-mix(in srgb,var(--paper) 90%,var(--ink)),var(--paper) 46%,color-mix(in srgb,var(--paper) 86%,var(--paper-ink)));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--paper-ink) 80%,var(--candle)),inset 0 0 30px 9px color-mix(in srgb,var(--paper-ink) 60%,transparent),0 28px 50px rgb(0 0 0 / .55);filter:url(#burn)}
+.prog{font:800 clamp(15px,1.45vw,21px)/1.1 var(--font-display)}
+.src{max-width:62%;font:500 clamp(10px,.82vw,12px)/1.35 var(--font-data);color:var(--paper-dim);margin:3px 0 clamp(6px,.9vw,12px)}
+.ln{display:grid;grid-template-columns:3.2ch minmax(0,1fr) 7ch 13px;gap:0 clamp(6px,.8vw,10px);align-items:center;font:500 clamp(9.5px,.92vw,13.2px)/1.72 var(--font-data);white-space:nowrap;font-variant-ligatures:none}
+.ln .no,.ln .rem{text-align:right;color:var(--paper-dim)}
+.ln .bd{overflow:hidden;text-overflow:ellipsis}
+.st{display:grid;place-items:center}
+.g{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.st.ok{color:var(--paper-dim)}
+.l20{position:relative;margin:0 -8px;padding:1.05em 8px 0;background:color-mix(in srgb,var(--after-on-paper) 9%,transparent);transition:background-color .5s}
+.l20 .bd{overflow:visible}
+.mis{position:relative;display:inline-block;text-decoration:line-through solid var(--after-on-paper) 2px;transition:color .5s,text-decoration-color .5s}
+.ring{position:absolute;left:-14%;top:-36%;width:128%;height:172%;overflow:visible;pointer-events:none}
+.ring path{fill:none;stroke:var(--after-on-paper);stroke-width:3.2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0;vector-effect:non-scaling-stroke;transition:stroke .5s}
+.fix{position:absolute;left:0;bottom:84%;font:800 1.18em/1 var(--font-display);color:var(--after-on-paper);transform:rotate(-5deg);transform-origin:0 100%;white-space:nowrap;transition:color .5s,opacity .35s}
+.st .x{display:none;color:var(--before-on-paper)}
+.st .v{color:var(--after-on-paper)}
+/* replay states (JS sets data-ph on .hero; no attribute = the settled, recorded end state) */
+.hero[data-ph="0"] .l20{background:transparent}
+.hero[data-ph="0"] .mis{text-decoration-color:transparent}
+.hero[data-ph="0"] .ring path{stroke-dashoffset:1}
+.hero[data-ph="0"] .fix,.hero[data-ph="1"] .fix{opacity:0}
+.hero[data-ph="0"] .st .v{display:none}
+.hero:is([data-ph="1"],[data-ph="2"]) .l20{background:color-mix(in srgb,var(--before-on-paper) 11%,transparent)}
+.hero:is([data-ph="1"],[data-ph="2"]) .mis{color:var(--before-on-paper);text-decoration-color:var(--before-on-paper)}
+.hero:is([data-ph="1"],[data-ph="2"]) .ring path{stroke:var(--before-on-paper);transition:stroke-dashoffset .7s var(--ease)}
+.hero:is([data-ph="1"],[data-ph="2"]) .fix{color:var(--before-on-paper)}
+.hero:is([data-ph="1"],[data-ph="2"]) .st .x{display:block}
+.hero:is([data-ph="1"],[data-ph="2"]) .st .v{display:none}
+
+.crt{position:absolute;right:0;bottom:0;width:58%;z-index:2;padding:clamp(9px,1.25vw,17px);border-radius:clamp(14px,1.6vw,22px);background:linear-gradient(158deg,color-mix(in srgb,var(--stone) 78%,var(--ink)),var(--stone) 34%,color-mix(in srgb,var(--stone) 50%,var(--bg)));box-shadow:0 34px 60px rgb(0 0 0 / .62),inset 0 1px 0 color-mix(in srgb,var(--ink) 16%,transparent)}
+.crt::before{content:"";position:absolute;z-index:-1;left:-75%;right:-8%;top:-25%;bottom:-45%;pointer-events:none;background:radial-gradient(46% 50% at 66% 46%,color-mix(in srgb,var(--after) 19%,transparent),transparent 72%);transition:opacity .9s}
+.hero:is([data-ph="0"],[data-ph="1"],[data-ph="2"],[data-ph="3"]) .crt::before{opacity:.55}
+.scr{display:block;width:100%;height:auto;border-radius:clamp(5px,.7vw,9px)}
+.scr .bord{fill:var(--border64)}
+.scr .face{fill:var(--screen)}
+.scr .txt{fill:var(--after)}
+.scr .s{display:none}
+.scr .s-post{display:inline}
+.hero[data-ph="0"] .scr .s-post{display:none}
+.hero:is([data-ph="1"],[data-ph="2"],[data-ph="3"]) .scr .s-post{display:none}
+.hero:is([data-ph="1"],[data-ph="2"],[data-ph="3"]) .scr .s-err{display:inline}
+.hero[data-ph="4"]:not(.post) .scr .s-post{display:none}
+.hero[data-ph="4"]:not(.post) .scr .s-title{display:inline}
+.cur{animation:blink 1.06s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.scr-cap{margin-top:8px;font:500 clamp(9.5px,.78vw,11px)/1.3 var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right}
+
+.candle{position:absolute;left:4%;bottom:-3%;z-index:3;width:clamp(20px,2.3vw,32px);aspect-ratio:1/3.3;border-radius:5px 5px 3px 3px;background:linear-gradient(90deg,color-mix(in srgb,var(--paper) 72%,var(--paper-ink)),color-mix(in srgb,var(--paper) 88%,var(--ink)) 44%,color-mix(in srgb,var(--paper) 66%,var(--paper-ink)));box-shadow:0 16px 26px rgb(0 0 0 / .5)}
+.candle::before{content:"";position:absolute;left:50%;top:-7%;width:2px;height:9%;translate:-50% 0;background:var(--paper-ink)}
+.flame{position:absolute;left:50%;bottom:99%;width:72%;aspect-ratio:1/2.1;translate:-50% 0;border-radius:50% 50% 45% 45%/62% 62% 38% 38%;background:radial-gradient(46% 56% at 50% 74%,var(--ink),var(--candle) 54%,transparent 76%);transform-origin:50% 100%;animation:flick 3.3s ease-in-out infinite}
+@keyframes flick{0%,100%{transform:scale(1,1) skewX(0)}22%{transform:scale(.94,1.07) skewX(2deg)}48%{transform:scale(1.04,.95) skewX(-1.5deg)}71%{transform:scale(.97,1.05) skewX(1deg)}}
+.candlelight{position:absolute;left:50%;bottom:105%;width:1500%;aspect-ratio:1;translate:-50% 50%;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,color-mix(in srgb,var(--candle) 24%,transparent),color-mix(in srgb,var(--candle) 7%,transparent) 46%,transparent 72%);mix-blend-mode:screen;animation:breathe 3.3s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.92}30%{opacity:.78}60%{opacity:1}}
+
+.stamp{position:absolute;z-index:4;right:-3%;top:-6%;display:grid;justify-items:center;font:800 clamp(24px,3vw,46px)/1 var(--font-display);letter-spacing:.09em;color:var(--after);padding:.2em .5em .16em;border:.11em double currentColor;transform:rotate(-8deg);filter:url(#ink);text-shadow:0 0 .35em color-mix(in srgb,var(--after) 60%,transparent)}
+.stamp small{font:700 max(11px,.26em)/1.2 var(--font-data);letter-spacing:.24em;margin-top:.32em}
+.hero:is([data-ph="0"],[data-ph="1"],[data-ph="2"],[data-ph="3"],[data-ph="4"]) .stamp{opacity:0}
+.hero.playing:is([data-ph="5"],[data-ph="6"]) .stamp{animation:land .55s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes land{0%{opacity:0;transform:rotate(-15deg) scale(1.8)}60%{opacity:1;transform:rotate(-7deg) scale(.95)}100%{opacity:1;transform:rotate(-8deg) scale(1)}}
+.hero:is([data-ph="0"],[data-ph="1"],[data-ph="2"],[data-ph="3"],[data-ph="4"]) .verb{color:var(--ink);text-decoration-color:transparent}
+
+.replay{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 16px;align-items:center;margin-top:clamp(18px,2.2vw,30px)}
+.replay .btn{padding:11px 15px;font-size:14px}
+.ticker{font:500 13px/1.45 var(--font-data);color:var(--muted);min-height:2.9em;overflow-wrap:anywhere}
+.ticker b{color:var(--ink);font-weight:700}
+.track{grid-column:1/-1;position:relative;height:34px;margin:0 10px}
+.track::before,.track .fill{content:"";position:absolute;left:0;top:9px;height:2px}
+.track::before{right:0;background:var(--rule)}
+.track .fill{width:100%;background:var(--after);transition:background-color .4s}
+.hero:is([data-ph="0"],[data-ph="1"],[data-ph="2"]) .track .fill{background:var(--before)}
+.tick{position:absolute;left:var(--x);top:2px;translate:-50% 0;width:16px;height:16px;padding:0;border-radius:50%;border:2px solid var(--rule);background:var(--bg);cursor:pointer;transition:border-color .2s,background-color .2s,transform .15s}
+.tick:hover{transform:scale(1.25);border-color:var(--ink)}
+.tick.on{border-color:var(--ink);background:var(--ink)}
+.tick span{position:absolute;top:19px;left:50%;translate:-50% 0;font:500 11.5px/1 var(--font-data);color:var(--muted);white-space:nowrap;pointer-events:none}
+.tick:nth-of-type(4) span,.tick:nth-of-type(6) span,.tick:nth-of-type(7) span{display:none}
+.tick:first-of-type span{translate:-15% 0}
+.tick:last-of-type span{translate:-85% 0}
+.replay-note{grid-column:1/-1;font:500 12px/1.45 var(--font-data);color:var(--muted);max-width:52em}
+
+/* ---------- receipts ---------- */
+.receipts{background:linear-gradient(180deg,var(--soot-2),var(--bg));border-block:1px solid var(--rule)}
+.rgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.rc{padding:clamp(24px,3vw,40px) clamp(14px,2vw,28px);border-left:1px solid var(--rule)}
+.rc:first-child{border-left:0;padding-left:0}
+.num{font:800 clamp(44px,5vw,74px)/1 var(--font-display);letter-spacing:-.01em;color:var(--ink)}
+.num small{font-size:.42em;margin-left:.08em;color:var(--muted)}
+.lab{margin-top:10px;font-size:15px;line-height:1.45;color:color-mix(in srgb,var(--ink) 84%,var(--muted))}
+.prv{margin-top:8px;font:500 12px/1.4 var(--font-data);color:var(--muted);overflow-wrap:anywhere}
+.prv a{color:var(--muted)}
+.prv a:hover{color:var(--ink)}
+
+/* ---------- seen twice ---------- */
+section.band{padding:clamp(64px,9vw,128px) 0}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(18px,2.6vw,36px);margin-top:clamp(28px,4vw,48px);align-items:start}
+.shot{border:1px solid var(--rule);background:var(--stone);box-shadow:0 30px 60px rgb(0 0 0 / .45)}
+.chrome{display:flex;align-items:center;gap:7px;padding:10px 14px;border-bottom:1px solid var(--rule);font:500 12px/1 var(--font-data);color:var(--muted)}
+.chrome i{width:9px;height:9px;border-radius:50%;background:var(--rule)}
+.chrome span{margin-left:10px;padding:5px 12px;background:var(--bg);border-radius:3px;flex:1;max-width:340px}
+.shot figcaption,.cap{padding:12px 14px;font-size:14px;line-height:1.5;color:var(--muted)}
+.term{border:1px solid var(--rule);background:color-mix(in srgb,var(--bg) 70%,var(--stone));box-shadow:0 30px 60px rgb(0 0 0 / .45)}
+.term-bar{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--rule);font:500 12px/1.3 var(--font-data);color:var(--muted)}
+.term-body{padding:12px 14px 16px;font:500 12.5px/1.55 var(--font-data);min-height:300px}
+.tr{display:grid;grid-template-columns:8.6ch 6.2ch minmax(0,1fr);gap:0 10px;padding:2px 0;color:color-mix(in srgb,var(--ink) 86%,var(--muted))}
+.tr time{color:var(--muted)}
+.tr b{font-weight:700;color:var(--muted)}
+.tr span{overflow-wrap:anywhere}
+.tr.acc span{color:var(--after)}
+.tr.bad span{color:var(--before)}
+.tr.dim span{color:var(--muted)}
+.js .term.typing .tr{visibility:hidden}
+.js .term.typing .tr.shown{visibility:visible}
+.tr .caret{display:inline-block;width:.6em;height:1.05em;vertical-align:-.15em;background:var(--ink);animation:blink 1s steps(1) infinite}
+
+/* ---------- the gate (paper band) ---------- */
+.gate{position:relative;color:var(--paper-ink);padding:clamp(64px,8vw,112px) 0;isolation:isolate}
+.gate::before{content:"";position:absolute;inset:0 clamp(0px,2vw,28px);z-index:-1;background:radial-gradient(70% 90% at 0% 100%,color-mix(in srgb,var(--candle) 26%,transparent),transparent 60%),linear-gradient(176deg,color-mix(in srgb,var(--paper) 92%,var(--ink)),var(--paper) 40%,color-mix(in srgb,var(--paper) 88%,var(--paper-ink)));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--paper-ink) 78%,var(--candle)),inset 0 0 60px 14px color-mix(in srgb,var(--paper-ink) 55%,transparent);filter:url(#burn)}
+.gate .eyebrow{color:var(--before-on-paper)}
+.gate h2{color:var(--paper-ink)}
+.gate-grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(28px,4vw,64px);align-items:start}
+.gate p.body{margin-top:16px;max-width:34em}
+.gate code.in{color:var(--paper-ink);background:color-mix(in srgb,var(--paper-ink) 10%,transparent)}
+.gate a{color:var(--after-on-paper)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{font:700 14px/1 var(--font-body);padding:11px 14px;border:1.5px solid var(--paper-ink);background:transparent;color:var(--paper-ink);cursor:pointer;transition:background-color .2s,color .2s,transform .15s}
+.chip:hover{background:var(--paper-ink);color:var(--paper)}
+.chip:active{transform:translateY(1px)}
+.chip[aria-pressed="true"]{background:var(--paper-ink);color:var(--paper)}
+.sheet{position:relative;padding:clamp(18px,2.4vw,30px);border:2px solid var(--paper-ink);background:color-mix(in srgb,var(--paper) 70%,var(--ink));box-shadow:6px 6px 0 var(--paper-ink)}
+.sheet .row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;font:500 clamp(14px,1.3vw,17px)/1.3 var(--font-data)}
+.sheet label{font-weight:700}
+.sheet input{width:100%;min-width:0;font:500 clamp(14px,1.3vw,17px)/1.3 var(--font-data);font-variant-ligatures:none;color:var(--paper-ink);background:var(--paper);border:0;border-bottom:2px solid var(--paper-ink);padding:8px 6px;caret-color:var(--before-on-paper)}
+.sheet input:focus-visible{outline:2px solid var(--after-on-paper);outline-offset:2px}
+.sum{margin-top:14px;font:500 15px/1.4 var(--font-data)}
+.sum b{font-weight:700}
+.verdict{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;margin-top:18px;min-height:86px}
+.vstamp{font:800 clamp(22px,2.2vw,30px)/1 var(--font-display);letter-spacing:.08em;padding:.22em .45em .16em;border:.12em double currentColor;color:var(--before-on-paper);transform:rotate(-6deg);filter:url(#ink)}
+.verdict[data-v="accepted"] .vstamp{color:var(--after-on-paper)}
+.verdict.thump .vstamp{animation:thump .35s cubic-bezier(.2,1.6,.4,1)}
+@keyframes thump{0%{transform:rotate(-12deg) scale(1.35);opacity:.2}100%{transform:rotate(-6deg) scale(1);opacity:1}}
+.why{font:500 14px/1.5 var(--font-data);color:var(--paper-ink)}
+.trap{margin-top:clamp(28px,3vw,40px);padding-top:18px;border-top:1px dashed color-mix(in srgb,var(--paper-ink) 50%,transparent);font-size:16px;max-width:44em}
+.trap b{color:var(--before-on-paper)}
+
+/* ---------- five hands (bento) ---------- */
+.bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(12px,1.4vw,18px);margin-top:clamp(28px,4vw,48px)}
+.card{position:relative;display:flex;flex-direction:column;gap:12px;padding:clamp(18px,2vw,26px);border:1px solid var(--rule);background:linear-gradient(180deg,color-mix(in srgb,var(--stone) 70%,var(--bg)),var(--bg));transition:border-color .25s,transform .25s var(--ease)}
+.card:hover{border-color:color-mix(in srgb,var(--ink) 40%,var(--rule));transform:translateY(-2px)}
+.card .k{font:700 12px/1 var(--font-data);letter-spacing:.2em;color:var(--muted)}
+.card h3{font-size:clamp(22px,2vw,30px)}
+.card p{font-size:16px;line-height:1.5;color:color-mix(in srgb,var(--ink) 84%,var(--muted))}
+.pill{align-self:flex-start;margin-top:auto;font:500 12px/1 var(--font-data);padding:7px 10px;border:1px solid var(--rule);color:var(--ink)}
+.c1{grid-column:span 2}.c2{grid-column:span 2}.c3{grid-column:span 2;grid-row:span 2}.c4{grid-column:span 2}.c5{grid-column:span 2}
+.c3{border-color:color-mix(in srgb,var(--before) 45%,var(--rule));background:linear-gradient(180deg,color-mix(in srgb,var(--before) 8%,var(--bg)),var(--bg))}
+.mini-scan{border:1px solid var(--rule);overflow:hidden;aspect-ratio:2.5;background:var(--paper)}
+.mini-scan img{width:100%;height:100%;object-fit:cover;object-position:50% 38%}
+.tools{display:flex;flex-wrap:wrap;gap:6px}
+.tools code{font-size:12px;padding:5px 8px;background:color-mix(in srgb,var(--rule) 50%,transparent);color:var(--ink)}
+.refusals{display:grid;gap:10px;margin:4px 0}
+.refusals div{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;font-size:15px;line-height:1.4}
+.refusals b{font:800 13px/1 var(--font-display);letter-spacing:.08em;color:var(--before);padding:6px 8px 5px;border:2px solid currentColor;transform:rotate(-4deg)}
+.refusals div:last-child b{color:var(--after)}
+.mini-crt{width:min(100%,250px);padding:9px;border-radius:12px;background:linear-gradient(158deg,color-mix(in srgb,var(--stone) 78%,var(--ink)),var(--stone) 40%)}
+.caps{display:flex;gap:18px;flex-wrap:wrap}
+.caps div{font:800 30px/1 var(--font-display)}
+.caps small{display:block;margin-top:4px;font:500 11.5px/1.2 var(--font-data);color:var(--muted)}
+
+/* ---------- the crypt ---------- */
+.crypt{position:relative;isolation:isolate;overflow:clip;padding:clamp(70px,9vw,128px) 0 clamp(60px,8vw,110px);background:linear-gradient(180deg,var(--bg),var(--soot-2) 55%,var(--bg))}
+.crypt::after{content:"";position:absolute;left:-10%;right:-10%;top:47%;height:220px;z-index:-1;background:radial-gradient(50% 55% at 50% 60%,color-mix(in srgb,var(--ink) 9%,transparent),transparent 72%);filter:blur(14px);animation:fog 14s ease-in-out infinite alternate;pointer-events:none}
+@keyframes fog{to{transform:translateX(4%)}}
+.yard{display:flex;justify-content:center;align-items:flex-end;gap:clamp(12px,2.6vw,40px);margin:clamp(36px,5vw,64px) 0 clamp(36px,5vw,64px)}
+.stone{position:relative;width:min(29%,280px);padding:clamp(34px,4vw,56px) clamp(12px,1.6vw,22px) clamp(20px,2.4vw,30px);text-align:center;border-radius:999px 999px 6px 6px/150px 150px 6px 6px;background:linear-gradient(180deg,color-mix(in srgb,var(--stone) 70%,var(--ink) 10%),var(--stone) 55%,color-mix(in srgb,var(--stone) 70%,var(--bg)));box-shadow:inset 0 2px 0 color-mix(in srgb,var(--ink) 12%,transparent),0 30px 40px rgb(0 0 0 / .55)}
+.stone h3{font-size:clamp(17px,1.7vw,24px);line-height:1.08;letter-spacing:.05em;text-transform:uppercase;color:color-mix(in srgb,var(--ink) 88%,var(--muted));text-shadow:0 -1px 0 rgb(0 0 0 / .6),0 1px 0 color-mix(in srgb,var(--ink) 14%,transparent)}
+.stone .ep{display:block;margin:10px 0 16px;font:500 12.5px/1.45 var(--font-data);color:var(--ink)}
+.stone .cod{display:block;font:700 12.5px/1.4 var(--font-data);color:var(--before)}
+.stone .note{display:block;margin-top:8px;font-size:13.5px;line-height:1.4;color:var(--ink)}
+.stone.risen{min-height:clamp(300px,30vw,380px);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--after) 70%,transparent),0 -10px 60px color-mix(in srgb,var(--after) 22%,transparent),0 30px 40px rgb(0 0 0 / .55)}
+.stone.risen .cod{text-decoration:line-through 1.5px}
+.stone.risen .note{color:var(--after)}
+.stone:not(.risen){min-height:clamp(250px,25vw,320px)}
+.cert{position:relative;max-width:880px;margin:0 auto;padding:clamp(24px,3.4vw,44px) clamp(20px,3.6vw,52px) clamp(104px,11vw,140px);color:var(--paper-ink);isolation:isolate}
+.cert::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(60% 70% at 100% 0%,color-mix(in srgb,var(--candle) 22%,transparent),transparent 62%),linear-gradient(170deg,color-mix(in srgb,var(--paper) 92%,var(--ink)),var(--paper) 50%,color-mix(in srgb,var(--paper) 86%,var(--paper-ink)));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--paper-ink) 80%,var(--candle)),inset 0 0 38px 8px color-mix(in srgb,var(--paper-ink) 52%,transparent),0 30px 60px rgb(0 0 0 / .6);filter:url(#burn)}
+.cert-h{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;border-bottom:3px double var(--paper-ink);padding-bottom:12px}
+.cert-h h3{font-size:clamp(22px,2.6vw,34px);letter-spacing:.04em;text-transform:uppercase}
+.cert-h span{font:500 12px/1.3 var(--font-data);color:var(--paper-dim)}
+.cert dl{display:grid;grid-template-columns:minmax(0,13em) minmax(0,1fr);gap:0;margin:14px 0 0}
+.cert dt,.cert dd{padding:11px 0;border-bottom:1px solid color-mix(in srgb,var(--paper-ink) 22%,transparent)}
+.cert dt{font:700 12px/1.45 var(--font-data);letter-spacing:.14em;text-transform:uppercase;color:var(--paper-dim);padding-top:14px}
+.cert dd{margin:0;font-size:16.5px;line-height:1.45}
+.cert dd code{font-weight:700}
+.cert dd small{display:block;font-size:13.5px;color:var(--paper-dim)}
+.cert .bad{color:var(--before-on-paper)}
+.cert-stamp{position:absolute;right:clamp(16px,5vw,64px);bottom:clamp(18px,2.4vw,30px);display:grid;justify-items:center;font:800 clamp(30px,4vw,54px)/1 var(--font-display);letter-spacing:.09em;color:var(--after-on-paper);padding:.18em .45em .14em;border:.1em double currentColor;transform:rotate(-9deg);filter:url(#ink);mix-blend-mode:multiply;pointer-events:none}
+.cert-stamp small{font:700 .22em/1.2 var(--font-data);letter-spacing:.24em;margin-top:.3em}
+
+/* ---------- kiro ---------- */
+.kgrid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,4vw,64px);align-items:start}
+.tree{border-top:1px solid var(--rule)}
+.tree div{display:grid;grid-template-columns:minmax(0,15.5em) minmax(0,1fr);gap:4px 22px;padding:14px 0;border-bottom:1px solid var(--rule)}
+.tree code{font-size:14px;color:var(--ink);overflow-wrap:anywhere}
+.tree p{font-size:15.5px;line-height:1.5;color:color-mix(in srgb,var(--ink) 84%,var(--muted))}
+.credit{margin-top:22px;padding:16px 18px;border:1px dashed color-mix(in srgb,var(--before) 60%,var(--rule));font-size:16px;line-height:1.55}
+
+/* ---------- stet ---------- */
+.stet{background:linear-gradient(180deg,var(--bg),color-mix(in srgb,var(--before) 5%,var(--bg)) 50%,var(--bg));border-block:1px solid var(--rule)}
+.stet-grid{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:clamp(28px,4vw,64px)}
+.stetmark{display:inline-block;font:800 .5em/1 var(--font-display);letter-spacing:.08em;color:var(--before);border:2px solid currentColor;padding:.18em .4em .12em;transform:rotate(-6deg) translateY(-.4em);margin-right:.3em}
+.limits{display:grid;gap:0}
+.limits blockquote{position:relative;padding:20px 0 20px 64px;border-bottom:1px solid var(--rule);font-size:clamp(18px,1.5vw,21px);line-height:1.5}
+.limits blockquote::before{content:"stet";position:absolute;left:0;top:24px;font:800 13px/1 var(--font-display);letter-spacing:.1em;color:var(--before);border-bottom:2px dotted var(--before);padding-bottom:3px}
+.limits cite{display:block;margin-top:8px;font:500 12.5px/1.3 var(--font-data);font-style:normal;color:var(--muted)}
+
+/* ---------- questions ---------- */
+.qgrid{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:clamp(28px,4vw,64px)}
+details{border-bottom:1px solid var(--rule)}
+details:first-child{border-top:1px solid var(--rule)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;padding:20px 0;font:800 clamp(19px,1.6vw,23px)/1.2 var(--font-display);transition:color .2s}
+summary::-webkit-details-marker{display:none}
+summary:hover{color:var(--paper)}
+summary::after{content:"+";flex:none;font:500 22px/1 var(--font-data);color:var(--before);transition:transform .25s var(--ease)}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding:0 0 22px;max-width:40em;color:color-mix(in srgb,var(--ink) 86%,var(--muted));font-size:17px}
+
+/* ---------- raise one ---------- */
+.raise{position:relative;isolation:isolate;overflow:clip;padding:clamp(70px,9vw,130px) 0}
+.raise::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(55% 60% at 50% 100%,color-mix(in srgb,var(--candle) 14%,transparent),transparent 70%),radial-gradient(40% 50% at 50% 0%,color-mix(in srgb,var(--after) 8%,transparent),transparent 70%)}
+.raise .head{text-align:center;max-width:46em;margin:0 auto}
+.raise h2{font-size:clamp(40px,5vw,72px)}
+.raise .ctas{justify-content:center}
+.raise .shot{margin-top:clamp(28px,4vw,48px);display:block;text-decoration:none;transition:transform .3s var(--ease),border-color .25s}
+.raise .shot:hover{transform:translateY(-3px);border-color:var(--muted)}
+footer{border-top:1px solid var(--rule);padding:34px 0 44px;font-size:14.5px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between}
+footer .fb{display:flex;align-items:center;gap:10px;font:800 18px/1 var(--font-display);color:var(--ink)}
+footer .fb img{width:24px;height:24px}
+footer nav{display:flex;flex-wrap:wrap;gap:8px 18px}
+footer a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
+footer a:hover{border-bottom-color:var(--before)}
+footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
+
+/* ---------- small screens ---------- */
+@media (max-width:980px){
+  .hero .wrap,.gate-grid,.kgrid,.stet-grid,.qgrid,.pair{grid-template-columns:minmax(0,1fr)}
+  .exhibit{max-width:640px;width:100%;justify-self:center}
+  .bento{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .c1,.c2,.c4,.c5{grid-column:span 1}.c3{grid-column:span 2;grid-row:auto}
+  .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rc:nth-child(3){border-left:0;padding-left:0}
+  .rc:nth-child(n+3){border-top:1px solid var(--rule)}
+}
+@media (max-width:640px){
+  body{font-size:17px}
+  .ctas .btn{flex:1 1 auto;justify-content:center}
+  .seance{aspect-ratio:auto;padding-bottom:4px}
+  .slip{position:relative;width:100%}
+  .crt{position:relative;width:78%;margin:-30px 0 0 auto}
+  .candle{left:8%;bottom:10%}
+  .stamp{right:-1%;top:-5%;font-size:24px}
+  .src{max-width:58%}
+  .tr{grid-template-columns:8.6ch minmax(0,1fr)}
+  .tr b{display:none}
+  .brand{font-size:16px;gap:8px}
+  .brand img{width:24px;height:24px}
+  .top .gh{padding:8px 11px}
+  .ln{grid-template-columns:2.6ch minmax(0,1fr) 6.6ch 11px}
+  .tick span{display:none}
+  .tick:first-of-type span,.tick:last-of-type span{display:block}
+  .bento{grid-template-columns:minmax(0,1fr)}
+  .c3{grid-column:auto}
+  .yard{flex-wrap:wrap}
+  .stone{width:min(100%,300px)}
+  .stone.risen{order:-1}
+  .stone,.stone.risen,.stone:not(.risen){min-height:0}
+  .cert dl{grid-template-columns:minmax(0,1fr)}
+  .cert dt{border-bottom:0;padding-bottom:0}
+  .cert-stamp{position:relative;right:auto;bottom:auto;margin:18px auto 0;width:max-content}
+  .tree div{grid-template-columns:minmax(0,1fr)}
+  .rgrid{grid-template-columns:minmax(0,1fr)}
+  .rc,.rc:nth-child(3){border-left:0;padding-left:0;border-top:1px solid var(--rule)}
+  .rc:first-child{border-top:0}
+  .limits blockquote{padding-left:0;padding-top:44px}
+  .chrome span{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+@media print{
+  .top,.replay,.presets,.skip{display:none}
+  .reveal{animation:none!important;opacity:1!important;transform:none!important}
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the page</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="burn" x="-4%" y="-4%" width="108%" height="108%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".021 .028" numOctaves="4" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="20" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="ink" x="-8%" y="-14%" width="116%" height="128%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="4" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.6 0 0 0 1.75" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in" result="t"/>
+      <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="9" result="w"/>
+      <feDisplacementMap in="t" in2="w" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="phos" x="-6%" y="-6%" width="112%" height="112%">
+      <feGaussianBlur stdDeviation="2.4" result="b"/>
+      <feComponentTransfer in="b" result="g"><feFuncA type="linear" slope=".55"/></feComponentTransfer>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <radialGradient id="glass" cx="50%" cy="45%" r="70%">
+      <stop offset="58%" style="stop-color:var(--bg);stop-opacity:0"/>
+      <stop offset="100%" style="stop-color:var(--bg);stop-opacity:.42"/>
+    </radialGradient>
+    <pattern id="scan" width="4" height="3" patternUnits="userSpaceOnUse"><rect width="4" height="1" style="fill:var(--bg);fill-opacity:.13"/></pattern>
+  </defs>
+</svg>
+
+<header class="top">
+  <nav class="wrap" aria-label="Page">
+    <a class="brand" href="#top"><img src="/landing/icon.svg" alt="" width="28" height="28">SYNTAX ERROR IN 20</a>
+    <a class="nl" href="#run">The run</a>
+    <a class="nl" href="#gate">The gate</a>
+    <a class="nl" href="#kiro">Kiro</a>
+    <a class="nl" href="#honest">Limits</a>
+    <a class="nl" href="#questions">Questions</a>
+    <a class="btn gh" href="https://github.com/edycutjong/ready"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+  </nav>
+</header>
+
+<main id="main">
+<section class="hero" id="top" aria-labelledby="h1">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow reveal" style="--d:.05s">Kiroween 2026 · Resurrection</p>
+      <h1 id="h1" class="reveal" style="--d:.15s">The dead listing <span class="verb">rises</span> only when the checksum agrees.</h1>
+      <p class="lede reveal" style="--d:.3s">COMPUTE!'s Gazette printed programs to type in, and every line carried a checksum. OCR breaks the lines. A Kiro agent proposes the repair, a gate checks it against the printed <code class="in">:rem</code>, and an emulated Commodore 64 runs it. One recorded run: <b>1 patch</b>, <b>12 of 12 lines</b> consistent, <b>27.1 s</b>, <b>0.85 Kiro credits</b>.</p>
+      <div class="ctas reveal" style="--d:.42s">
+        <a class="btn primary" href="https://github.com/edycutjong/ready"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+        <a class="btn" href="/deck/"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M2.5 3.5h15v10h-15zM10 13.5v3M6.5 16.5h7"/></svg>Pitch deck</a>
+        <a class="btn" href="/"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M4 10h11M11 5.5 15.5 10 11 14.5"/></svg>Open the live site</a>
+      </div>
+      <p class="proof reveal" style="--d:.52s">Recorded playback of a real Kiro run · no C64 ROM served · every patch re-judged in your tab · <a href="/runs/line20-2026-11-24T19-56-44Z.jsonl">the raw run log</a></p>
+    </div>
+
+    <div class="exhibit reveal" style="--d:.25s">
+      <div class="seance">
+        <div class="slip">
+          <div class="slip-paper" aria-hidden="true"></div>
+          <p class="prog">Program 1: The Last Seance</p>
+          <p class="src">authored 2026, typeset by us, read by real OCR</p>
+          <div class="listing" role="group" aria-label="The listing as OCR read it, with the checksum gate's mark on line 20">
+<div class="ln"><span class="no">10</span><span class="bd">PRINT&quot;{CLR}{2 DOWN}&quot;</span><span class="rem">:rem 231</span><span class="st ok" role="img" aria-label="checksum verified"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></div>
+<div class="ln l20"><span class="no">20</span><span class="bd"><span class="mis">PRIMT™<svg class="ring" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M8 22C6 9 32 3 54 4s42 5 40 18-30 15-52 14S10 34 8 22Z"/></svg><span class="fix" aria-hidden="true">PRINT&quot;</span></span>   ** THE LAST SEANCE **&quot;</span><span class="rem">:rem 159</span><span class="st" role="img" aria-label="line 20: checksum gate verdict"><span class="x"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 2.5 9.5 9.5M9.5 2.5 2.5 9.5"/></svg></span><span class="v"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></span></div>
+<div class="ln"><span class="no">30</span><span class="bd">PRINT&quot;{DOWN} A TYPE-IN FROM 2026&quot;</span><span class="rem">:rem 138</span><span class="st ok" role="img" aria-label="checksum verified"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></div>
+<div class="ln"><span class="no">40</span><span class="bd">PRINT&quot;{2 DOWN} KNOCK ONCE: PRESS {RVS}RETURN{OFF}&quot;</span><span class="rem">:rem 61</span><span class="st ok" role="img" aria-label="checksum verified"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></div>
+<div class="ln"><span class="no">50</span><span class="bd">GETK$:IFK$=&quot;&quot;THEN50</span><span class="rem">:rem 1</span><span class="st ok" role="img" aria-label="checksum verified"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></div>
+<div class="ln"><span class="no">60</span><span class="bd">IFK$&lt;&gt;CHR$(13)THEN50</span><span class="rem">:rem 40</span><span class="st ok" role="img" aria-label="checksum verified"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></div>
+<div class="ln"><span class="no">70</span><span class="bd">PRINT&quot;{CLR}{RVS} THE SPIRITS ANSWER {OFF}{DOWN}&quot;</span><span class="rem">:rem 95</span><span class="st ok" role="img" aria-label="checksum verified"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></div>
+<div class="ln"><span class="no">80</span><span class="bd">FORI=1TO5:READN$:PRINT&quot; &quot;;N$:NEXT</span><span class="rem">:rem 215</span><span class="st ok" role="img" aria-label="checksum verified"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></div>
+<div class="ln"><span class="no">90</span><span class="bd">PRINT&quot;{DOWN} READY TO RISE.&quot;</span><span class="rem">:rem 196</span><span class="st ok" role="img" aria-label="checksum verified"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></div>
+<div class="ln"><span class="no">100</span><span class="bd">END</span><span class="rem">:rem 104</span><span class="st ok" role="img" aria-label="checksum verified"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></div>
+<div class="ln"><span class="no">110</span><span class="bd">DATA &quot;THE PAGE&quot;, &quot;THE CHECKSUM&quot;, &quot;THE MACHINE&quot;</span><span class="rem">:rem 216</span><span class="st ok" role="img" aria-label="checksum verified"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></div>
+<div class="ln"><span class="no">120</span><span class="bd">DATA &quot;THE AGENT&quot;,&quot;IT LIVES&quot;</span><span class="rem">:rem 209</span><span class="st ok" role="img" aria-label="checksum verified"><svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg></span></div>
+          </div>
+        </div>
+        <div class="candle" aria-hidden="true"><span class="candlelight"></span><span class="flame"></span></div>
+        <div class="crt">
+          <svg class="scr" viewBox="0 0 384 272" role="img" aria-label="Recorded C64 screens of this run. First: ?SYNTAX  ERROR IN 20 / READY.. After the patch: ** THE LAST SEANCE ** / A TYPE-IN FROM 2026 / KNOCK ONCE: PRESS RETURN. Then: THE SPIRITS ANSWER / THE PAGE / THE CHECKSUM / THE MACHINE / THE AGENT / IT LIVES / READY TO RISE. / READY..">
+            <rect class="bord" width="384" height="272"/>
+            <rect class="face" x="32" y="36" width="320" height="200"/>
+            <g class="txt" transform="translate(42 46) scale(1.3)" filter="url(#phos)">
+              <g class="s s-err"><path d="M2 32h4v1h-4zM1 33h2v1h-2zM5 33h2v1h-2zM5 34h2v1h-2zM4 35h2v1h-2zM3 36h2v1h-2zM3 38h2v1h-2zM10 32h4v1h-4zM9 33h2v1h-2zM13 33h2v1h-2zM9 34h2v1h-2zM10 35h4v1h-4zM13 36h2v1h-2zM9 37h2v1h-2zM13 37h2v1h-2zM10 38h4v1h-4zM17 32h2v1h-2zM21 32h2v1h-2zM17 33h2v1h-2zM21 33h2v1h-2zM17 34h2v1h-2zM21 34h2v1h-2zM18 35h4v1h-4zM19 36h2v1h-2zM19 37h2v1h-2zM19 38h2v1h-2zM25 32h2v1h-2zM29 32h2v1h-2zM25 33h3v1h-3zM29 33h2v1h-2zM25 34h6v1h-6zM25 35h6v1h-6zM25 36h2v1h-2zM28 36h3v1h-3zM25 37h2v1h-2zM29 37h2v1h-2zM25 38h2v1h-2zM29 38h2v1h-2zM33 32h6v1h-6zM35 33h2v1h-2zM35 34h2v1h-2zM35 35h2v1h-2zM35 36h2v1h-2zM35 37h2v1h-2zM35 38h2v1h-2zM42 32h4v1h-4zM41 33h2v1h-2zM45 33h2v1h-2zM41 34h2v1h-2zM45 34h2v1h-2zM41 35h6v1h-6zM41 36h2v1h-2zM45 36h2v1h-2zM41 37h2v1h-2zM45 37h2v1h-2zM41 38h2v1h-2zM45 38h2v1h-2zM49 32h2v1h-2zM53 32h2v1h-2zM49 33h2v1h-2zM53 33h2v1h-2zM50 34h4v1h-4zM51 35h2v1h-2zM50 36h4v1h-4zM49 37h2v1h-2zM53 37h2v1h-2zM49 38h2v1h-2zM53 38h2v1h-2zM73 32h6v1h-6zM73 33h2v1h-2zM73 34h2v1h-2zM73 35h4v1h-4zM73 36h2v1h-2zM73 37h2v1h-2zM73 38h6v1h-6zM81 32h5v1h-5zM81 33h2v1h-2zM85 33h2v1h-2zM81 34h2v1h-2zM85 34h2v1h-2zM81 35h5v1h-5zM81 36h4v1h-4zM81 37h2v1h-2zM84 37h2v1h-2zM81 38h2v1h-2zM85 38h2v1h-2zM89 32h5v1h-5zM89 33h2v1h-2zM93 33h2v1h-2zM89 34h2v1h-2zM93 34h2v1h-2zM89 35h5v1h-5zM89 36h4v1h-4zM89 37h2v1h-2zM92 37h2v1h-2zM89 38h2v1h-2zM93 38h2v1h-2zM98 32h4v1h-4zM97 33h2v1h-2zM101 33h2v1h-2zM97 34h2v1h-2zM101 34h2v1h-2zM97 35h2v1h-2zM101 35h2v1h-2zM97 36h2v1h-2zM101 36h2v1h-2zM97 37h2v1h-2zM101 37h2v1h-2zM98 38h4v1h-4zM105 32h5v1h-5zM105 33h2v1h-2zM109 33h2v1h-2zM105 34h2v1h-2zM109 34h2v1h-2zM105 35h5v1h-5zM105 36h4v1h-4zM105 37h2v1h-2zM108 37h2v1h-2zM105 38h2v1h-2zM109 38h2v1h-2zM122 32h4v1h-4zM123 33h2v1h-2zM123 34h2v1h-2zM123 35h2v1h-2zM123 36h2v1h-2zM123 37h2v1h-2zM122 38h4v1h-4zM129 32h2v1h-2zM133 32h2v1h-2zM129 33h3v1h-3zM133 33h2v1h-2zM129 34h6v1h-6zM129 35h6v1h-6zM129 36h2v1h-2zM132 36h3v1h-3zM129 37h2v1h-2zM133 37h2v1h-2zM129 38h2v1h-2zM133 38h2v1h-2zM146 32h4v1h-4zM145 33h2v1h-2zM149 33h2v1h-2zM149 34h2v1h-2zM148 35h2v1h-2zM146 36h2v1h-2zM145 37h2v1h-2zM145 38h6v1h-6zM154 32h4v1h-4zM153 33h2v1h-2zM157 33h2v1h-2zM153 34h2v1h-2zM156 34h3v1h-3zM153 35h3v1h-3zM157 35h2v1h-2zM153 36h2v1h-2zM157 36h2v1h-2zM153 37h2v1h-2zM157 37h2v1h-2zM154 38h4v1h-4zM1 40h5v1h-5zM1 41h2v1h-2zM5 41h2v1h-2zM1 42h2v1h-2zM5 42h2v1h-2zM1 43h5v1h-5zM1 44h4v1h-4zM1 45h2v1h-2zM4 45h2v1h-2zM1 46h2v1h-2zM5 46h2v1h-2zM9 40h6v1h-6zM9 41h2v1h-2zM9 42h2v1h-2zM9 43h4v1h-4zM9 44h2v1h-2zM9 45h2v1h-2zM9 46h6v1h-6zM18 40h4v1h-4zM17 41h2v1h-2zM21 41h2v1h-2zM17 42h2v1h-2zM21 42h2v1h-2zM17 43h6v1h-6zM17 44h2v1h-2zM21 44h2v1h-2zM17 45h2v1h-2zM21 45h2v1h-2zM17 46h2v1h-2zM21 46h2v1h-2zM25 40h4v1h-4zM25 41h2v1h-2zM28 41h2v1h-2zM25 42h2v1h-2zM29 42h2v1h-2zM25 43h2v1h-2zM29 43h2v1h-2zM25 44h2v1h-2zM29 44h2v1h-2zM25 45h2v1h-2zM28 45h2v1h-2zM25 46h4v1h-4zM33 40h2v1h-2zM37 40h2v1h-2zM33 41h2v1h-2zM37 41h2v1h-2zM33 42h2v1h-2zM37 42h2v1h-2zM34 43h4v1h-4zM35 44h2v1h-2zM35 45h2v1h-2zM35 46h2v1h-2zM43 45h2v1h-2zM43 46h2v1h-2z"/><rect class="cur" x="0" y="48" width="8" height="8"/></g>
+              <g class="s s-title"><path d="M25 25h2v1h-2zM29 25h2v1h-2zM26 26h4v1h-4zM25 27h6v1h-6zM26 28h4v1h-4zM25 29h2v1h-2zM29 29h2v1h-2zM33 25h2v1h-2zM37 25h2v1h-2zM34 26h4v1h-4zM33 27h6v1h-6zM34 28h4v1h-4zM33 29h2v1h-2zM37 29h2v1h-2zM49 24h6v1h-6zM51 25h2v1h-2zM51 26h2v1h-2zM51 27h2v1h-2zM51 28h2v1h-2zM51 29h2v1h-2zM51 30h2v1h-2zM57 24h2v1h-2zM61 24h2v1h-2zM57 25h2v1h-2zM61 25h2v1h-2zM57 26h2v1h-2zM61 26h2v1h-2zM57 27h6v1h-6zM57 28h2v1h-2zM61 28h2v1h-2zM57 29h2v1h-2zM61 29h2v1h-2zM57 30h2v1h-2zM61 30h2v1h-2zM65 24h6v1h-6zM65 25h2v1h-2zM65 26h2v1h-2zM65 27h4v1h-4zM65 28h2v1h-2zM65 29h2v1h-2zM65 30h6v1h-6zM81 24h2v1h-2zM81 25h2v1h-2zM81 26h2v1h-2zM81 27h2v1h-2zM81 28h2v1h-2zM81 29h2v1h-2zM81 30h6v1h-6zM90 24h4v1h-4zM89 25h2v1h-2zM93 25h2v1h-2zM89 26h2v1h-2zM93 26h2v1h-2zM89 27h6v1h-6zM89 28h2v1h-2zM93 28h2v1h-2zM89 29h2v1h-2zM93 29h2v1h-2zM89 30h2v1h-2zM93 30h2v1h-2zM98 24h4v1h-4zM97 25h2v1h-2zM101 25h2v1h-2zM97 26h2v1h-2zM98 27h4v1h-4zM101 28h2v1h-2zM97 29h2v1h-2zM101 29h2v1h-2zM98 30h4v1h-4zM105 24h6v1h-6zM107 25h2v1h-2zM107 26h2v1h-2zM107 27h2v1h-2zM107 28h2v1h-2zM107 29h2v1h-2zM107 30h2v1h-2zM122 24h4v1h-4zM121 25h2v1h-2zM125 25h2v1h-2zM121 26h2v1h-2zM122 27h4v1h-4zM125 28h2v1h-2zM121 29h2v1h-2zM125 29h2v1h-2zM122 30h4v1h-4zM129 24h6v1h-6zM129 25h2v1h-2zM129 26h2v1h-2zM129 27h4v1h-4zM129 28h2v1h-2zM129 29h2v1h-2zM129 30h6v1h-6zM138 24h4v1h-4zM137 25h2v1h-2zM141 25h2v1h-2zM137 26h2v1h-2zM141 26h2v1h-2zM137 27h6v1h-6zM137 28h2v1h-2zM141 28h2v1h-2zM137 29h2v1h-2zM141 29h2v1h-2zM137 30h2v1h-2zM141 30h2v1h-2zM145 24h2v1h-2zM149 24h2v1h-2zM145 25h3v1h-3zM149 25h2v1h-2zM145 26h6v1h-6zM145 27h6v1h-6zM145 28h2v1h-2zM148 28h3v1h-3zM145 29h2v1h-2zM149 29h2v1h-2zM145 30h2v1h-2zM149 30h2v1h-2zM154 24h4v1h-4zM153 25h2v1h-2zM157 25h2v1h-2zM153 26h2v1h-2zM153 27h2v1h-2zM153 28h2v1h-2zM153 29h2v1h-2zM157 29h2v1h-2zM154 30h4v1h-4zM161 24h6v1h-6zM161 25h2v1h-2zM161 26h2v1h-2zM161 27h4v1h-4zM161 28h2v1h-2zM161 29h2v1h-2zM161 30h6v1h-6zM177 25h2v1h-2zM181 25h2v1h-2zM178 26h4v1h-4zM177 27h6v1h-6zM178 28h4v1h-4zM177 29h2v1h-2zM181 29h2v1h-2zM185 25h2v1h-2zM189 25h2v1h-2zM186 26h4v1h-4zM185 27h6v1h-6zM186 28h4v1h-4zM185 29h2v1h-2zM189 29h2v1h-2zM10 40h4v1h-4zM9 41h2v1h-2zM13 41h2v1h-2zM9 42h2v1h-2zM13 42h2v1h-2zM9 43h6v1h-6zM9 44h2v1h-2zM13 44h2v1h-2zM9 45h2v1h-2zM13 45h2v1h-2zM9 46h2v1h-2zM13 46h2v1h-2zM25 40h6v1h-6zM27 41h2v1h-2zM27 42h2v1h-2zM27 43h2v1h-2zM27 44h2v1h-2zM27 45h2v1h-2zM27 46h2v1h-2zM33 40h2v1h-2zM37 40h2v1h-2zM33 41h2v1h-2zM37 41h2v1h-2zM33 42h2v1h-2zM37 42h2v1h-2zM34 43h4v1h-4zM35 44h2v1h-2zM35 45h2v1h-2zM35 46h2v1h-2zM41 40h5v1h-5zM41 41h2v1h-2zM45 41h2v1h-2zM41 42h2v1h-2zM45 42h2v1h-2zM41 43h5v1h-5zM41 44h2v1h-2zM41 45h2v1h-2zM41 46h2v1h-2zM49 40h6v1h-6zM49 41h2v1h-2zM49 42h2v1h-2zM49 43h4v1h-4zM49 44h2v1h-2zM49 45h2v1h-2zM49 46h6v1h-6zM57 43h6v1h-6zM66 40h4v1h-4zM67 41h2v1h-2zM67 42h2v1h-2zM67 43h2v1h-2zM67 44h2v1h-2zM67 45h2v1h-2zM66 46h4v1h-4zM73 40h2v1h-2zM77 40h2v1h-2zM73 41h3v1h-3zM77 41h2v1h-2zM73 42h6v1h-6zM73 43h6v1h-6zM73 44h2v1h-2zM76 44h3v1h-3zM73 45h2v1h-2zM77 45h2v1h-2zM73 46h2v1h-2zM77 46h2v1h-2zM89 40h6v1h-6zM89 41h2v1h-2zM89 42h2v1h-2zM89 43h4v1h-4zM89 44h2v1h-2zM89 45h2v1h-2zM89 46h2v1h-2zM97 40h5v1h-5zM97 41h2v1h-2zM101 41h2v1h-2zM97 42h2v1h-2zM101 42h2v1h-2zM97 43h5v1h-5zM97 44h4v1h-4zM97 45h2v1h-2zM100 45h2v1h-2zM97 46h2v1h-2zM101 46h2v1h-2zM106 40h4v1h-4zM105 41h2v1h-2zM109 41h2v1h-2zM105 42h2v1h-2zM109 42h2v1h-2zM105 43h2v1h-2zM109 43h2v1h-2zM105 44h2v1h-2zM109 44h2v1h-2zM105 45h2v1h-2zM109 45h2v1h-2zM106 46h4v1h-4zM113 40h2v1h-2zM118 40h2v1h-2zM113 41h3v1h-3zM117 41h3v1h-3zM113 42h7v1h-7zM113 43h2v1h-2zM116 43h1v1h-1zM118 43h2v1h-2zM113 44h2v1h-2zM118 44h2v1h-2zM113 45h2v1h-2zM118 45h2v1h-2zM113 46h2v1h-2zM118 46h2v1h-2zM130 40h4v1h-4zM129 41h2v1h-2zM133 41h2v1h-2zM133 42h2v1h-2zM132 43h2v1h-2zM130 44h2v1h-2zM129 45h2v1h-2zM129 46h6v1h-6zM138 40h4v1h-4zM137 41h2v1h-2zM141 41h2v1h-2zM137 42h2v1h-2zM140 42h3v1h-3zM137 43h3v1h-3zM141 43h2v1h-2zM137 44h2v1h-2zM141 44h2v1h-2zM137 45h2v1h-2zM141 45h2v1h-2zM138 46h4v1h-4zM146 40h4v1h-4zM145 41h2v1h-2zM149 41h2v1h-2zM149 42h2v1h-2zM148 43h2v1h-2zM146 44h2v1h-2zM145 45h2v1h-2zM145 46h6v1h-6zM154 40h4v1h-4zM153 41h2v1h-2zM157 41h2v1h-2zM153 42h2v1h-2zM153 43h5v1h-5zM153 44h2v1h-2zM157 44h2v1h-2zM153 45h2v1h-2zM157 45h2v1h-2zM154 46h4v1h-4zM9 64h2v1h-2zM13 64h2v1h-2zM9 65h2v1h-2zM12 65h2v1h-2zM9 66h4v1h-4zM9 67h3v1h-3zM9 68h4v1h-4zM9 69h2v1h-2zM12 69h2v1h-2zM9 70h2v1h-2zM13 70h2v1h-2zM17 64h2v1h-2zM21 64h2v1h-2zM17 65h3v1h-3zM21 65h2v1h-2zM17 66h6v1h-6zM17 67h6v1h-6zM17 68h2v1h-2zM20 68h3v1h-3zM17 69h2v1h-2zM21 69h2v1h-2zM17 70h2v1h-2zM21 70h2v1h-2zM26 64h4v1h-4zM25 65h2v1h-2zM29 65h2v1h-2zM25 66h2v1h-2zM29 66h2v1h-2zM25 67h2v1h-2zM29 67h2v1h-2zM25 68h2v1h-2zM29 68h2v1h-2zM25 69h2v1h-2zM29 69h2v1h-2zM26 70h4v1h-4zM34 64h4v1h-4zM33 65h2v1h-2zM37 65h2v1h-2zM33 66h2v1h-2zM33 67h2v1h-2zM33 68h2v1h-2zM33 69h2v1h-2zM37 69h2v1h-2zM34 70h4v1h-4zM41 64h2v1h-2zM45 64h2v1h-2zM41 65h2v1h-2zM44 65h2v1h-2zM41 66h4v1h-4zM41 67h3v1h-3zM41 68h4v1h-4zM41 69h2v1h-2zM44 69h2v1h-2zM41 70h2v1h-2zM45 70h2v1h-2zM58 64h4v1h-4zM57 65h2v1h-2zM61 65h2v1h-2zM57 66h2v1h-2zM61 66h2v1h-2zM57 67h2v1h-2zM61 67h2v1h-2zM57 68h2v1h-2zM61 68h2v1h-2zM57 69h2v1h-2zM61 69h2v1h-2zM58 70h4v1h-4zM65 64h2v1h-2zM69 64h2v1h-2zM65 65h3v1h-3zM69 65h2v1h-2zM65 66h6v1h-6zM65 67h6v1h-6zM65 68h2v1h-2zM68 68h3v1h-3zM65 69h2v1h-2zM69 69h2v1h-2zM65 70h2v1h-2zM69 70h2v1h-2zM74 64h4v1h-4zM73 65h2v1h-2zM77 65h2v1h-2zM73 66h2v1h-2zM73 67h2v1h-2zM73 68h2v1h-2zM73 69h2v1h-2zM77 69h2v1h-2zM74 70h4v1h-4zM81 64h6v1h-6zM81 65h2v1h-2zM81 66h2v1h-2zM81 67h4v1h-4zM81 68h2v1h-2zM81 69h2v1h-2zM81 70h6v1h-6zM91 65h2v1h-2zM91 66h2v1h-2zM91 68h2v1h-2zM91 69h2v1h-2zM105 64h5v1h-5zM105 65h2v1h-2zM109 65h2v1h-2zM105 66h2v1h-2zM109 66h2v1h-2zM105 67h5v1h-5zM105 68h2v1h-2zM105 69h2v1h-2zM105 70h2v1h-2zM113 64h5v1h-5zM113 65h2v1h-2zM117 65h2v1h-2zM113 66h2v1h-2zM117 66h2v1h-2zM113 67h5v1h-5zM113 68h4v1h-4zM113 69h2v1h-2zM116 69h2v1h-2zM113 70h2v1h-2zM117 70h2v1h-2zM121 64h6v1h-6zM121 65h2v1h-2zM121 66h2v1h-2zM121 67h4v1h-4zM121 68h2v1h-2zM121 69h2v1h-2zM121 70h6v1h-6zM130 64h4v1h-4zM129 65h2v1h-2zM133 65h2v1h-2zM129 66h2v1h-2zM130 67h4v1h-4zM133 68h2v1h-2zM129 69h2v1h-2zM133 69h2v1h-2zM130 70h4v1h-4zM138 64h4v1h-4zM137 65h2v1h-2zM141 65h2v1h-2zM137 66h2v1h-2zM138 67h4v1h-4zM141 68h2v1h-2zM137 69h2v1h-2zM141 69h2v1h-2zM138 70h4v1h-4zM153 64h5v1h-5zM153 65h2v1h-2zM157 65h2v1h-2zM153 66h2v1h-2zM157 66h2v1h-2zM153 67h5v1h-5zM153 68h4v1h-4zM153 69h2v1h-2zM156 69h2v1h-2zM153 70h2v1h-2zM157 70h2v1h-2zM161 64h6v1h-6zM161 65h2v1h-2zM161 66h2v1h-2zM161 67h4v1h-4zM161 68h2v1h-2zM161 69h2v1h-2zM161 70h6v1h-6zM169 64h6v1h-6zM171 65h2v1h-2zM171 66h2v1h-2zM171 67h2v1h-2zM171 68h2v1h-2zM171 69h2v1h-2zM171 70h2v1h-2zM177 64h2v1h-2zM181 64h2v1h-2zM177 65h2v1h-2zM181 65h2v1h-2zM177 66h2v1h-2zM181 66h2v1h-2zM177 67h2v1h-2zM181 67h2v1h-2zM177 68h2v1h-2zM181 68h2v1h-2zM177 69h2v1h-2zM181 69h2v1h-2zM178 70h4v1h-4zM185 64h5v1h-5zM185 65h2v1h-2zM189 65h2v1h-2zM185 66h2v1h-2zM189 66h2v1h-2zM185 67h5v1h-5zM185 68h4v1h-4zM185 69h2v1h-2zM188 69h2v1h-2zM185 70h2v1h-2zM189 70h2v1h-2zM193 64h2v1h-2zM197 64h2v1h-2zM193 65h3v1h-3zM197 65h2v1h-2zM193 66h6v1h-6zM193 67h6v1h-6zM193 68h2v1h-2zM196 68h3v1h-3zM193 69h2v1h-2zM197 69h2v1h-2zM193 70h2v1h-2zM197 70h2v1h-2z"/></g>
+              <g class="s s-post"><path d="M9 0h6v1h-6zM11 1h2v1h-2zM11 2h2v1h-2zM11 3h2v1h-2zM11 4h2v1h-2zM11 5h2v1h-2zM11 6h2v1h-2zM17 0h2v1h-2zM21 0h2v1h-2zM17 1h2v1h-2zM21 1h2v1h-2zM17 2h2v1h-2zM21 2h2v1h-2zM17 3h6v1h-6zM17 4h2v1h-2zM21 4h2v1h-2zM17 5h2v1h-2zM21 5h2v1h-2zM17 6h2v1h-2zM21 6h2v1h-2zM25 0h6v1h-6zM25 1h2v1h-2zM25 2h2v1h-2zM25 3h4v1h-4zM25 4h2v1h-2zM25 5h2v1h-2zM25 6h6v1h-6zM42 0h4v1h-4zM41 1h2v1h-2zM45 1h2v1h-2zM41 2h2v1h-2zM42 3h4v1h-4zM45 4h2v1h-2zM41 5h2v1h-2zM45 5h2v1h-2zM42 6h4v1h-4zM49 0h5v1h-5zM49 1h2v1h-2zM53 1h2v1h-2zM49 2h2v1h-2zM53 2h2v1h-2zM49 3h5v1h-5zM49 4h2v1h-2zM49 5h2v1h-2zM49 6h2v1h-2zM58 0h4v1h-4zM59 1h2v1h-2zM59 2h2v1h-2zM59 3h2v1h-2zM59 4h2v1h-2zM59 5h2v1h-2zM58 6h4v1h-4zM65 0h5v1h-5zM65 1h2v1h-2zM69 1h2v1h-2zM65 2h2v1h-2zM69 2h2v1h-2zM65 3h5v1h-5zM65 4h4v1h-4zM65 5h2v1h-2zM68 5h2v1h-2zM65 6h2v1h-2zM69 6h2v1h-2zM74 0h4v1h-4zM75 1h2v1h-2zM75 2h2v1h-2zM75 3h2v1h-2zM75 4h2v1h-2zM75 5h2v1h-2zM74 6h4v1h-4zM81 0h6v1h-6zM83 1h2v1h-2zM83 2h2v1h-2zM83 3h2v1h-2zM83 4h2v1h-2zM83 5h2v1h-2zM83 6h2v1h-2zM90 0h4v1h-4zM89 1h2v1h-2zM93 1h2v1h-2zM89 2h2v1h-2zM90 3h4v1h-4zM93 4h2v1h-2zM89 5h2v1h-2zM93 5h2v1h-2zM90 6h4v1h-4zM106 0h4v1h-4zM105 1h2v1h-2zM109 1h2v1h-2zM105 2h2v1h-2zM109 2h2v1h-2zM105 3h6v1h-6zM105 4h2v1h-2zM109 4h2v1h-2zM105 5h2v1h-2zM109 5h2v1h-2zM105 6h2v1h-2zM109 6h2v1h-2zM113 0h2v1h-2zM117 0h2v1h-2zM113 1h3v1h-3zM117 1h2v1h-2zM113 2h6v1h-6zM113 3h6v1h-6zM113 4h2v1h-2zM116 4h3v1h-3zM113 5h2v1h-2zM117 5h2v1h-2zM113 6h2v1h-2zM117 6h2v1h-2zM122 0h4v1h-4zM121 1h2v1h-2zM125 1h2v1h-2zM121 2h2v1h-2zM122 3h4v1h-4zM125 4h2v1h-2zM121 5h2v1h-2zM125 5h2v1h-2zM122 6h4v1h-4zM129 0h2v1h-2zM134 0h2v1h-2zM129 1h2v1h-2zM134 1h2v1h-2zM129 2h2v1h-2zM134 2h2v1h-2zM129 3h2v1h-2zM132 3h1v1h-1zM134 3h2v1h-2zM129 4h7v1h-7zM129 5h3v1h-3zM133 5h3v1h-3zM129 6h2v1h-2zM134 6h2v1h-2zM137 0h6v1h-6zM137 1h2v1h-2zM137 2h2v1h-2zM137 3h4v1h-4zM137 4h2v1h-2zM137 5h2v1h-2zM137 6h6v1h-6zM145 0h5v1h-5zM145 1h2v1h-2zM149 1h2v1h-2zM145 2h2v1h-2zM149 2h2v1h-2zM145 3h5v1h-5zM145 4h4v1h-4zM145 5h2v1h-2zM148 5h2v1h-2zM145 6h2v1h-2zM149 6h2v1h-2zM9 16h6v1h-6zM11 17h2v1h-2zM11 18h2v1h-2zM11 19h2v1h-2zM11 20h2v1h-2zM11 21h2v1h-2zM11 22h2v1h-2zM17 16h2v1h-2zM21 16h2v1h-2zM17 17h2v1h-2zM21 17h2v1h-2zM17 18h2v1h-2zM21 18h2v1h-2zM17 19h6v1h-6zM17 20h2v1h-2zM21 20h2v1h-2zM17 21h2v1h-2zM21 21h2v1h-2zM17 22h2v1h-2zM21 22h2v1h-2zM25 16h6v1h-6zM25 17h2v1h-2zM25 18h2v1h-2zM25 19h4v1h-4zM25 20h2v1h-2zM25 21h2v1h-2zM25 22h6v1h-6zM41 16h5v1h-5zM41 17h2v1h-2zM45 17h2v1h-2zM41 18h2v1h-2zM45 18h2v1h-2zM41 19h5v1h-5zM41 20h2v1h-2zM41 21h2v1h-2zM41 22h2v1h-2zM50 16h4v1h-4zM49 17h2v1h-2zM53 17h2v1h-2zM49 18h2v1h-2zM53 18h2v1h-2zM49 19h6v1h-6zM49 20h2v1h-2zM53 20h2v1h-2zM49 21h2v1h-2zM53 21h2v1h-2zM49 22h2v1h-2zM53 22h2v1h-2zM58 16h4v1h-4zM57 17h2v1h-2zM61 17h2v1h-2zM57 18h2v1h-2zM57 19h2v1h-2zM60 19h3v1h-3zM57 20h2v1h-2zM61 20h2v1h-2zM57 21h2v1h-2zM61 21h2v1h-2zM58 22h4v1h-4zM65 16h6v1h-6zM65 17h2v1h-2zM65 18h2v1h-2zM65 19h4v1h-4zM65 20h2v1h-2zM65 21h2v1h-2zM65 22h6v1h-6zM9 24h6v1h-6zM11 25h2v1h-2zM11 26h2v1h-2zM11 27h2v1h-2zM11 28h2v1h-2zM11 29h2v1h-2zM11 30h2v1h-2zM17 24h2v1h-2zM21 24h2v1h-2zM17 25h2v1h-2zM21 25h2v1h-2zM17 26h2v1h-2zM21 26h2v1h-2zM17 27h6v1h-6zM17 28h2v1h-2zM21 28h2v1h-2zM17 29h2v1h-2zM21 29h2v1h-2zM17 30h2v1h-2zM21 30h2v1h-2zM25 24h6v1h-6zM25 25h2v1h-2zM25 26h2v1h-2zM25 27h4v1h-4zM25 28h2v1h-2zM25 29h2v1h-2zM25 30h6v1h-6zM42 24h4v1h-4zM41 25h2v1h-2zM45 25h2v1h-2zM41 26h2v1h-2zM41 27h2v1h-2zM41 28h2v1h-2zM41 29h2v1h-2zM45 29h2v1h-2zM42 30h4v1h-4zM49 24h2v1h-2zM53 24h2v1h-2zM49 25h2v1h-2zM53 25h2v1h-2zM49 26h2v1h-2zM53 26h2v1h-2zM49 27h6v1h-6zM49 28h2v1h-2zM53 28h2v1h-2zM49 29h2v1h-2zM53 29h2v1h-2zM49 30h2v1h-2zM53 30h2v1h-2zM57 24h6v1h-6zM57 25h2v1h-2zM57 26h2v1h-2zM57 27h4v1h-4zM57 28h2v1h-2zM57 29h2v1h-2zM57 30h6v1h-6zM66 24h4v1h-4zM65 25h2v1h-2zM69 25h2v1h-2zM65 26h2v1h-2zM65 27h2v1h-2zM65 28h2v1h-2zM65 29h2v1h-2zM69 29h2v1h-2zM66 30h4v1h-4zM73 24h2v1h-2zM77 24h2v1h-2zM73 25h2v1h-2zM76 25h2v1h-2zM73 26h4v1h-4zM73 27h3v1h-3zM73 28h4v1h-4zM73 29h2v1h-2zM76 29h2v1h-2zM73 30h2v1h-2zM77 30h2v1h-2zM82 24h4v1h-4zM81 25h2v1h-2zM85 25h2v1h-2zM81 26h2v1h-2zM82 27h4v1h-4zM85 28h2v1h-2zM81 29h2v1h-2zM85 29h2v1h-2zM82 30h4v1h-4zM89 24h2v1h-2zM93 24h2v1h-2zM89 25h2v1h-2zM93 25h2v1h-2zM89 26h2v1h-2zM93 26h2v1h-2zM89 27h2v1h-2zM93 27h2v1h-2zM89 28h2v1h-2zM93 28h2v1h-2zM89 29h2v1h-2zM93 29h2v1h-2zM90 30h4v1h-4zM97 24h2v1h-2zM102 24h2v1h-2zM97 25h3v1h-3zM101 25h3v1h-3zM97 26h7v1h-7zM97 27h2v1h-2zM100 27h1v1h-1zM102 27h2v1h-2zM97 28h2v1h-2zM102 28h2v1h-2zM97 29h2v1h-2zM102 29h2v1h-2zM97 30h2v1h-2zM102 30h2v1h-2zM9 32h6v1h-6zM11 33h2v1h-2zM11 34h2v1h-2zM11 35h2v1h-2zM11 36h2v1h-2zM11 37h2v1h-2zM11 38h2v1h-2zM17 32h2v1h-2zM21 32h2v1h-2zM17 33h2v1h-2zM21 33h2v1h-2zM17 34h2v1h-2zM21 34h2v1h-2zM17 35h6v1h-6zM17 36h2v1h-2zM21 36h2v1h-2zM17 37h2v1h-2zM21 37h2v1h-2zM17 38h2v1h-2zM21 38h2v1h-2zM25 32h6v1h-6zM25 33h2v1h-2zM25 34h2v1h-2zM25 35h4v1h-4zM25 36h2v1h-2zM25 37h2v1h-2zM25 38h6v1h-6zM41 32h2v1h-2zM46 32h2v1h-2zM41 33h3v1h-3zM45 33h3v1h-3zM41 34h7v1h-7zM41 35h2v1h-2zM44 35h1v1h-1zM46 35h2v1h-2zM41 36h2v1h-2zM46 36h2v1h-2zM41 37h2v1h-2zM46 37h2v1h-2zM41 38h2v1h-2zM46 38h2v1h-2zM50 32h4v1h-4zM49 33h2v1h-2zM53 33h2v1h-2zM49 34h2v1h-2zM53 34h2v1h-2zM49 35h6v1h-6zM49 36h2v1h-2zM53 36h2v1h-2zM49 37h2v1h-2zM53 37h2v1h-2zM49 38h2v1h-2zM53 38h2v1h-2zM58 32h4v1h-4zM57 33h2v1h-2zM61 33h2v1h-2zM57 34h2v1h-2zM57 35h2v1h-2zM57 36h2v1h-2zM57 37h2v1h-2zM61 37h2v1h-2zM58 38h4v1h-4zM65 32h2v1h-2zM69 32h2v1h-2zM65 33h2v1h-2zM69 33h2v1h-2zM65 34h2v1h-2zM69 34h2v1h-2zM65 35h6v1h-6zM65 36h2v1h-2zM69 36h2v1h-2zM65 37h2v1h-2zM69 37h2v1h-2zM65 38h2v1h-2zM69 38h2v1h-2zM74 32h4v1h-4zM75 33h2v1h-2zM75 34h2v1h-2zM75 35h2v1h-2zM75 36h2v1h-2zM75 37h2v1h-2zM74 38h4v1h-4zM81 32h2v1h-2zM85 32h2v1h-2zM81 33h3v1h-3zM85 33h2v1h-2zM81 34h6v1h-6zM81 35h6v1h-6zM81 36h2v1h-2zM84 36h3v1h-3zM81 37h2v1h-2zM85 37h2v1h-2zM81 38h2v1h-2zM85 38h2v1h-2zM89 32h6v1h-6zM89 33h2v1h-2zM89 34h2v1h-2zM89 35h4v1h-4zM89 36h2v1h-2zM89 37h2v1h-2zM89 38h6v1h-6zM9 40h6v1h-6zM11 41h2v1h-2zM11 42h2v1h-2zM11 43h2v1h-2zM11 44h2v1h-2zM11 45h2v1h-2zM11 46h2v1h-2zM17 40h2v1h-2zM21 40h2v1h-2zM17 41h2v1h-2zM21 41h2v1h-2zM17 42h2v1h-2zM21 42h2v1h-2zM17 43h6v1h-6zM17 44h2v1h-2zM21 44h2v1h-2zM17 45h2v1h-2zM21 45h2v1h-2zM17 46h2v1h-2zM21 46h2v1h-2zM25 40h6v1h-6zM25 41h2v1h-2zM25 42h2v1h-2zM25 43h4v1h-4zM25 44h2v1h-2zM25 45h2v1h-2zM25 46h6v1h-6zM42 40h4v1h-4zM41 41h2v1h-2zM45 41h2v1h-2zM41 42h2v1h-2zM45 42h2v1h-2zM41 43h6v1h-6zM41 44h2v1h-2zM45 44h2v1h-2zM41 45h2v1h-2zM45 45h2v1h-2zM41 46h2v1h-2zM45 46h2v1h-2zM50 40h4v1h-4zM49 41h2v1h-2zM53 41h2v1h-2zM49 42h2v1h-2zM49 43h2v1h-2zM52 43h3v1h-3zM49 44h2v1h-2zM53 44h2v1h-2zM49 45h2v1h-2zM53 45h2v1h-2zM50 46h4v1h-4zM57 40h6v1h-6zM57 41h2v1h-2zM57 42h2v1h-2zM57 43h4v1h-4zM57 44h2v1h-2zM57 45h2v1h-2zM57 46h6v1h-6zM65 40h2v1h-2zM69 40h2v1h-2zM65 41h3v1h-3zM69 41h2v1h-2zM65 42h6v1h-6zM65 43h6v1h-6zM65 44h2v1h-2zM68 44h3v1h-3zM65 45h2v1h-2zM69 45h2v1h-2zM65 46h2v1h-2zM69 46h2v1h-2zM73 40h6v1h-6zM75 41h2v1h-2zM75 42h2v1h-2zM75 43h2v1h-2zM75 44h2v1h-2zM75 45h2v1h-2zM75 46h2v1h-2zM10 48h4v1h-4zM11 49h2v1h-2zM11 50h2v1h-2zM11 51h2v1h-2zM11 52h2v1h-2zM11 53h2v1h-2zM10 54h4v1h-4zM17 48h6v1h-6zM19 49h2v1h-2zM19 50h2v1h-2zM19 51h2v1h-2zM19 52h2v1h-2zM19 53h2v1h-2zM19 54h2v1h-2zM33 48h2v1h-2zM33 49h2v1h-2zM33 50h2v1h-2zM33 51h2v1h-2zM33 52h2v1h-2zM33 53h2v1h-2zM33 54h6v1h-6zM42 48h4v1h-4zM43 49h2v1h-2zM43 50h2v1h-2zM43 51h2v1h-2zM43 52h2v1h-2zM43 53h2v1h-2zM42 54h4v1h-4zM49 48h2v1h-2zM53 48h2v1h-2zM49 49h2v1h-2zM53 49h2v1h-2zM49 50h2v1h-2zM53 50h2v1h-2zM49 51h2v1h-2zM53 51h2v1h-2zM49 52h2v1h-2zM53 52h2v1h-2zM50 53h4v1h-4zM51 54h2v1h-2zM57 48h6v1h-6zM57 49h2v1h-2zM57 50h2v1h-2zM57 51h4v1h-4zM57 52h2v1h-2zM57 53h2v1h-2zM57 54h6v1h-6zM66 48h4v1h-4zM65 49h2v1h-2zM69 49h2v1h-2zM65 50h2v1h-2zM66 51h4v1h-4zM69 52h2v1h-2zM65 53h2v1h-2zM69 53h2v1h-2zM66 54h4v1h-4zM9 64h5v1h-5zM9 65h2v1h-2zM13 65h2v1h-2zM9 66h2v1h-2zM13 66h2v1h-2zM9 67h5v1h-5zM9 68h4v1h-4zM9 69h2v1h-2zM12 69h2v1h-2zM9 70h2v1h-2zM13 70h2v1h-2zM17 64h6v1h-6zM17 65h2v1h-2zM17 66h2v1h-2zM17 67h4v1h-4zM17 68h2v1h-2zM17 69h2v1h-2zM17 70h6v1h-6zM26 64h4v1h-4zM25 65h2v1h-2zM29 65h2v1h-2zM25 66h2v1h-2zM29 66h2v1h-2zM25 67h6v1h-6zM25 68h2v1h-2zM29 68h2v1h-2zM25 69h2v1h-2zM29 69h2v1h-2zM25 70h2v1h-2zM29 70h2v1h-2zM33 64h4v1h-4zM33 65h2v1h-2zM36 65h2v1h-2zM33 66h2v1h-2zM37 66h2v1h-2zM33 67h2v1h-2zM37 67h2v1h-2zM33 68h2v1h-2zM37 68h2v1h-2zM33 69h2v1h-2zM36 69h2v1h-2zM33 70h4v1h-4zM41 64h2v1h-2zM45 64h2v1h-2zM41 65h2v1h-2zM45 65h2v1h-2zM41 66h2v1h-2zM45 66h2v1h-2zM42 67h4v1h-4zM43 68h2v1h-2zM43 69h2v1h-2zM43 70h2v1h-2zM57 64h6v1h-6zM59 65h2v1h-2zM59 66h2v1h-2zM59 67h2v1h-2zM59 68h2v1h-2zM59 69h2v1h-2zM59 70h2v1h-2zM66 64h4v1h-4zM65 65h2v1h-2zM69 65h2v1h-2zM65 66h2v1h-2zM69 66h2v1h-2zM65 67h2v1h-2zM69 67h2v1h-2zM65 68h2v1h-2zM69 68h2v1h-2zM65 69h2v1h-2zM69 69h2v1h-2zM66 70h4v1h-4zM81 64h5v1h-5zM81 65h2v1h-2zM85 65h2v1h-2zM81 66h2v1h-2zM85 66h2v1h-2zM81 67h5v1h-5zM81 68h4v1h-4zM81 69h2v1h-2zM84 69h2v1h-2zM81 70h2v1h-2zM85 70h2v1h-2zM90 64h4v1h-4zM91 65h2v1h-2zM91 66h2v1h-2zM91 67h2v1h-2zM91 68h2v1h-2zM91 69h2v1h-2zM90 70h4v1h-4zM98 64h4v1h-4zM97 65h2v1h-2zM101 65h2v1h-2zM97 66h2v1h-2zM98 67h4v1h-4zM101 68h2v1h-2zM97 69h2v1h-2zM101 69h2v1h-2zM98 70h4v1h-4zM105 64h6v1h-6zM105 65h2v1h-2zM105 66h2v1h-2zM105 67h4v1h-4zM105 68h2v1h-2zM105 69h2v1h-2zM105 70h6v1h-6zM115 69h2v1h-2zM115 70h2v1h-2zM1 80h5v1h-5zM1 81h2v1h-2zM5 81h2v1h-2zM1 82h2v1h-2zM5 82h2v1h-2zM1 83h5v1h-5zM1 84h4v1h-4zM1 85h2v1h-2zM4 85h2v1h-2zM1 86h2v1h-2zM5 86h2v1h-2zM9 80h6v1h-6zM9 81h2v1h-2zM9 82h2v1h-2zM9 83h4v1h-4zM9 84h2v1h-2zM9 85h2v1h-2zM9 86h6v1h-6zM18 80h4v1h-4zM17 81h2v1h-2zM21 81h2v1h-2zM17 82h2v1h-2zM21 82h2v1h-2zM17 83h6v1h-6zM17 84h2v1h-2zM21 84h2v1h-2zM17 85h2v1h-2zM21 85h2v1h-2zM17 86h2v1h-2zM21 86h2v1h-2zM25 80h4v1h-4zM25 81h2v1h-2zM28 81h2v1h-2zM25 82h2v1h-2zM29 82h2v1h-2zM25 83h2v1h-2zM29 83h2v1h-2zM25 84h2v1h-2zM29 84h2v1h-2zM25 85h2v1h-2zM28 85h2v1h-2zM25 86h4v1h-4zM33 80h2v1h-2zM37 80h2v1h-2zM33 81h2v1h-2zM37 81h2v1h-2zM33 82h2v1h-2zM37 82h2v1h-2zM34 83h4v1h-4zM35 84h2v1h-2zM35 85h2v1h-2zM35 86h2v1h-2zM43 85h2v1h-2zM43 86h2v1h-2z"/><rect class="cur" x="0" y="88" width="8" height="8"/></g>
+            </g>
+            <rect x="32" y="36" width="320" height="200" fill="url(#scan)"/>
+            <rect width="384" height="272" fill="url(#glass)"/>
+          </svg>
+          <p class="scr-cap">recorded screen · c64-ready@3.4.0</p>
+        </div>
+        <div class="stamp" role="img" aria-label="IT LIVES, as recorded">IT LIVES<small>AS RECORDED</small></div>
+      </div>
+      <div class="replay">
+        <button class="btn" type="button" id="play" aria-controls="ticker">Replay the run</button>
+        <p class="ticker" id="ticker" aria-live="polite"><b>19:57:11</b> end · RESURRECTED · 1 iteration · 27.1 s · 0.85 Kiro credits</p>
+        <div class="track" role="group" aria-label="the run's events, by the run's own clock"><span class="fill"></span><button class="tick" type="button" data-i="0" style="--x:0.00%" aria-label="jump to 19:56:44 start · resurrector · claude-sonnet-5.5 · kiro-cli 3.6.0"><span>+0.0 s</span></button><button class="tick" type="button" data-i="1" style="--x:12.27%" aria-label="jump to hook listing-context (session start) · 12 lines handed to the agent"><span>+3.3 s</span></button><button class="tick" type="button" data-i="2" style="--x:55.58%" aria-label="jump to @c64/c64_run → ?SYNTAX  ERROR IN 20 · 11/12 checksum-consistent"><span>+15.0 s</span></button><button class="tick" type="button" data-i="3" style="--x:66.46%" aria-label="jump to @c64/checksum_line 20 → computed 159 · printed 159"><span>+18.0 s</span></button><button class="tick" type="button" data-i="4" style="--x:75.65%" aria-label="jump to hook checksum-gate (Pre Tool Use) exit 0 → ACCEPTED: 20: checksum 159 = printed 159"><span>+20.5 s</span></button><button class="tick" type="button" data-i="5" style="--x:87.03%" aria-label="jump to @c64/c64_run → RESURRECTED · 12/12 · title seen · post-title pass"><span>+23.5 s</span></button><button class="tick" type="button" data-i="6" style="--x:94.81%" aria-label="jump to hook until-title (Agent Stop) exit 0 → allow · RESURRECTED"><span>+25.6 s</span></button><button class="tick" type="button" data-i="7" style="--x:100.00%" aria-label="jump to end · RESURRECTED · 1 iteration · 27.1 s · 0.85 Kiro credits"><span>+27.0 s</span></button></div>
+        <p class="replay-note">Timed by the run's own clock (kiro-cli 3.6.0, claude-sonnet-5.5): waits sped up, the last 3.5 s in real time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="receipts" aria-label="Receipts">
+  <div class="wrap rgrid">
+    <div class="rc"><p class="num"><span data-count="27.1" data-dec="1">27.1</span><small>s</small></p><p class="lab">one recorded Kiro run, error to RESURRECTED</p><p class="prv">run log · wallMs 27084</p></div>
+    <div class="rc"><p class="num"><span data-count="0.85" data-dec="2">0.85</span></p><p class="lab">Kiro credits for that run, metered by kiro-cli</p><p class="prv">run log · credits total</p></div>
+    <div class="rc"><p class="num"><span data-count="6">6</span><small>/ 6</small></p><p class="lab">model runs RESURRECTED (2 cases × 3), re-judged, 0 mismatches</p><p class="prv">README · Engineering Rigor · docs/EVALS.md</p></div>
+    <div class="rc"><p class="num"><span data-count="492">492</span></p><p class="lab">tests passing on <code>2b4fadd</code>, 41 files</p><p class="prv">npm test · evidence/tests</p></div>
+  </div>
+</section>
+
+<section class="band" id="run" aria-labelledby="run-h">
+  <div class="wrap">
+    <p class="eyebrow">Recorded 2026-11-24 · 19:56 UTC</p>
+    <h2 id="run-h" style="margin-top:18px">The site shows the hooks. The log shows the run.</h2>
+    <p class="lede2">Left, <a href="/kiro">/kiro</a> on the live site. Right, the same run typed from its log, failed skill load included. Hook rows come from the hooks, not the model.</p>
+    <div class="pair">
+      <figure class="shot">
+        <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>ready.edycu.dev/kiro</span></div>
+        <img src="/landing/img/kiro.webp" width="1600" height="1023" loading="lazy" decoding="async" alt="The /kiro page on the live site: a table of the recorded run's hook rows and tool calls with times, from listing-context at 19:56:44 to until-title allow and 0.85 credits at 19:57:11.">
+        <figcaption>Captured from the live site, 2026-11-25.</figcaption>
+      </figure>
+      <div class="term" id="term">
+        <div class="term-bar"><span>kiro-cli 3.6.0 · agent resurrector</span><span>claude-sonnet-5.5</span></div>
+        <div class="term-body" role="log" aria-label="The run's own events">
+<p class="tr "><time>19:56:44</time><b>hook</b><span>listing-context (runner-context) exit 0</span></p>
+<p class="tr "><time>19:56:47</time><b>hook</b><span>listing-context (kiro-session-start) exit 0</span></p>
+<p class="tr "><time>19:56:54</time><b>call</b><span>Load skill: petscii-notation</span></p>
+<p class="tr dim"><time>19:56:54</time><b>result</b><span>skill load failed (the permission request failed before it was answered)</span></p>
+<p class="tr "><time>19:56:59</time><b>call</b><span>@c64/c64_run</span></p>
+<p class="tr bad"><time>19:56:59</time><b>c64</b><span>NO-TITLE NOT RESURRECTED · 11/12 checksum-consistent · error: ?SYNTAX  ERROR IN 20</span></p>
+<p class="tr "><time>19:57:02</time><b>call</b><span>@c64/checksum_line line 20</span></p>
+<p class="tr "><time>19:57:02</time><b>result</b><span>line 20: computed 159 · printed 159 · status: verified · matches: true</span></p>
+<p class="tr acc"><time>19:57:05</time><b>hook</b><span>checksum-gate (kiro-pre-tool-use) exit 0 · accepted</span></p>
+<p class="tr "><time>19:57:05</time><b>call</b><span>@c64/apply_patch</span></p>
+<p class="tr acc"><time>19:57:05</time><b>result</b><span>ACCEPTED: 20: checksum 159 = printed 159</span></p>
+<p class="tr "><time>19:57:06</time><b>call</b><span>@c64/c64_run</span></p>
+<p class="tr acc"><time>19:57:08</time><b>c64</b><span>RESURRECTED · 12/12 checksum-consistent · error: none</span></p>
+<p class="tr "><time>19:57:10</time><b>hook</b><span>until-title (kiro-stop) exit 0 · allow</span></p>
+<p class="tr "><time>19:57:10</time><b>credits</b><span>+0.85 (total 0.85, metered)</span></p>
+<p class="tr "><time>19:57:11</time><b>hook</b><span>until-title (runner-cycle) exit 0 · allow</span></p>
+<p class="tr acc"><time>19:57:11</time><b>end</b><span>RESURRECTED · 1 iteration · 27.1 s wall</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gate" id="gate" aria-labelledby="gate-h">
+  <div class="wrap gate-grid">
+    <div>
+      <p class="eyebrow">Line 20 · printed :rem 159</p>
+      <h2 id="gate-h" style="margin-top:18px">Try to fool the gate.</h2>
+      <p class="body">Type any line 20. This page runs the project's own gate, <code class="in">src/gate/checksum-gate.ts</code>, bundled as <a href="/landing/gate.js">gate.js</a> (7.3 KB): the code the Kiro Pre Tool Use hook runs before <code class="in">apply_patch</code>. No model. p95 0.021 ms (N=2000).</p>
+      <div class="presets" role="group" aria-label="Try a line 20">
+        <button class="chip" type="button" data-try="ocr" aria-pressed="true">What the OCR read</button>
+        <button class="chip" type="button" data-try="tm" aria-pressed="false">Fix only the M</button>
+        <button class="chip" type="button" data-try="agent" aria-pressed="false">What the agent proposed</button>
+        <button class="chip" type="button" data-try="empty" aria-pressed="false">Cheat: empty the line</button>
+        <button class="chip" type="button" data-try="rewrite" aria-pressed="false">Rewrite it</button>
+      </div>
+    </div>
+    <div class="sheet">
+      <div class="row"><label for="l20">20</label><input id="l20" type="text" value="PRIMT™   ** THE LAST SEANCE **&quot;" spellcheck="false" autocomplete="off" autocapitalize="characters" aria-describedby="why"><span>:rem 159</span></div>
+      <p class="sum">computed <b id="sum">158</b> · printed <b>159</b></p>
+      <div class="verdict" id="verdict" data-v="refused"><span class="vstamp" id="vstamp">REFUSED</span><p class="why" id="why" aria-live="polite">REFUSED (R4.15): line 20 contains &quot;™&quot;, which no C64 key types. The magazine's checksum is the sum of what the typist typed, so this cannot be the printed line; write the character the page shows (Gazette notation for control keys).</p></div>
+    </div>
+  </div>
+  <div class="wrap"><p class="trap"><b>The ™ trap.</b> OCR read the opening quote as ™, code 8482, which is 34 mod 256: a quote. Fix only the M and a raw sum matches (159 = 159) for a line the C64 never stores. The gate drops untypeable characters before it sums.</p></div>
+</section>
+
+<section class="band" id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <h2 id="how-h">The model chooses where to look. Code decides what is true.</h2>
+    <p class="lede2">Five hands touch line 20. Only the last three can say yes. None of them is the model.</p>
+    <div class="bento">
+      <article class="card c1">
+        <p class="k">I · READ</p><h3>The page is read</h3>
+        <div class="mini-scan"><img src="/landing/img/scan.webp" width="1600" height="824" loading="lazy" decoding="async" alt="The live /scan page after reading the authored page in the tab: 9 of 12 lines match their printed checksum, 3 are flagged as mismatches."></div>
+        <p>Tesseract reads the scan in your tab; each line's sum is checked against its printed <code>:rem</code>.</p>
+        <span class="pill">tesseract.js 7 · p50 903 ms in node</span>
+      </article>
+      <article class="card c2">
+        <p class="k">II · PROPOSE</p><h3>The agent proposes</h3>
+        <p>The Kiro agent <code>resurrector</code> gets the flagged listing and 6 MCP tools. No files, shell or web.</p>
+        <div class="tools"><code>c64_reload</code><code>c64_run</code><code>c64_read_screen</code><code>c64_press</code><code>checksum_line</code><code>apply_patch</code></div>
+        <span class="pill">.kiro/agents/resurrector.json</span>
+      </article>
+      <article class="card c3">
+        <p class="k">III · JUDGE</p><h3>The gate decides</h3>
+        <p>A Kiro Pre Tool Use hook runs the gate before <code>apply_patch</code>. A refusal exits 2; the agent reads the reason verbatim.</p>
+        <div class="refusals">
+          <div><b>REFUSED</b><span>the printed sum does not match (R4.15)</span></div>
+          <div><b>REFUSED</b><span>a character no C64 key types (R4.15)</span></div>
+          <div><b>REFUSED</b><span>an empty line: deletion (R4.4)</span></div>
+          <div><b>REFUSED</b><span>more than 40% of the line rewritten (R4.7)</span></div>
+          <div><b>ACCEPTED</b><span>20: checksum 159 = printed 159, the recorded patch</span></div>
+        </div>
+        <span class="pill">hook checksum-gate · Pre Tool Use · exit 2</span>
+      </article>
+      <article class="card c4">
+        <p class="k">IV · RUN</p><h3>The machine confirms</h3>
+        <p>Every accepted patch is re-RUN on an emulated C64. The verdict is read from screen memory.</p>
+        <div class="mini-crt"><svg class="scr" viewBox="0 0 384 272" role="img" aria-label="Recorded screen: ?SYNTAX  ERROR IN 20 / READY."><rect class="bord" width="384" height="272"/><rect class="face" x="32" y="36" width="320" height="200"/><g class="txt" transform="translate(42 46) scale(1.3)" filter="url(#phos)"><path d="M2 32h4v1h-4zM1 33h2v1h-2zM5 33h2v1h-2zM5 34h2v1h-2zM4 35h2v1h-2zM3 36h2v1h-2zM3 38h2v1h-2zM10 32h4v1h-4zM9 33h2v1h-2zM13 33h2v1h-2zM9 34h2v1h-2zM10 35h4v1h-4zM13 36h2v1h-2zM9 37h2v1h-2zM13 37h2v1h-2zM10 38h4v1h-4zM17 32h2v1h-2zM21 32h2v1h-2zM17 33h2v1h-2zM21 33h2v1h-2zM17 34h2v1h-2zM21 34h2v1h-2zM18 35h4v1h-4zM19 36h2v1h-2zM19 37h2v1h-2zM19 38h2v1h-2zM25 32h2v1h-2zM29 32h2v1h-2zM25 33h3v1h-3zM29 33h2v1h-2zM25 34h6v1h-6zM25 35h6v1h-6zM25 36h2v1h-2zM28 36h3v1h-3zM25 37h2v1h-2zM29 37h2v1h-2zM25 38h2v1h-2zM29 38h2v1h-2zM33 32h6v1h-6zM35 33h2v1h-2zM35 34h2v1h-2zM35 35h2v1h-2zM35 36h2v1h-2zM35 37h2v1h-2zM35 38h2v1h-2zM42 32h4v1h-4zM41 33h2v1h-2zM45 33h2v1h-2zM41 34h2v1h-2zM45 34h2v1h-2zM41 35h6v1h-6zM41 36h2v1h-2zM45 36h2v1h-2zM41 37h2v1h-2zM45 37h2v1h-2zM41 38h2v1h-2zM45 38h2v1h-2zM49 32h2v1h-2zM53 32h2v1h-2zM49 33h2v1h-2zM53 33h2v1h-2zM50 34h4v1h-4zM51 35h2v1h-2zM50 36h4v1h-4zM49 37h2v1h-2zM53 37h2v1h-2zM49 38h2v1h-2zM53 38h2v1h-2zM73 32h6v1h-6zM73 33h2v1h-2zM73 34h2v1h-2zM73 35h4v1h-4zM73 36h2v1h-2zM73 37h2v1h-2zM73 38h6v1h-6zM81 32h5v1h-5zM81 33h2v1h-2zM85 33h2v1h-2zM81 34h2v1h-2zM85 34h2v1h-2zM81 35h5v1h-5zM81 36h4v1h-4zM81 37h2v1h-2zM84 37h2v1h-2zM81 38h2v1h-2zM85 38h2v1h-2zM89 32h5v1h-5zM89 33h2v1h-2zM93 33h2v1h-2zM89 34h2v1h-2zM93 34h2v1h-2zM89 35h5v1h-5zM89 36h4v1h-4zM89 37h2v1h-2zM92 37h2v1h-2zM89 38h2v1h-2zM93 38h2v1h-2zM98 32h4v1h-4zM97 33h2v1h-2zM101 33h2v1h-2zM97 34h2v1h-2zM101 34h2v1h-2zM97 35h2v1h-2zM101 35h2v1h-2zM97 36h2v1h-2zM101 36h2v1h-2zM97 37h2v1h-2zM101 37h2v1h-2zM98 38h4v1h-4zM105 32h5v1h-5zM105 33h2v1h-2zM109 33h2v1h-2zM105 34h2v1h-2zM109 34h2v1h-2zM105 35h5v1h-5zM105 36h4v1h-4zM105 37h2v1h-2zM108 37h2v1h-2zM105 38h2v1h-2zM109 38h2v1h-2zM122 32h4v1h-4zM123 33h2v1h-2zM123 34h2v1h-2zM123 35h2v1h-2zM123 36h2v1h-2zM123 37h2v1h-2zM122 38h4v1h-4zM129 32h2v1h-2zM133 32h2v1h-2zM129 33h3v1h-3zM133 33h2v1h-2zM129 34h6v1h-6zM129 35h6v1h-6zM129 36h2v1h-2zM132 36h3v1h-3zM129 37h2v1h-2zM133 37h2v1h-2zM129 38h2v1h-2zM133 38h2v1h-2zM146 32h4v1h-4zM145 33h2v1h-2zM149 33h2v1h-2zM149 34h2v1h-2zM148 35h2v1h-2zM146 36h2v1h-2zM145 37h2v1h-2zM145 38h6v1h-6zM154 32h4v1h-4zM153 33h2v1h-2zM157 33h2v1h-2zM153 34h2v1h-2zM156 34h3v1h-3zM153 35h3v1h-3zM157 35h2v1h-2zM153 36h2v1h-2zM157 36h2v1h-2zM153 37h2v1h-2zM157 37h2v1h-2zM154 38h4v1h-4zM1 40h5v1h-5zM1 41h2v1h-2zM5 41h2v1h-2zM1 42h2v1h-2zM5 42h2v1h-2zM1 43h5v1h-5zM1 44h4v1h-4zM1 45h2v1h-2zM4 45h2v1h-2zM1 46h2v1h-2zM5 46h2v1h-2zM9 40h6v1h-6zM9 41h2v1h-2zM9 42h2v1h-2zM9 43h4v1h-4zM9 44h2v1h-2zM9 45h2v1h-2zM9 46h6v1h-6zM18 40h4v1h-4zM17 41h2v1h-2zM21 41h2v1h-2zM17 42h2v1h-2zM21 42h2v1h-2zM17 43h6v1h-6zM17 44h2v1h-2zM21 44h2v1h-2zM17 45h2v1h-2zM21 45h2v1h-2zM17 46h2v1h-2zM21 46h2v1h-2zM25 40h4v1h-4zM25 41h2v1h-2zM28 41h2v1h-2zM25 42h2v1h-2zM29 42h2v1h-2zM25 43h2v1h-2zM29 43h2v1h-2zM25 44h2v1h-2zM29 44h2v1h-2zM25 45h2v1h-2zM28 45h2v1h-2zM25 46h4v1h-4zM33 40h2v1h-2zM37 40h2v1h-2zM33 41h2v1h-2zM37 41h2v1h-2zM33 42h2v1h-2zM37 42h2v1h-2zM34 43h4v1h-4zM35 44h2v1h-2zM35 45h2v1h-2zM35 46h2v1h-2zM43 45h2v1h-2zM43 46h2v1h-2z"/><rect class="cur" x="0" y="48" width="8" height="8"/></g></svg></div>
+        <span class="pill">c64-ready@3.4.0 · boot p50 641 ms in node</span>
+      </article>
+      <article class="card c5">
+        <p class="k">V · HOLD</p><h3>The Stop hook holds it</h3>
+        <p>The agent cannot stop until the contract says RESURRECTED, only unfixable lines remain, or a cap hits.</p>
+        <div class="caps"><div>15<small>patches</small></div><div>8<small>credits</small></div><div>600<small>seconds</small></div></div>
+        <span class="pill">hook until-title · Agent Stop</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="crypt" id="crypt" aria-labelledby="crypt-h">
+  <div class="wrap">
+    <h2 id="crypt-h" style="text-align:center">Every listing gets a headstone. One has been raised.</h2>
+    <div class="yard">
+      <div class="stone"><h3>Random Number Test</h3><span class="ep">COMPUTE!'s Gazette · June 1984</span><span class="cod">cause withheld with the recording (rights)</span><span class="note">title path raised in 2 of 2 attempts</span></div>
+      <div class="stone risen"><h3>The Last Seance</h3><span class="ep">authored 2026</span><span class="cod">?SYNTAX&nbsp;&nbsp;ERROR IN 20</span><span class="note">raised 2026-11-24 by a recorded Kiro run</span></div>
+      <div class="stone"><h3>Your own page</h3><span class="ep">assisted · in your tab</span><span class="cod">no cause of death: nothing has run</span><span class="note">OCR + checksum flags, 0 credits</span></div>
+    </div>
+    <div class="cert">
+      <div class="cert-h"><h3>Certificate of death, reversed</h3><span>filled in from the run log · run 2026-11-24 19:56:44 UTC</span></div>
+      <dl>
+        <dt>Cause of death</dt><dd><code class="bad">?SYNTAX&nbsp;&nbsp;ERROR IN 20</code><small>the run's own first error, verbatim</small></dd>
+        <dt>Treatment</dt><dd>1 patch accepted · 0 refused · 0 forced<small>line 20: <code>PRIMT™</code> → <code>PRINT"</code>, checksum 159 = printed 159</small></dd>
+        <dt>Time of revival</dt><dd>2026-11-24 19:57:05 UTC<small>the last accepted patch, from the gate's log line</small></dd>
+        <dt>Examined by</dt><dd>the checksum gate<small>Pre Tool Use hook, then apply_patch</small></dd>
+        <dt>Pronounced alive by</dt><dd>the C64 re-RUN at 19:57:08 UTC<small>title seen, post-title pass, 12/12 checksum-consistent</small></dd>
+      </dl>
+      <div class="cert-stamp" role="img" aria-label="IT LIVES, as recorded">IT LIVES<small>AS RECORDED</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="kiro" aria-labelledby="kiro-h">
+  <div class="wrap kgrid">
+    <div>
+      <p class="eyebrow">Kiro is the engine</p>
+      <h2 id="kiro-h" style="margin-top:18px">What Kiro did, file by file.</h2>
+      <p class="lede2">Specs built the parts that must be exact. Hooks guard every patch. The agent is a Kiro profile with one MCP server.</p>
+      <p class="credit">Two spec lines hit or neared their credit cap (51.26 of 50, 68.71 of 70). The remaining tasks were written claude-direct and labelled in commits and <code>docs/DX-REPORT.md</code>.</p>
+    </div>
+    <div class="tree">
+      <div><code>.kiro/specs/checksum-oracle/</code><p>7 properties, 12 tasks. Kiro built the tokenizer and checksum (tasks 1–6) and caught three spec errors against the real C64.</p></div>
+      <div><code>.kiro/specs/c64-mcp-server/</code><p>11 properties, 8 tasks. Kiro wrote the schemas, run-dir contract and tools (tasks 1–5).</p></div>
+      <div><code>.kiro/specs/resurrect-loop/</code><p>The agent loop; the profile and steering came from it (T1 done, T2–T6 open).</p></div>
+      <div><code>.kiro/agents/resurrector.json</code><p>Only <code>@c64</code>. Hooks: listing-context (Session Start), checksum-gate (Pre Tool Use), until-title (Stop).</p></div>
+      <div><code>.kiro/hooks/prop-tests-on-save.json</code><p>Saves under <code>src/basic</code> or <code>src/gate</code> run the property tests.</p></div>
+      <div><code>.kiro/steering/ (7 files)</code><p>BASIC V2, Gazette notation, the agent's rules; Kiro wrote <code>resurrector.md</code>.</p></div>
+      <div><code>.kiro/skills/petscii-notation</code><p>Control-code notation. Its load failed in the recorded run (see the log).</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band stet" id="honest" aria-labelledby="honest-h">
+  <div class="wrap stet-grid">
+    <div>
+      <h2 id="honest-h"><span class="stetmark">stet</span>What we will not claim.</h2>
+      <p class="lede2">Stet is the proofreader's mark for "let it stand". These stand, word for word from the README.</p>
+    </div>
+    <div class="limits">
+      <blockquote>The live site is recorded playback; no C64 ROM is hosted (rights), so "IT LIVES" there is captioned "as recorded".<cite>README · Honest limits 1</cite></blockquote>
+      <blockquote>On the real 1984 page the title-path result is 19/28 lines source-exact against a vision-read reference; the other lines are checksum-consistent, not proven identical.<cite>README · Honest limits 3</cite></blockquote>
+      <blockquote>Evals: N=3 per model case on one machine; cases 5 and 6 are not run.<cite>README · Honest limits 5</cite></blockquote>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="questions" aria-labelledby="q-h">
+  <div class="wrap qgrid">
+    <h2 id="q-h">Questions a judge would ask.</h2>
+    <div class="qs">
+      <details><summary>Is the C64 on this page real?</summary><p>The screens are recorded from c64-ready@3.4.0's screen memory during the run. This site serves no C64 ROM (rights not cleared), so nothing here runs on a C64 live; the stamp says "as recorded". The gate panel is live.</p></details>
+      <details><summary>Can the agent cheat its way to IT LIVES?</summary><p>No. An emptied line, an untypeable character or a rewrite is refused; a forced patch is never certified (eval cases 4 and 9). RESURRECTED needs matching checksums and a C64 re-RUN that reaches the title.</p></details>
+      <details><summary>Does it work on a real 1984 page?</summary><p>On the June 1984 Gazette's Random Number Test the agent reached TITLE-PATH RESURRECTED in 2 of 2 attempts; 19 of 28 lines are source-exact against a vision-read reference. The recording stays private until rights clear.</p></details>
+      <details><summary>Why trust a 1984 checksum?</summary><p>It sums the line number's digits and the body's codes, mod 256, spaces counting 0; ours reproduces it on 43 of 43 lines of a real June 1984 page. A match is evidence, never proof: sums collide. So the C64 must run the line too.</p></details>
+      <details><summary>What is not measured yet?</summary><p>As of 2026-11-25: eval cases 5 and 6, the held-out runs, and any outside user's listing. Everything here comes from recorded runs on one machine.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="raise" aria-labelledby="raise-h">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="raise-h">Raise one yourself.</h2>
+      <p class="lede2" style="margin-inline:auto">Press Resurrect, then Cheat. The hooks are at /kiro; your own scan goes to /scan.</p>
+      <div class="ctas">
+        <a class="btn primary" href="/">Open ready.edycu.dev</a>
+        <a class="btn" href="/kiro">See the hooks at /kiro</a>
+        <a class="btn" href="/scan">Check a page at /scan</a>
+      </div>
+    </div>
+    <a class="shot" href="/" aria-label="Open the live site">
+      <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>ready.edycu.dev</span></div>
+      <img src="/landing/img/desk.webp" width="1800" height="652" loading="lazy" decoding="async" alt="The live site after the recorded run: the galley with line 20 struck in red and re-inked in blue, every line's checksum ticked, and the C64 pane showing THE SPIRITS ANSWER, IT LIVES, READY TO RISE.">
+    </a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="fb"><img src="/landing/icon.svg" alt="" width="24" height="24">SYNTAX ERROR IN 20</p>
+    <nav aria-label="Footer">
+      <a href="https://github.com/edycutjong/ready">GitHub</a>
+      <a href="/deck/">Pitch deck</a>
+      <a href="/">Live site</a>
+      <a href="/kiro">/kiro</a>
+      <a href="https://kiroween.devpost.com/">Kiroween 2026</a>
+    </nav>
+    <p class="stampline">Kiroween 2026 · Resurrection · MIT · page built 2026-11-25 from 2b4fadd · no trackers</p>
+  </div>
+</footer>
+
+<script id="run-data" type="application/json">{"speed":3,"total":27042,"tl":[{"ms":0,"ph":0,"text":"19:56:44 start · resurrector · claude-sonnet-5.5 · kiro-cli 3.6.0"},{"ms":3319,"ph":0,"text":"hook listing-context (session start) · 12 lines handed to the agent"},{"ms":15030,"ph":1,"text":"@c64/c64_run → ?SYNTAX  ERROR IN 20 · 11/12 checksum-consistent"},{"ms":17973,"ph":2,"text":"@c64/checksum_line 20 → computed 159 · printed 159"},{"ms":20457,"ph":3,"text":"hook checksum-gate (Pre Tool Use) exit 0 → ACCEPTED: 20: checksum 159 = printed 159"},{"ms":23535,"ph":4,"text":"@c64/c64_run → RESURRECTED · 12/12 · title seen · post-title pass"},{"ms":25638,"ph":5,"text":"hook until-title (Agent Stop) exit 0 → allow · RESURRECTED"},{"ms":27042,"ph":6,"text":"end · RESURRECTED · 1 iteration · 27.1 s · 0.85 Kiro credits"}],"listing":[{"n":10,"body":"PRINT\"{CLR}{2 DOWN}\"","printed":231,"status":"verified","source":"ocr"},{"n":20,"body":"PRIMT™   ** THE LAST SEANCE **\"","printed":159,"status":"unverified","source":"ocr"},{"n":30,"body":"PRINT\"{DOWN} A TYPE-IN FROM 2026\"","printed":138,"status":"verified","source":"ocr"},{"n":40,"body":"PRINT\"{2 DOWN} KNOCK ONCE: PRESS {RVS}RETURN{OFF}\"","printed":61,"status":"verified","source":"ocr"},{"n":50,"body":"GETK$:IFK$=\"\"THEN50","printed":1,"status":"verified","source":"ocr"},{"n":60,"body":"IFK$\u003c>CHR$(13)THEN50","printed":40,"status":"verified","source":"ocr"},{"n":70,"body":"PRINT\"{CLR}{RVS} THE SPIRITS ANSWER {OFF}{DOWN}\"","printed":95,"status":"verified","source":"ocr"},{"n":80,"body":"FORI=1TO5:READN$:PRINT\" \";N$:NEXT","printed":215,"status":"verified","source":"ocr"},{"n":90,"body":"PRINT\"{DOWN} READY TO RISE.\"","printed":196,"status":"verified","source":"ocr"},{"n":100,"body":"END","printed":104,"status":"verified","source":"ocr"},{"n":110,"body":"DATA \"THE PAGE\", \"THE CHECKSUM\", \"THE MACHINE\"","printed":216,"status":"verified","source":"ocr"},{"n":120,"body":"DATA \"THE AGENT\",\"IT LIVES\"","printed":209,"status":"verified","source":"ocr"}],"expected":[10,20,30,40,50,60,70,80,90,100,110,120],"l20":{"printed":159,"ocr":"PRIMT™   ** THE LAST SEANCE **\"","agent":"PRINT\"   ** THE LAST SEANCE **\"","tm":"PRINT™   ** THE LAST SEANCE **\""}}</script>
+<script src="/landing/gate.js"></script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById("run-data").textContent);
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches || new URLSearchParams(location.search).has("still");
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const hero = $(".hero");
+  setTimeout(() => hero.classList.add("settled"), 1600);
+
+  /* ---- the hero replay: piecewise clock, the run's own timestamps ---- */
+  const tl = D.tl, total = D.total, ph1 = tl.find((x) => x.ph === 1).ms, ph4 = tl.find((x) => x.ph === 4).ms;
+  const segs = [[0, ph1, 6], [ph1, ph4, 2], [ph4, total, 1]].map(([a, b, s]) => ({ a, b, s, v: (b - a) / s }));
+  const vTotal = segs.reduce((n, s) => n + s.v, 0);
+  const runMs = (v) => { for (const s of segs) { if (v <= s.v) return s.a + v * s.s; v -= s.v; } return total; };
+  const ticker = $("#ticker"), fill = $(".track .fill"), ticks = $$(".tick"), play = $("#play");
+  const POST_AFTER = 900; // run-ms after the title screen; both screens come from one c64_run call
+  let raf = 0, t0 = 0;
+  const esc = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+  function show(ms) {
+    let i = 0; tl.forEach((x, j) => { if (ms >= x.ms) i = j; });
+    const x = tl[i], sp = x.text.indexOf(" ");
+    hero.dataset.ph = x.ph;
+    hero.classList.toggle("post", ms >= ph4 + POST_AFTER);
+    const lead = /^\d\d:/.test(x.text) ? x.text.slice(0, sp) : "+" + (x.ms / 1000).toFixed(1) + " s";
+    ticker.innerHTML = "<b>" + esc(lead) + "</b> " + esc(/^\d\d:/.test(x.text) ? x.text.slice(sp + 1) : x.text);
+    fill.style.width = (ms / total * 100).toFixed(2) + "%";
+    ticks.forEach((t, j) => t.classList.toggle("on", j <= i));
+  }
+  function frame(now) {
+    const v = now - t0, ms = runMs(v);
+    show(ms);
+    if (v < vTotal) raf = requestAnimationFrame(frame);
+    else { hero.classList.remove("playing"); delete hero.dataset.ph; hero.classList.remove("post"); show(total); delete hero.dataset.ph; play.textContent = "Replay the run"; }
+  }
+  function start() {
+    cancelAnimationFrame(raf); hero.classList.add("playing"); hero.classList.remove("post");
+    play.textContent = "Playing…"; t0 = performance.now(); raf = requestAnimationFrame(frame);
+  }
+  play.addEventListener("click", start);
+  ticks.forEach((t, j) => t.addEventListener("click", () => {
+    cancelAnimationFrame(raf); hero.classList.remove("playing"); play.textContent = "Replay the run";
+    const ms = tl[j].ms; show(ms); if (j === tl.length - 1) { delete hero.dataset.ph; hero.classList.remove("post"); }
+  }));
+  if (!still) {
+    hero.dataset.ph = "0";
+    setTimeout(() => { if (scrollY < innerHeight * .6) start(); else { delete hero.dataset.ph; } }, 1300);
+  }
+
+  /* ---- count-ups ---- */
+  const nums = $$("[data-count]");
+  const io = "IntersectionObserver" in window && !still ? new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return; io.unobserve(e.target);
+    const el = e.target, to = parseFloat(el.dataset.count), dec = +(el.dataset.dec || 0), t1 = performance.now();
+    const tick = (n) => { const k = Math.min(1, (n - t1) / 1300), f = 1 - Math.pow(1 - k, 3); el.textContent = (to * f).toFixed(dec); if (k < 1) requestAnimationFrame(tick); else el.textContent = el.dataset.count; };
+    requestAnimationFrame(tick);
+  }), { threshold: .6 }) : null;
+  if (io) nums.forEach((n) => { if (n.getBoundingClientRect().top > innerHeight) { n.textContent = (0).toFixed(+(n.dataset.dec || 0)); io.observe(n); } });
+
+  /* ---- the terminal types the run's own rows ---- */
+  const term = $("#term"), rows = $$(".tr", term);
+  if (!still && "IntersectionObserver" in window && term.getBoundingClientRect().top > innerHeight) {
+    const full = rows.map((r) => r.lastElementChild.textContent);
+    term.classList.add("typing");
+    const tio = new IntersectionObserver((es) => { if (!es[0].isIntersecting) return; tio.disconnect();
+      let r = 0, c = 0; const caret = document.createElement("i"); caret.className = "caret";
+      const step = () => {
+        if (r >= rows.length) { caret.remove(); term.classList.remove("typing"); return; }
+        const row = rows[r], span = row.lastElementChild; row.classList.add("shown");
+        c = Math.min(full[r].length, c + 4); span.textContent = full[r].slice(0, c); span.append(caret);
+        if (c >= full[r].length) { r++; c = 0; setTimeout(step, 70); } else requestAnimationFrame(step);
+      };
+      rows.forEach((row) => (row.lastElementChild.textContent = "")); step();
+    }, { threshold: .25 });
+    tio.observe(term);
+  }
+
+  /* ---- try to fool the gate: the real gate, bundled ---- */
+  const G = window.READY_GATE, inp = $("#l20"), sum = $("#sum"), why = $("#why"), verdict = $("#verdict"), vstamp = $("#vstamp");
+  const TRY = { ocr: D.l20.ocr, tm: D.l20.tm, agent: D.l20.agent, empty: "", rewrite: 'PRINT"   ** IT LIVES **"' };
+  function judge() {
+    if (!G) return;
+    const body = inp.value, v = G.applyPatch(D.listing, [{ type: "replace", lineno: 20, new_body: body }], D.expected);
+    const c = G.checkLine(20, body, D.l20.printed);
+    sum.textContent = c.computed == null ? "none" : String(c.computed);
+    verdict.dataset.v = v.verdict; vstamp.textContent = v.verdict.toUpperCase(); why.textContent = v.reason;
+    verdict.classList.remove("thump"); void verdict.offsetWidth; verdict.classList.add("thump");
+  }
+  inp.addEventListener("input", () => { $$(".chip").forEach((b) => b.setAttribute("aria-pressed", "false")); judge(); });
+  $$(".chip").forEach((b) => b.addEventListener("click", () => {
+    $$(".chip").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+    inp.value = TRY[b.dataset.try]; judge();
+  }));
+})();
+</script>
+</body>
+</html>
