@@ -1,0 +1,4 @@
+npm test on HEAD 887de9f, 2026-11-26 (P6d a2a judge r01; 2026-11-25T20:29Z, node v22.22.0)
+ Test Files  45 passed (45)
+      Tests  520 passed | 1 expected fail (521)
+   Duration  51.41s (tests 99%, import 1%)
