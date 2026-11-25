@@ -180,7 +180,7 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
 .wq{margin-top:34px;font:800 66px/1.04 var(--font-display)}
 .wstat{text-align:right}
 .wstat .big{font:800 226px/.84 var(--font-display);letter-spacing:-.03em;color:var(--after-on-paper)}
-.wstat p:not(.big){font-size:29px;line-height:1.3;margin-top:18px}
+.wstat p:not(.big){font-size:29px;line-height:1.3;margin-top:18px;text-wrap:balance}
 
 /* 4 the rite */
 .rite{position:relative;padding-top:64px}
@@ -310,6 +310,16 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
 .links span{font-size:27px;color:color-mix(in srgb,var(--ink) 84%,var(--muted))}
 .r10 .shot{margin-top:28px}
 
+/* Portrait phone: the 16:9 stage fills the width at the top; the letterbox below carries this slide's notes, legible */
+.pnotes{display:none}
+@media (max-aspect-ratio:4/5){
+  .stage{top:calc(var(--s,.2) * 540px + 14px)}
+  .pnotes{display:flex;flex-direction:column;gap:12px;position:fixed;left:18px;right:18px;top:calc(var(--s,.2) * 1080px + 30px);bottom:16px;overflow-y:auto;overscroll-behavior:contain;color:color-mix(in srgb,var(--paper) 92%,var(--muted));font:400 16px/1.55 var(--font-body)}
+  .pnotes .ph{margin:0;font:500 12px/1.3 var(--font-data);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .pnotes .ph b{color:var(--before);font-weight:500}
+  .pnotes p{margin:0;max-width:62ch}
+  .pnotes .turn{margin-top:auto;padding-top:12px;border-top:1px solid var(--rule);font:500 13px/1.4 var(--font-data);color:var(--muted)}
+}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 @media print{
   @page{size:1920px 1080px;margin:0}
@@ -319,7 +329,7 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
   .slide{display:flex!important;position:relative;width:1920px;height:1080px;break-after:page;page-break-after:always}
   .slide:last-of-type{break-after:auto;page-break-after:auto}
   .slide::after{display:none}
-  .notes,.nav{display:none!important}
+  .notes,.nav,.pnotes{display:none!important}
   .foot{position:fixed;left:120px;right:120px;bottom:38px}
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -615,13 +625,15 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
 </footer>
 </main>
 </div>
+<section class="pnotes" id="pnotes" aria-label="Notes for the current slide"><p class="ph"><b id="pn-n">1 / 10</b> · read along</p><p id="pn-t"></p><p class="turn">↻ Turn the phone sideways for the full-size slide. Tap its right side for the next slide, its left side to go back.</p></section>
 
 <script>
 (() => {
   const de = document.documentElement, stage = document.getElementById("stage");
   const slides = [...document.querySelectorAll(".slide")], count = document.getElementById("count");
   let i = 0;
-  const fit = () => stage.style.setProperty("--s", Math.min(de.clientWidth / 1920, de.clientHeight / 1080));
+  const pnN = document.getElementById("pn-n"), pnT = document.getElementById("pn-t");
+  const fit = () => { const v = Math.min(de.clientWidth / 1920, de.clientHeight / 1080); stage.style.setProperty("--s", v); de.style.setProperty("--s", v); };
   function go(n, write = true) {
     i = Math.max(0, Math.min(slides.length - 1, n));
     slides.forEach((s, j) => {
@@ -630,6 +642,7 @@ h2{font-size:80px;margin-top:22px;max-width:1560px}
       if (on) { s.classList.remove("settled"); s.addEventListener("animationend", () => s.classList.add("settled"), { once: true }); }
     });
     count.textContent = (i + 1) + " / " + slides.length;
+    pnN.textContent = (i + 1) + " / " + slides.length; pnT.textContent = slides[i].querySelector(".notes")?.textContent ?? "";
     if (write) history.replaceState(null, "", "#" + (i + 1));
   }
   const fromHash = () => { const n = parseInt(location.hash.slice(1), 10); return Number.isFinite(n) ? n - 1 : 0; };
