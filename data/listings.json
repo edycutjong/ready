@@ -2,7 +2,7 @@
  "randnum": {
   "title": "Random Number Test (Gazette, June 1984)",
   "scope": "title-path",
-  "note": "line inventory read from the page before the run (vision transcript; 11/28 confirmed by a second OCR engine) \u2014 numbers and screen predicates only; no listing text (tier C)",
+  "note": "line inventory read from the page before the run (vision transcript; 11/28 confirmed by a second OCR engine) — numbers and screen predicates only; no listing text (tier C)",
   "spec": {
    "expectedLines": [
     1,
@@ -62,7 +62,7 @@
  "line20": {
   "title": "The Last Seance (authored 2026 page)",
   "scope": "whole listing",
-  "note": "authored 2026 page \u2014 typeset by us, real OCR, line 20 typo planted (fixtures/authored/line20.bas, fixture-authored-ocr.json)",
+  "note": "authored 2026 page — typeset by us, real OCR, line 20 typo planted (fixtures/authored/line20.bas, fixture-authored-ocr.json)",
   "spec": {
    "expectedLines": [
     10,
@@ -86,6 +86,75 @@
      13
     ],
     "screenContains": "THE SPIRITS ANSWER"
+   }
+  },
+  "scopeRanges": [
+   [
+    0,
+    63999
+   ]
+  ]
+ },
+ "knock": {
+  "title": "The Ninth Knock (authored 2026 page, eval case 5)",
+  "scope": "whole listing",
+  "note": "authored 2026 page — typeset by us, real OCR; line 80 DATA value misprinted (silent failure: no ?ERROR, the post-title screen is wrong) — fixtures/authored/knock.bas",
+  "spec": {
+   "expectedLines": [
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90
+   ],
+   "titlePredicate": {
+    "screenContains": "THE NINTH KNOCK"
+   },
+   "postTitle": {
+    "keys": [
+     13
+    ],
+    "screenContains": "THE WALL SAYS: IT LIVES"
+   }
+  },
+  "scopeRanges": [
+   [
+    0,
+    63999
+   ]
+  ]
+ },
+ "ossuary": {
+  "title": "The Ossuary (authored 2026 page, eval case 6)",
+  "scope": "whole listing",
+  "note": "authored 2026 page — typeset by us, real OCR; DATA 890 misprinted (a comma printed as a full stop) so the READ loop in line 19 runs out of DATA, the kill-test pattern — fixtures/authored/ossuary.bas",
+  "spec": {
+   "expectedLines": [
+    10,
+    15,
+    19,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    885,
+    890,
+    895
+   ],
+   "titlePredicate": {
+    "screenContains": "THE OSSUARY"
+   },
+   "postTitle": {
+    "keys": [
+     13
+    ],
+    "screenContains": "BONES, SUM 115"
    }
   },
   "scopeRanges": [

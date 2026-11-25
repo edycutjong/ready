@@ -1,0 +1,72 @@
+{
+ "label": "authored 2026 page — typeset by us, real OCR, line 80 DATA value misprinted (eval case 5)",
+ "listing": "knock",
+ "source": "fixtures/authored/knock.bas",
+ "page": "fixtures/authored/knock.page.png",
+ "pageSha256": "30aede105139ef48c8aeb15e40dfd35e7f7a824691a1814fe830fec12c383136",
+ "ocr": {
+  "engine": "tesseract.js 7.0.0",
+  "psm": 6,
+  "lang": "eng",
+  "font": "Atkinson Hyperlegible Mono 500, 22 px @2x"
+ },
+ "printedLines": 9,
+ "ocrLines": 9,
+ "text": "Program 2: The Ninth Knock\n\nAn original type-in listing, written in 2026 for this project.\n\n10 PRINT\"{CLR}{2 DOWN} ** THE NINTH KNOCK **\" :rem 103\n20 PRINT\"{DOWN} A TYPE-IN FROM 2026\" :rem 137\n\n30 PRINT\"{2 DOWN} PRESS {RVS}RETURN{OFF} TO LISTEN\" :rem 217\n40 GETK$:IFK$=\"\"THEN4® :rem 255\n\n50 PRINT\"{CLR}{DOWN} THE WALL SAYS: \"; :rem 160\n\n60 FORI=1TO8:READC:PRINTCHR$(C);:NEXT :rem 136\n\n70 PRINT:END :rem 5\n\n80 DATA 73,84,32,78 :rem 174\n\n90 DATA 73,86,69,83 :rem 185\n",
+ "lines": [
+  {
+   "raw": "10 PRINT\"{CLR}{2 DOWN} ** THE NINTH KNOCK **\" :rem 103",
+   "n": 10,
+   "body": "PRINT\"{CLR}{2 DOWN} ** THE NINTH KNOCK **\" ",
+   "printed": 103
+  },
+  {
+   "raw": "20 PRINT\"{DOWN} A TYPE-IN FROM 2026\" :rem 137",
+   "n": 20,
+   "body": "PRINT\"{DOWN} A TYPE-IN FROM 2026\" ",
+   "printed": 137
+  },
+  {
+   "raw": "30 PRINT\"{2 DOWN} PRESS {RVS}RETURN{OFF} TO LISTEN\" :rem 217",
+   "n": 30,
+   "body": "PRINT\"{2 DOWN} PRESS {RVS}RETURN{OFF} TO LISTEN\" ",
+   "printed": 217
+  },
+  {
+   "raw": "40 GETK$:IFK$=\"\"THEN4® :rem 255",
+   "n": 40,
+   "body": "GETK$:IFK$=\"\"THEN4® ",
+   "printed": 255
+  },
+  {
+   "raw": "50 PRINT\"{CLR}{DOWN} THE WALL SAYS: \"; :rem 160",
+   "n": 50,
+   "body": "PRINT\"{CLR}{DOWN} THE WALL SAYS: \"; ",
+   "printed": 160
+  },
+  {
+   "raw": "60 FORI=1TO8:READC:PRINTCHR$(C);:NEXT :rem 136",
+   "n": 60,
+   "body": "FORI=1TO8:READC:PRINTCHR$(C);:NEXT ",
+   "printed": 136
+  },
+  {
+   "raw": "70 PRINT:END :rem 5",
+   "n": 70,
+   "body": "PRINT:END ",
+   "printed": 5
+  },
+  {
+   "raw": "80 DATA 73,84,32,78 :rem 174",
+   "n": 80,
+   "body": "DATA 73,84,32,78 ",
+   "printed": 174
+  },
+  {
+   "raw": "90 DATA 73,86,69,83 :rem 185",
+   "n": 90,
+   "body": "DATA 73,86,69,83 ",
+   "printed": 185
+  }
+ ]
+}

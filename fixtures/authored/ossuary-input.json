@@ -1,0 +1,121 @@
+{
+ "listingId": "ossuary",
+ "scope": "whole listing",
+ "spec": {
+  "expectedLines": [
+   10,
+   15,
+   19,
+   20,
+   30,
+   40,
+   50,
+   60,
+   70,
+   885,
+   890,
+   895
+  ],
+  "titlePredicate": {
+   "screenContains": "THE OSSUARY"
+  },
+  "postTitle": {
+   "keys": [
+    13
+   ],
+   "screenContains": "BONES, SUM 115"
+  }
+ },
+ "lines": [
+  {
+   "n": 10,
+   "body": "C=24:S=0 ",
+   "printed": 65,
+   "status": "verified",
+   "source": "ocr"
+  },
+  {
+   "n": 15,
+   "body": "PRINT\"{CLR}\" ",
+   "printed": 202,
+   "status": "verified",
+   "source": "ocr"
+  },
+  {
+   "n": 19,
+   "body": "FORI=1TOC:READA:S=S+A:NEXT ",
+   "printed": 135,
+   "status": "verified",
+   "source": "ocr"
+  },
+  {
+   "n": 20,
+   "body": "IFS<>115THENPRINT\"{DOWN} THE BONES ARE WRONG.\":END ",
+   "printed": 98,
+   "status": "verified",
+   "source": "ocr"
+  },
+  {
+   "n": 30,
+   "body": "PRINT\"{2 DOWN} ** THE OSSUARY **\" ",
+   "printed": 21,
+   "status": "verified",
+   "source": "ocr"
+  },
+  {
+   "n": 40,
+   "body": "PRINT\"{DOWN} PRESS {RVS}RETURN{OFF} TO COUNT\" ",
+   "printed": 131,
+   "status": "verified",
+   "source": "ocr"
+  },
+  {
+   "n": 50,
+   "body": "GETK$:IFK$=\"\"THEN50 ",
+   "printed": 1,
+   "status": "verified",
+   "source": "ocr"
+  },
+  {
+   "n": 60,
+   "body": "PRINT\"{CLR}{DOWN} \";C;\"BONES, SUM\";S ",
+   "printed": 254,
+   "status": "verified",
+   "source": "ocr"
+  },
+  {
+   "n": 70,
+   "body": "PRINT\"{DOWN} IT LIVES.\":END ",
+   "printed": 168,
+   "status": "verified",
+   "source": "ocr"
+  },
+  {
+   "n": 885,
+   "body": "DATA 3,1,4,1,5,9,2,6 ",
+   "printed": 146,
+   "status": "verified",
+   "source": "ocr"
+  },
+  {
+   "n": 890,
+   "body": "DATA 5,3,5.8,9,7,9,3 ",
+   "printed": 160,
+   "status": "unverified",
+   "source": "ocr"
+  },
+  {
+   "n": 895,
+   "body": "DATA 2,3,8,4,6,2,6,4 ",
+   "printed": 151,
+   "status": "verified",
+   "source": "ocr"
+  }
+ ],
+ "provisional": [],
+ "recovery": [],
+ "origin": {
+  "recovered": "fixture-ossuary-ocr.json (every inventory line read, no recovery needed)",
+  "note": "authored 2026 page — typeset by us, real OCR; DATA 890 misprinted (a comma printed as a full stop) so the READ loop in line 19 runs out of DATA, the kill-test pattern — fixtures/authored/ossuary.bas"
+ }
+}

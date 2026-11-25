@@ -1,0 +1,90 @@
+{
+ "label": "authored 2026 page — typeset by us, real OCR, DATA 890 comma printed as a full stop (eval case 6)",
+ "listing": "ossuary",
+ "source": "fixtures/authored/ossuary.bas",
+ "page": "fixtures/authored/ossuary.page.png",
+ "pageSha256": "c17ad5297f0b940a1895e23eb5983f990bdb85c5fc13ce610bb5e1604c06366c",
+ "ocr": {
+  "engine": "tesseract.js 7.0.0",
+  "psm": 6,
+  "lang": "eng",
+  "font": "Atkinson Hyperlegible Mono 500, 22 px @2x"
+ },
+ "printedLines": 12,
+ "ocrLines": 12,
+ "text": "Program 3: The Ossuary\n\nAn original type-in listing, written in 2026 for this project.\n\n10 C=24:S=0 :rem 65\n\n15 PRINT\"{CLR}\" :rem 202\n\n19 FORI=1TOC:READA:S=S+A:NEXT :rem 135\n\n20 IFS<>115THENPRINT\"{DOWN} THE BONES ARE WRONG.\":END :rem 98\n30 PRINT\"{2 DOWN} ** THE OSSUARY **\" :rem 21\n\n40 PRINT\"{DOWN} PRESS {RVS}RETURN{OFF} TO COUNT\" :rem 131\n50 GETK$:IFK$=\"\"THEN50 :rem 1\n\n60 PRINT\"{CLR}{DOWN} \";C;\"BONES, SUM\";S :rem 254\n\n70 PRINT\"{DOWN} IT LIVES.\":END :rem 168\n\n885 DATA 3,1,4,1,5,9,2,6 :rem 146\n\n890 DATA 5,3,5.8,9,7,9,3 :rem 160\n\n895 DATA 2,3,8,4,6,2,6,4 :rem 151\n",
+ "lines": [
+  {
+   "raw": "10 C=24:S=0 :rem 65",
+   "n": 10,
+   "body": "C=24:S=0 ",
+   "printed": 65
+  },
+  {
+   "raw": "15 PRINT\"{CLR}\" :rem 202",
+   "n": 15,
+   "body": "PRINT\"{CLR}\" ",
+   "printed": 202
+  },
+  {
+   "raw": "19 FORI=1TOC:READA:S=S+A:NEXT :rem 135",
+   "n": 19,
+   "body": "FORI=1TOC:READA:S=S+A:NEXT ",
+   "printed": 135
+  },
+  {
+   "raw": "20 IFS<>115THENPRINT\"{DOWN} THE BONES ARE WRONG.\":END :rem 98",
+   "n": 20,
+   "body": "IFS<>115THENPRINT\"{DOWN} THE BONES ARE WRONG.\":END ",
+   "printed": 98
+  },
+  {
+   "raw": "30 PRINT\"{2 DOWN} ** THE OSSUARY **\" :rem 21",
+   "n": 30,
+   "body": "PRINT\"{2 DOWN} ** THE OSSUARY **\" ",
+   "printed": 21
+  },
+  {
+   "raw": "40 PRINT\"{DOWN} PRESS {RVS}RETURN{OFF} TO COUNT\" :rem 131",
+   "n": 40,
+   "body": "PRINT\"{DOWN} PRESS {RVS}RETURN{OFF} TO COUNT\" ",
+   "printed": 131
+  },
+  {
+   "raw": "50 GETK$:IFK$=\"\"THEN50 :rem 1",
+   "n": 50,
+   "body": "GETK$:IFK$=\"\"THEN50 ",
+   "printed": 1
+  },
+  {
+   "raw": "60 PRINT\"{CLR}{DOWN} \";C;\"BONES, SUM\";S :rem 254",
+   "n": 60,
+   "body": "PRINT\"{CLR}{DOWN} \";C;\"BONES, SUM\";S ",
+   "printed": 254
+  },
+  {
+   "raw": "70 PRINT\"{DOWN} IT LIVES.\":END :rem 168",
+   "n": 70,
+   "body": "PRINT\"{DOWN} IT LIVES.\":END ",
+   "printed": 168
+  },
+  {
+   "raw": "885 DATA 3,1,4,1,5,9,2,6 :rem 146",
+   "n": 885,
+   "body": "DATA 3,1,4,1,5,9,2,6 ",
+   "printed": 146
+  },
+  {
+   "raw": "890 DATA 5,3,5.8,9,7,9,3 :rem 160",
+   "n": 890,
+   "body": "DATA 5,3,5.8,9,7,9,3 ",
+   "printed": 160
+  },
+  {
+   "raw": "895 DATA 2,3,8,4,6,2,6,4 :rem 151",
+   "n": 895,
+   "body": "DATA 2,3,8,4,6,2,6,4 ",
+   "printed": 151
+  }
+ ]
+}
