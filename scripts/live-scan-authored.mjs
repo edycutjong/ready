@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Live check of /scan on OUR authored line-20 page: node scripts/live-scan-authored.mjs <baseUrl> [out.json] [runs]
-// Runs in Playwright's bundled Chromium AND in the installed Google Chrome (channel "chrome", when present): the page is
-// resampled to the scan width on a canvas (imageSmoothingQuality "high"), and that resampler differs between browser builds,
-// so the OCR can read a line differently per build. Both are recorded with their versions; nothing is averaged away.
+// Runs in Playwright's bundled Chromium AND in the installed Google Chrome (channel "chrome", when present). The page is
+// resampled to the scan width on a canvas (imageSmoothingQuality "high") before OCR, and the two builds can read a line
+// differently; that resampler is the suspected cause, not isolated. Both are recorded with their versions; nothing is averaged.
 // Each run: fresh tab → "Read our authored page" → in-tab tesseract.js → checksum flags. Records the heading, every row as
 // shown (line number, ok/bad, the text in the editable field, the mark) and the engine timings, so the rows a judge sees on
 // /scan (including any misread the OCR adds on its own) are on file, not just in a video.

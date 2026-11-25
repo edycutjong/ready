@@ -48,7 +48,7 @@ Then try [`/scan`](https://ready.edycu.dev/scan): pick a page of the June 1984 G
 ## 💡 The Problem & Solution
 
 ### The Problem
-COMPUTE!'s Gazette (1984) printed programs for you to type in, and its program lines carried a checksum (`:rem NNN`). Scans of
+COMPUTE!'s Gazette (1984) printed programs for you to type in, and most of its program lines carried a checksum (`:rem NNN`). Scans of
 those pages are OCR'd with errors, and a single wrong character gives `?SYNTAX  ERROR IN 20` on a machine nobody owns
 any more. An LLM asked to "fix the listing" will happily invent a line that runs and is wrong.
 
