@@ -11,7 +11,11 @@ The same three parts the `resurrector` agent uses, packaged for one install:
 `tests/unit/power.test.ts` fails if a copy drifts from its source.
 
 **Install (Kiro CLI, from a clone of this repo):** `kiro-cli powers install ./powers/c64-resurrect`.
-The MCP server path is relative (`mcp/c64-server/server.ts`), so the Power works in a clone of this repository, where
-the server, the gate and `node_modules` are. It is not a standalone package. The server needs `RUN_DIR` (the
-recorder sets it; see `scripts/record-run.mjs`). The C64 core (`c64-ready`, npm) embeds Commodore ROMs: it is
+
+**Measured on kiro-cli 3.6.0, V3 headless (`evidence/power/activation-2026-11-26.md`):** the two skills activate on
+the keywords. The Power's MCP server does **not** start: it registers as `power-c64-resurrect-c64`, then kiro-cli logs
+`Failed to connect … Connection closed`. Its server path is relative (`mcp/c64-server/server.ts`) and does not resolve
+from where kiro-cli spawns a Power's server. The `resurrector` agent gets its six tools from the workspace config
+(`.kiro/settings/mcp.json`). So this Power currently packages the skills only; it is not a standalone package. The server
+also needs `RUN_DIR` (the recorder sets it) and the C64 core (`c64-ready`, npm), which embeds Commodore ROMs: it is
 installed from npm on your machine and never committed or served.
