@@ -116,7 +116,7 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 
 | Metric | Value | Source |
 |---|---|---|
-| Tests | 511 passing, 44 files, plus 1 expected fail (the known-limitation marker, Honest limits 7) (`npm test` on 3d0faee) | `tests/`, `evidence/tests/npm-test-2026-11-26.txt` |
+| Tests | 520 passing, 45 files, plus 1 expected fail (the known-limitation marker, Honest limits 7) (`npm test` on 887de9f) | `tests/`, `evidence/tests/npm-test-2026-11-26b.txt` |
 | Agent evals, release 2 | 9 of 9 cases run and passing; cases 5 (silent DATA fault) and 6 (`?OUT OF DATA`) are original 2026 pages | [`docs/EVALS.md`](docs/EVALS.md) |
 | Model runs | 12 of 12 `RESURRECTED` with the shipped profile (4 model cases × N=3; the E1–E4 ablation arms are not counted here and include failures). Every recording on disk (35: 20 public, 15 local tier-C) re-judges with 0 mismatches, a run counting only when its recorded and recomputed verdicts are both present and equal | `scripts/rejudge-runs.mjs`, `evidence/boot-detect/rejudge-p6c.json`; the case-3, 5 and 6 runs are in `evidence/evals/runs/`; the case-1 recordings are withheld (rights) and cannot be reproduced from a clone |
 | Gate `applyPatch` | p50 0.01 ms, p95 0.03 ms (N=2000, node) | `evidence/bench/bench-2026-11-25.json` (re-run on the current gate; the 11-24 file predates the P1d changes) |
@@ -160,7 +160,7 @@ npm run dev                   # http://localhost:5173
 ## 🧪 Testing & CI
 
 ```bash
-npm test           # 44 files, 511 tests + 1 expected fail (unit + property + real-core)
+npm test           # 45 files, 520 tests + 1 expected fail (unit + property + real-core)
 npm run typecheck
 ```
 The KERNAL-equality property (`tests/prop/kernal-equality.prop.ts`) types generated lines and the committed `tests/fixtures/crypt.bas` (100 OCR-style mutations) into

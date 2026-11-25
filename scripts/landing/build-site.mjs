@@ -82,7 +82,7 @@ const BENCH_FILE = "evidence/bench/" + readdirSync(ROOT + "evidence/bench").filt
 const bench = JSON.parse(rd(BENCH_FILE));
 const bRow = (re) => { const r = bench.rows.find((x) => re.test(x.name)); ok(r, `bench row ${re}`); return r; };
 const gateB = bRow(/^gate: applyPatch/), bootB = bRow(/^emulator boot/), ocrB = bRow(/^OCR: tesseract/), repB = bRow(/^REPLAY/);
-const TEST_NOTE = "evidence/tests/" + readdirSync(ROOT + "evidence/tests").filter((f) => /^npm-test-\d{4}-\d\d-\d\d\.txt$/.test(f)).sort().at(-1);
+const TEST_NOTE = "evidence/tests/" + readdirSync(ROOT + "evidence/tests").filter((f) => /^npm-test-\d{4}-\d\d-\d\d[a-z]?\.txt$/.test(f)).sort().at(-1);
 const testNote = rd(TEST_NOTE);
 const tests = +testNote.match(/Tests\s+(\d+) passed/)[1], testFiles = +testNote.match(/Test Files\s+(\d+) passed/)[1];
 const testsCommit = testNote.match(/on HEAD ([0-9a-f]{7})/)[1], noteDate = testNote.match(/(\d{4}-\d\d-\d\d)/)[1];

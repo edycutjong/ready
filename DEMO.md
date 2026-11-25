@@ -36,7 +36,7 @@ Live: https://ready.edycu.dev · No account, no install, no key.
 ```bash
 npm ci
 node scripts/vendor-ocr.mjs                  # self-hosted tesseract.js worker, needed for /scan
-npm test                                   # 44 files, 511 tests + 1 expected fail
+npm test                                   # 45 files, 520 tests + 1 expected fail
 node scripts/bench.mjs                     # p50/p95 → evidence/bench/bench-<date>.json (N stated per row)
 node scripts/eval-agents.mjs --deterministic   # 0 credits: cases 2, 4, 7, 8, 9, 5d, 6d
 node scripts/e0-search.mjs --input fixtures/authored/line20-input.json --out /tmp/e0.json   # experiment E0 baseline, authored row only (0 credits)
@@ -51,7 +51,7 @@ the hero run (`public/runs/`) and the case-3, 5 and 6 runs (`evidence/evals/runs
 
 | Claim | File |
 |---|---|
-| 511 tests + 1 expected fail, 44 files | `npm test` on 3d0faee (`evidence/tests/npm-test-2026-11-26.txt`) |
+| 520 tests + 1 expected fail, 45 files | `npm test` on 887de9f (`evidence/tests/npm-test-2026-11-26b.txt`) |
 | gate p50 0.01 ms (p95 0.03) · boot p50 829 ms · REPLAY p50 2295 ms · OCR p50 842 ms (N = 2000 / 10 / 10 / 5) | `evidence/bench/bench-2026-11-25.json` |
 | evals: 9 of 9 cases run and passing; 12 of 12 model runs RESURRECTED with the shipped profile (the E1–E4 ablation arms are not counted and include failures) | `evidence/evals/evals-2026-11-2{4,5}.jsonl`, `docs/EVALS.md` |
 | experiments E1–E4 (18 new runs, N=2 per arm and case; the shipped case-6 row reuses release 2's 3 runs) | `node scripts/experiments-table.mjs` → `evidence/experiments/e1-e4.json`, `docs/EXPERIMENTS.md` |
