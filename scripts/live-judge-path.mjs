@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Judge path on a DEPLOYED URL (no install, clean profile): time to a playable page, press Resurrect, check the recorded
- * run plays to its end, the certificate + stamp appear, Cheat is refused, /kiro lists real hook rows, and no ROM WASM is served.
+ * run plays to its end, the certificate + stamp appear, Cheat is refused, /kiro lists real hook rows, the page logs no console error or failed request, and no ROM WASM is served.
  *   node scripts/live-judge-path.mjs <baseUrl> [out.json]
  */
 import { writeFileSync } from "node:fs";
@@ -12,6 +12,10 @@ const ctx = await browser.newContext();
 const page = await ctx.newPage();
 const checks = [];
 const check = (name, pass, detail) => checks.push({ name, pass: Boolean(pass), detail });
+const consoleErrors = [];
+page.on("console", (m) => { if (m.type() === "error") consoleErrors.push(m.text()); });
+page.on("requestfailed", (r) => consoleErrors.push(`requestfailed ${r.url()}`));
+page.on("response", (r) => { if (r.status() >= 400) consoleErrors.push(`${r.status()} ${r.url()}`); });
 const t0 = Date.now();
 await page.goto(base + "/?still=1");
 await page.waitForFunction(() => window.__ready && window.__ready.steps > 0, null, { timeout: 60_000 });
@@ -32,6 +36,7 @@ const cheat = await page.textContent("[data-testid=cheat-out]");
 check("Cheat is refused by the gate", /REFUSED/.test(cheat), cheat);
 const [dl] = await Promise.all([page.waitForEvent("download"), page.click("[data-testid=dl-prg]")]);
 check(".PRG download works", /\.prg$/.test(dl.suggestedFilename()), dl.suggestedFilename());
+check("judge path page: 0 console errors, 0 failed or 4xx/5xx requests", consoleErrors.length === 0, consoleErrors.slice(0, 5));
 await page.goto(base + "/kiro");
 await page.waitForFunction(() => document.querySelectorAll("[data-testid=kiro-rows] tbody tr").length > 0, null, { timeout: 30_000 });
 const hook = await page.$$eval("[data-testid=kiro-rows] tbody tr", (t) => t.map((r) => r.textContent).filter((x) => /hook /.test(x)));

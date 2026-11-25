@@ -23,6 +23,9 @@ declare global { interface Window { __ready?: Record<string, unknown> } }
 
 type Booted = { core: C64Core | null; wasmSha256?: string };
 async function bootCore(): Promise<Booted> {
+  // A production build has no ROM-bearing WASM (rights not cleared; check-no-rom blocks it by hash), so it does not
+  // probe for one — no 404 in the judge's console. `vite dev` (builder route) or a build with VITE_C64_WASM=1 probes.
+  if (!import.meta.env.DEV && import.meta.env.VITE_C64_WASM !== "1") return { core: null };
   try {
     const head = await fetch("/c64.wasm", { method: "HEAD" });
     if (!head.ok || !/wasm/.test(head.headers.get("content-type") ?? "")) return { core: null };
