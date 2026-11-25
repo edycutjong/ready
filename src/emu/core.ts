@@ -46,13 +46,28 @@ export function screenCodeToChar(code: number): string {
 
 /** 40×25 screen as text, trailing spaces trimmed per row. */
 export function readScreenText(core: C64Core): string {
+  return decodeScreen(readScreenRam(core));
+}
+
+function readScreenRam(core: C64Core): Uint8Array {
+  const raw = new Uint8Array(1000);
+  for (let i = 0; i < 1000; i++) raw[i] = core.peek(SCREEN_RAM + i);
+  return raw;
+}
+
+function decodeScreen(raw: Uint8Array): string {
   const rows: string[] = [];
   for (let r = 0; r < 25; r++) {
     let row = "";
-    for (let c = 0; c < 40; c++) row += screenCodeToChar(core.peek(SCREEN_RAM + r * 40 + c));
+    for (let c = 0; c < 40; c++) row += screenCodeToChar(raw[r * 40 + c]);
     rows.push(row.trimEnd());
   }
   return rows.join("\n");
+}
+
+function sameBytes(a: Uint8Array, b: Uint8Array): boolean {
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
 }
 
 export type C64Error = { kind: string; line: number | null };
@@ -122,28 +137,62 @@ export function loadProgram(core: C64Core, lines: readonly (readonly number[])[]
   return frames;
 }
 
-export type RunResult = { screen: string; error: C64Error | null; frames: number; stoppedOn: "error" | "predicate" | "frames" };
+/** A BASIC error, not program output: the text matches AND the machine is no longer running a program. */
+export function realError(core: C64Core, screen: string): C64Error | null {
+  const err = parseError(screen);
+  return err && !programRunning(core) ? err : null;
+}
+
+/**
+ * `latched` is set only when `opts.latch` held on some frame between two checks and the title is no longer on screen at the
+ * check: the screen as it was on the first frame the latch held. Absent otherwise (recorded runs never carry it).
+ */
+export type RunResult = { screen: string; error: C64Error | null; frames: number; stoppedOn: "error" | "predicate" | "frames"; latched?: string };
 
 /**
  * Type `RUN` and step until an error appears, `until(screen)` holds, or `maxFrames` pass.
- * Checks every `checkEvery` frames.
+ * Checks every `checkEvery` frames. With `latch`, the machine is stepped one frame at a time and `latch(screenAfterRun)`
+ * is evaluated on every frame whose screen RAM changed (never while keys are pending); the first frame it holds is kept,
+ * so a title shown for fewer than `checkEvery` frames is still seen. The run still stops at a check, not on that frame.
  */
-export function runProgram(core: C64Core, opts: { maxFrames?: number; until?: (screen: string) => boolean; checkEvery?: number } = {}): RunResult {
+const CLR_HOME = 147;
+
+export function runProgram(core: C64Core, opts: { maxFrames?: number; until?: (screen: string) => boolean; checkEvery?: number; latch?: (screenAfterRun: string) => boolean } = {}): RunResult {
   const maxFrames = opts.maxFrames ?? 6000;
   const every = opts.checkEvery ?? 50;
-  core.queueKeys([...asciiToPetscii("RUN"), RETURN]);
+  const latch = opts.latch;
+  // CLR/HOME (PETSCII 147) typed in direct mode clears the screen before RUN (bugfix-boot-detect, P6b, claude-direct): on a
+  // reused core the rows below the new RUN echo still held the previous run's output, and the per-frame latch caught that
+  // stale title in the first frames after RUN (then its stale post-title text failed clause 2). Only this run's own
+  // output is ever on screen below the RUN row now; the typed listing is gone from the screen, which nothing reads.
+  core.queueKeys([CLR_HOME, ...asciiToPetscii("RUN"), RETURN]);
   let frames = 0;
   let screen = "";
+  let latched: string | undefined;
+  let prev: Uint8Array | null = null;
   while (frames < maxFrames) {
-    core.step(every);
+    if (latch) {
+      for (let i = 0; i < every; i++) {
+        core.step(1);
+        if (latched !== undefined || core.pendingKeys() > 0) continue;
+        const raw = readScreenRam(core);
+        if (prev && sameBytes(raw, prev)) continue;
+        prev = raw;
+        const text = decodeScreen(raw);
+        if (latch(afterLastRun(text))) latched = text;
+      }
+    } else core.step(every);
     frames += every;
     screen = readScreenText(core);
     if (core.pendingKeys() > 0) continue;
-    const err = parseError(screen);
+    const err = realError(core, screen);
     if (err) return { screen, error: err, frames, stoppedOn: "error" };
     if (opts.until && opts.until(afterLastRun(screen))) return { screen, error: null, frames, stoppedOn: "predicate" };
+    if (latched !== undefined) return { screen, error: null, frames, stoppedOn: "predicate", latched };
   }
-  return { screen, error: parseError(screen), frames, stoppedOn: "frames" };
+  // Budget spent while keys are still queued: RUN was never typed, so no error on screen can be this run's (the typed
+  // listing itself may hold error-shaped text — bugfix-boot-detect C3 f1, P6b claude-direct).
+  return { screen, error: core.pendingKeys() > 0 ? null : realError(core, screen), frames, stoppedOn: "frames" };
 }
 
 /** Press keys (PETSCII) while a program waits in GET, then step `frames`. */

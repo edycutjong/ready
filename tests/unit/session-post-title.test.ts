@@ -25,7 +25,9 @@ describe("post-title clause needs fresh evidence (arch review 01)", () => {
     const l = listing([[10, 'PRINT "HELLO"'], [20, 'GET A$:IF A$="" THEN 20'], [30, "END"], [40, 'PRINT "SEEDS"']]);
     const f = runListing(core, l, spec(l, "SEEDS"), 1500);
     expect(f.titleSeen).toBe(true);
-    expect(f.screens.postTitle).toContain("SEEDS"); // the old whole-screen check passed here
+    // the old whole-screen check passed here while the typed listing sat above RUN; since bugfix-boot-detect (P6b) the
+    // screen is cleared before RUN, so the listing is never on screen and the press's own output decides
+    expect(f.screens.postTitle).not.toContain("SEEDS");
     expect(f.postTitle).toBe("fail");
   });
   it("fails closed when the text was already on screen before the press", () => {
