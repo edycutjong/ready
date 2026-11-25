@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Experiment E0 (kiro-plan.md §3, a2a r01) — "does a model add anything over search?" A NON-LLM baseline on the same
+ * Experiment E0 (Kiro plan §3, a2a r01) — "does a model add anything over search?" A NON-LLM baseline on the same
  * run input the agent gets: for every line failing its printed checksum, enumerate edits from the MEASURED OCR
  * confusions (gazette-notation steering; kill test REPORT row 2) — 1 or 2 substitutions, or 1 deletion / dropped-quote
  * insertion — and line-number readings from the page inventory; keep candidates whose Gazette checksum equals the

@@ -1,5 +1,5 @@
 /**
- * Certificate heading (agents.md §4): built from the contract the code computed, named by its SCOPE, with the
+ * Certificate heading (agent contract §4): built from the contract the code computed, named by its SCOPE, with the
  * evaluation-only source-exact count and the listing's own note (e.g. "DATA not executed" on randnum's title path).
  * Example: `TITLE-PATH RESURRECTED · 28/28 checksum-consistent · 19/28 source-exact · DATA not executed`.
  */
@@ -52,7 +52,7 @@ export function lineOrigins(batches: readonly AppliedOps[]): Map<number, number>
   return cur;
 }
 
-/** Where every final line came from (spec F10, agents.md §4 "certificate"): computed from the run input and the final listing. */
+/** Where every final line came from (spec F10, agent contract §4 "certificate"): computed from the run input and the final listing. */
 export function provenance(input: { lines: readonly CanonicalLine[]; recovery?: readonly RecoveryEvent[]; origin?: { recovered?: string; note?: string } | null }, final: CanonicalListing, origins: ReadonlyMap<number, number> = new Map()): Provenance {
   const start = new Map(input.lines.map((l) => [l.n, l]));
   const perLine = new Map<number, "OCR" | "re-OCR" | "TYPED" | "patched" | "FORCED">();

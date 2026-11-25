@@ -1,4 +1,4 @@
-/** src/ocr/recover.ts — lost-line recovery by code (agents.md §4). Authored 2026 text only. */
+/** src/ocr/recover.ts — lost-line recovery by code (agent contract §4). Authored 2026 text only. */
 import { describe, expect, it } from "vitest";
 import { computeChecksum } from "../../src/basic/checksum.ts";
 import { chooseRecovered, logicalFromRows, logicalFromText, planRecovery, resolveOrphan, type Row } from "../../src/ocr/recover.ts";
@@ -26,7 +26,7 @@ describe("recovery plan + choices", () => {
     const ok = `20 B=2 :rem ${sum(20, "B=2")}`;
     expect(chooseRecovered(20, logicalFromText(`${ok}\n${ok}`)).outcome).toBe("recovered");
     expect(chooseRecovered(20, logicalFromText(`${ok}\n20 B= 2 :rem ${sum(20, "B=2")}`)).outcome).toBe("recovered"); // spaces do not make a second reading
-    // a2a arch-01: a space inside quotes IS typed, so two readings that differ only there are two lines, not one
+    // arch review 01: a space inside quotes IS typed, so two readings that differ only there are two lines, not one
     const q1 = 'PRINT"A B"', q2 = 'PRINT"AB"';
     expect(sum(20, q1)).toBe(sum(20, q2));
     expect(chooseRecovered(20, logicalFromText(`20 ${q1} :rem ${sum(20, q1)}\n20 ${q2} :rem ${sum(20, q2)}`)).outcome).toBe("ambiguous");

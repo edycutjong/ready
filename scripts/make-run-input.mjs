@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Build a run's $RUN_DIR/input.json from a recovered listing (after lost-line recovery by CODE, agents.md §4) and the
+ * Build a run's $RUN_DIR/input.json from a recovered listing (after lost-line recovery by CODE, agent contract §4) and the
  * listing's spec in data/listings.json. Every line's starting status is computed by the same gate code
  * (`checkLine`): verified / digit-misread / unverified. Lines restored by recovery (re-OCR, TYPED) start provisional.
  *   node scripts/make-run-input.mjs --listing randnum --recovered <recovered.json> --out <input.json>

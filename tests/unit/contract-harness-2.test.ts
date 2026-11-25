@@ -1,5 +1,5 @@
 /**
- * Contract harness part 2 (agents.md §4, build Day 2, 0 credits): the bypasses, through the real MCP tools on the
+ * Contract harness part 2 (agent contract §4, build Day 2, 0 credits): the bypasses, through the real MCP tools on the
  * real headless core, on the authored 2026 line-20 page (real OCR output, fixtures/authored/).
  *  - an edit outside the gate (listing.json rewritten on disk) + c64_reload → still not RESURRECTED
  *  - an unlisted c64_press key → refused, nothing typed, contract unchanged

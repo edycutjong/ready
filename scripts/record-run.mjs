@@ -10,7 +10,7 @@
  *
  * --input: the run's $RUN_DIR/input.json (listingId, scope, spec, canonical lines after recovery, provisional) that
  * the c64 MCP server types in at start; copied into RUN_DIR and stored whole in the `start` event (replay fidelity,
- * agents.md §6: REPLAY re-executes the patches on this exact OCR input, never on the judge's own OCR).
+ * agent contract §6: REPLAY re-executes the patches on this exact OCR input, never on the judge's own OCR).
  *
  * Measured on kiro-cli 3.5.0 (spike K2, evidence/spikes/): in `--v3 --no-interactive` an Agent Stop hook's
  * {decision:"block"} forces ONE more turn per prompt and does not fire again. So the recorder runs cycles: after
@@ -89,7 +89,7 @@ while (true) {
 emit({ k: "credits", metered, delta: null, total: metered ? state.credits : null, lowerBound: Boolean(capReason && capReason !== "credits") });
 await finalJudgeIfStale();
 const final = finalResult();
-// evaluation-only source check (agents.md §4): the reference is read only now, after the run, never by the agent
+// evaluation-only source check (agent contract §4): the reference is read only now, after the run, never by the agent
 if (args.reference && existsSync(join(runDir, "listing.json"))) {
   const l = JSON.parse(readFileSync(join(runDir, "listing.json"), "utf8"));
   const sc = sourceCheck(l.lines, parseReference(readFileSync(resolve(args.reference), "utf8")), l.expectedLines, args["reference-origin"] ?? "unstated");
@@ -147,7 +147,7 @@ function onEvent(ev, calls) {
   if (ev.k === "finished") emit({ k: "kiro", op: "finished", status: ev.status, stopReason: ev.stopReason, finalText: ev.finalText.slice(0, 4000) });
 }
 
-/** $RUN_DIR/credits.json — the runner is the only writer; until-title.mjs reads it for the caps (agents.md §3). */
+/** $RUN_DIR/credits.json — the runner is the only writer; until-title.mjs reads it for the caps (agent contract §3). */
 function writeCredits() {
   writeFileSync(join(runDir, "credits.json"), JSON.stringify({ metered, credits: metered ? state.credits : null, iterations: state.iterations, startedAt: state.startedAt }) + "\n");
 }

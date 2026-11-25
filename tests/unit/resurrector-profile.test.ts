@@ -1,4 +1,4 @@
-/** Pins the agent's least privilege (agents.md §2, tightened in P1b QA r1): MCP c64 only; no read, shell, write or web. */
+/** Pins the agent's least privilege (agent contract §2, tightened in P1b QA r1): MCP c64 only; no read, shell, write or web. */
 import { readFileSync } from "node:fs";
 import { expect, it } from "vitest";
 it("resurrector profile: tools @c64 only, fs_read/shell/fs_write/web denied, inline hooks on the three triggers, no CLI 2.x fields", () => {

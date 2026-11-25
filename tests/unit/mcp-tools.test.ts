@@ -401,7 +401,7 @@ describe("list() and serial calls (R1.2, R1.6)", () => {
     await Promise.all([a, b]);
     expect(order).toEqual(["reload", "read"]);
     // start-up wrote 1 event, the reload's own `emu load` is the 2nd: the read starts only after it. The reload peeks
-    // too (loadProgram's running-program check, a2a arch-01), so: every peek is ordered, and the read's whole 40×25
+    // too (loadProgram's running-program check, arch review 01), so: every peek is ordered, and the read's whole 40×25
     // screen (1000 peeks) comes after the 2nd event exists.
     expect(spy.seen.at(-1)).toBe(2);
     const firstAfter = spy.seen.indexOf(2);
@@ -554,7 +554,7 @@ describe("c64_run (R6)", () => {
     expect((await call(t, "c64_run", { frames: 20001 })).isError).toBe(true);
   });
 
-  it("records the requested budget as maxFrames, so REPLAY re-runs the same experiment (a2a arch-01)", async () => {
+  it("records the requested budget as maxFrames, so REPLAY re-runs the same experiment (arch review 01)", async () => {
     const { replayBudget } = await import("../../src/replay/replay.ts");
     const never = { ...spec, titlePredicate: { screenContains: "NEVER ON SCREEN" } };
     const { t, r } = await setup({ spec: never });

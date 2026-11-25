@@ -1,4 +1,4 @@
-/** Per-run caps and the local daily credit ledger (recorder only, never deployed). Decisions: kiro-plan.md §4. */
+/** Per-run caps and the local daily credit ledger (recorder only, never deployed). Decisions: Kiro plan §4. */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 

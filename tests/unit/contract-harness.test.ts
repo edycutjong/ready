@@ -1,5 +1,5 @@
 /**
- * Contract harness, part 1 (agents.md §4, build Day 1): the gate + contract on the REAL headless core, 0 credits.
+ * Contract harness, part 1 (agent contract §4, build Day 1): the gate + contract on the REAL headless core, 0 credits.
  * Fixture: tests/fixtures/crypt.bas — an authored 2026 listing (not magazine text); :rem sums hand-checked on
  * lines 30, 70, 80. Title predicate "THE CRYPT KEEPER"; post-title key RETURN → "THE DOOR CREAKS OPEN.".
  */
@@ -99,7 +99,7 @@ describe("contract harness part 1 (real core)", () => {
     expect(v.verdict).toBe("refused");
   });
 
-  it("a spurious extra OCR line breaks clause 6 whenever it is typed, and the verdict path never types it (a2a arch-01)", () => {
+  it("a spurious extra OCR line breaks clause 6 whenever it is typed, and the verdict path never types it (arch review 01)", () => {
     const withOrphan = [...clone(truth), { n: 75, body: "REM", printed: null, status: "unverified" as const, source: "ocr" as const }];
     loadCanonical(core, withOrphan); // no inventory: the orphan reaches memory
     const r = evaluate({ listing: truth, expectedLines: expected, titleSeen: true, postTitle: "pass", residentBytes: dumpBasic(core), provisional: new Set() });

@@ -10,7 +10,7 @@ lineno 30 …"}` on the first stop.
 
 **Verdict: PARTIAL.** In `kiro-cli chat --v3 --no-interactive` (3.5.0) a Stop hook's block forces exactly one more
 turn per prompt; it does not re-fire at the end of that turn. A Stop hook alone cannot hold a 15-iteration loop open.
-**Pre-decided fallback (agents.md §3), applied in its lighter form:** the Stop hook stays in the profile (it does fire,
+**Pre-decided fallback (agent contract §3), applied in its lighter form:** the Stop hook stays in the profile (it does fire,
 and it forces the first continue), and `scripts/record-run.mjs` runs cycles: when a kiro-cli process ends, it runs the
 same stop predicate and, if stopping is not allowed and no cap is hit, resumes **the same session** (`--resume-id`)
 with the predicate's reason. Proven on the probe: 2 cycles, same session id, refusal + forced turn + resumed turn,

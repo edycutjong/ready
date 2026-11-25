@@ -1,5 +1,5 @@
 /**
- * Source check (agents.md §4, a2a r04 — EVALUATION ONLY). The contract proves checksum-consistency, completeness and
+ * Source check (agent contract §4, review r04 — EVALUATION ONLY). The contract proves checksum-consistency, completeness and
  * that the C64 holds the gated text; it cannot prove that text equals the magazine (mod-256 collisions; the checksum
  * ignores spaces). This compares the final canonical listing with a reference transcript that is never given to the
  * agent, the MCP server, the hooks or the gate. Exact = same body, spaces and notation included.

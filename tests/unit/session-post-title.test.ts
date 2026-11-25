@@ -1,5 +1,5 @@
 /**
- * a2a arch-01 (P1d): clause 2 must come from the post-title press itself. The typed listing stays on screen above
+ * arch review 01 (P1d): clause 2 must come from the post-title press itself. The typed listing stays on screen above
  * RUN and usually contains the PRINT of the post-title text, so a whole-screen search passed without the press
  * producing anything. Real C64 core (c64-ready), no mocks.
  */
@@ -19,7 +19,7 @@ const spec = (l: CanonicalListing, post: string): ListingSpec => ({
 let core: C64Core;
 beforeAll(async () => { core = await bootNodeCore(); });
 
-describe("post-title clause needs fresh evidence (a2a arch-01)", () => {
+describe("post-title clause needs fresh evidence (arch review 01)", () => {
   it("fails when the text is only in the typed listing above RUN, never printed by the press", () => {
     // line 40 is never reached: RETURN ends the program at line 30, yet "SEEDS" sits on screen inside the typed listing
     const l = listing([[10, 'PRINT "HELLO"'], [20, 'GET A$:IF A$="" THEN 20'], [30, "END"], [40, 'PRINT "SEEDS"']]);
@@ -40,7 +40,7 @@ describe("post-title clause needs fresh evidence (a2a arch-01)", () => {
   });
 });
 
-describe("orphan lines are never typed (a2a arch-01)", () => {
+describe("orphan lines are never typed (arch review 01)", () => {
   it("a typeable line outside the inventory stays out of memory, so clause 6 can pass and the orphan is counted", async () => {
     const { judge } = await import("../../src/emu/session.ts");
     const inScope = listing([[10, 'PRINT "HELLO"'], [20, 'GET A$:IF A$="" THEN 20'], [30, 'PRINT "SEEDS"']]);
@@ -57,7 +57,7 @@ describe("orphan lines are never typed (a2a arch-01)", () => {
   });
 });
 
-describe("a load never types into a running program (a2a arch-01)", () => {
+describe("a load never types into a running program (arch review 01)", () => {
   it("after a run leaves a GET loop waiting, the next load stores exactly the new program", async () => {
     const { loadProgram, runProgram, dumpBasic, programRunning } = await import("../../src/emu/core.ts");
     const { typedLine } = await import("../../src/basic/notation.ts");

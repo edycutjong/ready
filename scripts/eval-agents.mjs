@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Evals (agents.md §7). Deterministic cases cost 0 credits and run on every task; model cases run N times through the
+ * Evals (agent contract §7). Deterministic cases cost 0 credits and run on every task; model cases run N times through the
  * real recorder (record-run.mjs → kiro-cli → the shipped resurrector profile). One jsonl row per case/run, appended to
  * evidence/evals/evals-<date>.jsonl with the git commit the agent + gate ran on.
  *   node scripts/eval-agents.mjs --deterministic

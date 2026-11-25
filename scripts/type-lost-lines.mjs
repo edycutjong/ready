@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Spike-G0 recovery step 2 (agents.md §4 "Lost lines"): for every line still lost after re-OCR, show its page crop
+ * Spike-G0 recovery step 2 (agent contract §4 "Lost lines"): for every line still lost after re-OCR, show its page crop
  * and let a PERSON type it. No model is involved. Output lines carry source "typed" and are counted on the
  * certificate ("N lines typed from the page by a person").
  *   node scripts/type-lost-lines.mjs <recovery.json>   (recovery.json: { lost: [{ n, printed, crop }] , out })

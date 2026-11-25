@@ -90,7 +90,7 @@ describe("replay", () => {
   });
 });
 
-describe("renumber identity and forced lines on the certificate (a2a arch-01)", () => {
+describe("renumber identity and forced lines on the certificate (arch review 01)", () => {
   it("a renumbered line is a patched line, never 'added during the run', and stays on the errata", async () => {
     const { lineOrigins } = await import("../../src/replay/certificate.ts");
     const input = { lines: [
@@ -122,7 +122,7 @@ describe("renumber identity and forced lines on the certificate (a2a arch-01)", 
     expect(p.counts).toMatchObject({ patched: 0, forced: 1 }); // never counted as "changed by a gate-accepted patch"
     expect(p.perLine.get(10)).toBe("FORCED");
   });
-  it("an accepted change with no readable printed checksum is not said to match the page (a2a arch-01 QA)", () => {
+  it("an accepted change with no readable printed checksum is not said to match the page (arch review 01 QA)", () => {
     const input = [{ n: 10, body: "PRINT 1", printed: null, status: "unverified" as const, source: "ocr" as const }];
     const final = [{ n: 10, body: "PRINT 2", printed: null, status: "unverified" as const, source: "ocr" as const }];
     const t = errataText("t", "h", errata(input, final));

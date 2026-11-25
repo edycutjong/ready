@@ -9,13 +9,13 @@ describe("/api/page proxy", () => {
     const r = await GET(req("id=evil-item&n=1"));
     expect(r.status).toBe(400);
   });
-  it("refuses prototype keys: the allow-list is own keys only (a2a arch-01)", async () => {
+  it("refuses prototype keys: the allow-list is own keys only (arch review 01)", async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
     for (const id of ["constructor", "__proto__", "toString", "hasOwnProperty"]) expect((await GET(req(`id=${id}&n=0`))).status).toBe(400);
     expect(fetchMock).not.toHaveBeenCalled();
   });
-  it("checks every redirect hop before fetching it, and refuses an oversized body before or while reading (a2a arch-01)", async () => {
+  it("checks every redirect hop before fetching it, and refuses an oversized body before or while reading (arch review 01)", async () => {
     const img = () => new Response(new Uint8Array([0xff, 0xd8]), { status: 200, headers: { "content-type": "image/jpeg" } });
     const redirect = (to: string) => new Response(null, { status: 302, headers: { location: to } });
     const off = vi.fn(async () => redirect("https://evil.example/x.jpg"));

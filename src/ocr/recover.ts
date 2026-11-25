@@ -1,5 +1,5 @@
 /**
- * OCR → logical listing lines → lost-line recovery BY CODE (agents.md §4 "Lost lines"; spike G0, now in the product).
+ * OCR → logical listing lines → lost-line recovery BY CODE (agent contract §4 "Lost lines"; spike G0, now in the product).
  * Pure and isomorphic: the OCR engine (tesseract.js, browser worker or Node) hands in physical rows with their boxes;
  * this module joins rows into logical lines, diffs them against the page's line inventory (`expectedLines`), plans
  * the re-OCR of every gap and orphan, chooses between re-OCR candidates by the printed checksum, and returns the

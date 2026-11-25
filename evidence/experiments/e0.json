@@ -1,5 +1,5 @@
 {
- "experiment": "E0 \u2014 checksum-constrained confusable search + emulator re-run, no model (kiro-plan.md \u00a73; comparison arm only, never shipped)",
+ "experiment": "E0 \u2014 checksum-constrained confusable search + emulator re-run, no model (Kiro plan \u00a73; comparison arm only, never shipped)",
  "date": "2026-11-25",
  "script": "scripts/e0-search.mjs",
  "note": "randnum = the June 1984 Gazette title path (28 lines), input = spike G0's recovered tesseract.js @1600 px listing, the same input spike G gives the agent; counts only (tier C: no Gazette text in the repo)",

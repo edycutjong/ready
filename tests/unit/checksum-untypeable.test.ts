@@ -1,5 +1,5 @@
 /**
- * a2a arch-01 (P1d): a character no C64 key types can never make a line "verified". U+2122 is one UTF-16 unit,
+ * arch review 01 (P1d): a character no C64 key types can never make a line "verified". U+2122 is one UTF-16 unit,
  * 8482 mod 256 = 34 = the code of a quote, so the raw sum matched while the loader dropped the glyph.
  */
 import { describe, expect, it } from "vitest";
@@ -13,7 +13,7 @@ const good = 'PRINT "HI"';
 const glyph = 'PRINT ™HI"'; // the OCR read the opening quote as ™
 const printed = computeChecksum(10, good);
 
-describe("untypeable characters are never checksum-consistent (a2a arch-01)", () => {
+describe("untypeable characters are never checksum-consistent (arch review 01)", () => {
   it("the raw sum collides (the hole) but checkLine refuses the line and names the glyph", () => {
     expect(computeChecksum(10, glyph)).toBe(printed);
     expect(checkLine(10, glyph, printed)).toMatchObject({ status: "mismatch", untypeable: "™" });

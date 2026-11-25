@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * OCR a listing page and recover lost lines BY CODE (agents.md §4; spike G0's pipeline, now in the repo):
+ * OCR a listing page and recover lost lines BY CODE (agent contract §4; spike G0's pipeline, now in the repo):
  *   1. tesseract.js (psm 6) on the page → physical rows with boxes → logical lines (src/ocr/recover.ts)
  *   2. diff against the page's line inventory (data/listings.json expectedLines + scopeRanges)
  *   3. every absent line: re-OCR its gap crop at 2× (psm 6 and 4); exactly one distinct checksum-valid reading →
