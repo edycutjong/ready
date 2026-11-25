@@ -3,7 +3,7 @@
  * into the machine, RUN it, detect the title, press the post-title key (the server's press, never the agent's),
  * dump BASIC memory, and hand the facts to `contract.ts`. Isomorphic (no node: imports).
  */
-import { type C64Core, type RunResult, afterLastRun, dumpBasic, loadProgram, parseError, pressKeys, readScreenText, runProgram } from "./core.ts";
+import { type C64Core, type RunResult, afterLastRun, dumpBasic, loadProgram, pressKeys, readScreenText, realError, runProgram } from "./core.ts";
 import { controlOutsideQuotes, parseBody, typedLine } from "../basic/notation.ts";
 import type { CanonicalListing } from "../basic/types.ts";
 import { evaluate, type ContractResult } from "../gate/contract.ts";
@@ -73,18 +73,18 @@ export function runListing(core: C64Core, listing: CanonicalListing, spec: Listi
     last = s;
     return stable >= 3;
   };
-  let run = runProgram(core, { maxFrames, until: (s) => title(s) || waiting(s) });
+  let run = runProgram(core, { maxFrames, until: (s) => title(s) || waiting(s), latch: title });
   let titleScreen: string | undefined;
-  let titleSeen = !run.error && title(run.screen);
+  let titleSeen = !run.error && (title(run.screen) || run.latched !== undefined);
   if (!titleSeen && !run.error && spec.titlePredicate.keys) {
     titleScreen = pressKeys(core, spec.titlePredicate.keys, 300);
     titleSeen = title(titleScreen);
-    const err = parseError(titleScreen); // an error raised after the key press is still the run's diagnosis
+    const err = realError(core, titleScreen); // an error raised after the key press is still the run's diagnosis
     if (err) run = { ...run, screen: titleScreen, error: err, stoppedOn: "error" };
   }
   let postTitle: MachineFacts["postTitle"] = "not-reached";
   let postScreen: string | undefined;
-  if (titleSeen && titleScreen === undefined) titleScreen = readScreenText(core); // capture the title BEFORE the post-title press (P1b smoke test)
+  if (titleSeen && titleScreen === undefined) titleScreen = run.latched ?? readScreenText(core); // capture the title BEFORE the post-title press (P1b smoke test)
   if (titleSeen) {
     // Clause 2 is evidence the press PRODUCED the text (a2a arch-01): read only the program's own output (below the last
     // RUN, never the typed listing above it, which usually contains the very PRINT), and fail closed when the text was
