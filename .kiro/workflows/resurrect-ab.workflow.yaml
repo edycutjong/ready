@@ -1,4 +1,4 @@
-# One experiment's two arms in parallel, then an aggregator (kiro-plan item 16; docs/EXPERIMENTS.md).
+# One experiment's two arms in parallel, then an aggregator (Kiro plan item 16; docs/EXPERIMENTS.md).
 # Each arm step only RUNS the eval harness: real kiro-cli sessions through scripts/record-run.mjs, where code computes
 # every verdict (the C64 run + the checksum gate + the contract). No step judges a run itself; the aggregator copies
 # the harness's own "result" fields into a table.

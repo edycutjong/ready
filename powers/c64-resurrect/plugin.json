@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "c64-resurrect",
   "version": "0.1.0",
-  "description": "Repair OCR misreads in scanned 1984 Commodore 64 type-in listings on a real C64 emulator, through a checksum gate that refuses any edit the magazine's own printed :rem checksum does not allow. Packages the petscii-notation skill and the BASIC V2 error guide; it also declares the repo's c64 MCP server (6 tools), which failed to connect when installed as a Power in kiro-cli 3.5.0 (see README.md), so the server runs from the repo's own .kiro/settings/mcp.json.",
+  "description": "Repair OCR misreads in scanned 1984 Commodore 64 type-in listings on a real C64 emulator, through a checksum gate that refuses any edit the magazine's own printed :rem checksum does not allow. Packages the petscii-notation skill and the BASIC V2 error guide; it also declares the repo's c64 MCP server (6 tools), which failed to connect when installed as a Power in kiro-cli 3.6.0 (see README.md), so the server runs from the repo's own .kiro/settings/mcp.json.",
   "author": { "name": "ready (Kiroween 2026)", "url": "https://ready.edycu.dev" },
   "keywords": ["c64", "commodore 64", "commodore", "compute's gazette", "type-in listing", "petscii", "basic v2", "syntax error", "resurrect", "retro listing"]
 }

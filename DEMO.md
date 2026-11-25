@@ -42,8 +42,8 @@ the hero run (`public/runs/`) and the case-3, 5 and 6 runs (`evidence/evals/runs
 |---|---|
 | 511 tests + 1 expected fail, 44 files | `npm test` on 3d0faee (`evidence/tests/npm-test-2026-11-26.txt`) |
 | gate p50 0.01 ms (p95 0.03) · boot p50 829 ms · REPLAY p50 2295 ms · OCR p50 842 ms (N = 2000 / 10 / 10 / 5) | `evidence/bench/bench-2026-11-25.json` |
-| evals: 9 of 9 cases run and passing; 12 of 12 model runs RESURRECTED | `evidence/evals/evals-2026-11-2{4,5}.jsonl`, `docs/EVALS.md` |
-| experiments E1–E4 (N=2 per arm) | `node scripts/experiments-table.mjs` → `evidence/experiments/e1-e4.json`, `docs/EXPERIMENTS.md` |
+| evals: 9 of 9 cases run and passing; 12 of 12 model runs RESURRECTED with the shipped profile (the E1–E4 ablation arms are not counted and include failures) | `evidence/evals/evals-2026-11-2{4,5}.jsonl`, `docs/EVALS.md` |
+| experiments E1–E4 (18 new runs, N=2 per arm and case; the shipped case-6 row reuses release 2's 3 runs) | `node scripts/experiments-table.mjs` → `evidence/experiments/e1-e4.json`, `docs/EXPERIMENTS.md` |
 | every recording re-judges, 0 mismatches (35 on the builder's machine; a clone has only the 20 public ones, and `experiments-table.mjs` needs the local tier-C files) | `node scripts/rejudge-runs.mjs` |
 | E0: search fixed 3 of 18 failing lines on the real page; the agent 18 of 18 (N=2) | `evidence/experiments/e0.json`, `docs/EXPERIMENTS.md` |
 | Live judge path, interaction and first-viewport checks | `evidence/e2e/` |

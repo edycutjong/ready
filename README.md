@@ -133,6 +133,7 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 5. Evals and experiments use small N on one machine (N=3 per eval case, N=2–3 per experiment arm): directions, not rates.
 6. The MEGA65 Open ROMs spike failed (5/5 syntax probes unimplemented), so the C64 core is the one `c64-ready` ships.
 7. Title detection reads the program's output below the last screen row that is exactly `RUN`; a program that itself prints a row `RUN` before its title is judged as never reaching the title (measured, probe b in `.kiro/specs/bugfix-boot-detect/bugfix.md`; kept as the 1 expected-fail test).
+8. Clause 2 proves the post-title text was not on screen before the press (the title frame and the screen right before the press are both read), not that the key caused it: a program that prints that text by itself on a timer during the 300 frames after the press would still pass. Proving causation needs a second run without the press; the emulator has no snapshot, so it is not done.
 
 ## 🚀 Getting Started
 

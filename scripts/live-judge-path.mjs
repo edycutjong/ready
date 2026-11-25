@@ -43,7 +43,7 @@ check(".PRG download works", /\.prg$/.test(dl.suggestedFilename()), dl.suggested
   const runFile = (await (await fetch(base + "/runs/index.json")).json()).runs.find((r) => r.id === "line20-hero").file;
   const start = (await (await fetch(base + runFile)).text()).trim().split("\n").map((l) => JSON.parse(l)).find((e) => e.k === "start");
   const want = [...start.input.spec.expectedLines].sort((a, b) => a - b);
-  check(".PRG loads at $0801 and holds exactly the page-inventory lines", prg[0] === 0x01 && prg[1] === 0x08 && JSON.stringify(nums) === JSON.stringify(want), { lines: nums.length, want: want.length });
+  check(".PRG loads at $0801 and lists the run's page-inventory lines in order (the hero has no orphan; tests/unit/replay.test.ts proves the orphan filter)", prg[0] === 0x01 && prg[1] === 0x08 && JSON.stringify(nums) === JSON.stringify(want), { lines: nums.length, want: want.length });
 }
 check("judge path page: 0 console errors, 0 failed or 4xx/5xx requests", consoleErrors.length === 0, consoleErrors.slice(0, 5));
 // arch review 02: the URL a judge actually opens (no ?still=1) autoplays: says it is playing, reaches the certificate, logs nothing

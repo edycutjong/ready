@@ -35,4 +35,4 @@ const summary = { runs: judged.length, ok: judged.filter((x) => x.ok).length, mi
 if (out) { mkdirSync(dirname(out), { recursive: true }); writeFileSync(out, JSON.stringify({ t: new Date().toISOString(), commit: execFileSync("git", ["rev-parse", "--short", "HEAD"]).toString().trim(), codeClean: execFileSync("git", ["status", "--porcelain", "src", "mcp"]).toString().trim() === "", summary, rows: rows.map(({ _path, _mm, ...x }) => (x.tier === "public" ? { ...x, mismatchText: _mm } : x)) }, null, 1) + "\n"); }
 console.log(JSON.stringify(summary));
 for (const x of judged.filter((y) => !y.ok)) console.log("NOT OK (console only)", x._path, JSON.stringify(x._mm).slice(0, 600));
-process.exit(summary.runs > 0 && summary.ok === summary.runs ? 0 : 1);
+process.exit(summary.runs > 0 && summary.ok === summary.runs && summary.skipped === 0 ? 0 : 1); // a recording that cannot be replayed fails too
