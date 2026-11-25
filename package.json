@@ -2,7 +2,7 @@
   "name": "ready",
   "version": "0.1.0",
   "private": true,
-  "description": "SYNTAX ERROR IN 20 \u2014 resurrects 1984 type-in listings: OCR, checksum oracle, a real C64, and a Kiro agent behind a deterministic gate.",
+  "description": "SYNTAX ERROR IN 20 — resurrects 1984 type-in listings: OCR, checksum oracle, a real C64, and a Kiro agent behind a deterministic gate.",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -30,6 +30,7 @@
   "devDependencies": {
     "@preact/preset-vite": "2.10.6",
     "@types/node": "26.6.6",
+    "esbuild": "0.28.2",
     "fast-check": "4.11.0",
     "playwright": "^1.59.1",
     "tsx": "4.23.15",

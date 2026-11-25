@@ -91,9 +91,12 @@ ok(c1, "EVALS.md case 1 tally");
 const README = rd("README.md");
 for (const s of ["12 of 12 `RESURRECTED`", "19/28", "search fixed 3 of 18 failing lines", "made all 18 checksum-consistent",
   "51.26 of 50", "68.71 of 70", `${tests} passing, ${testFiles} files`])
-  ok(README.includes(s), `README carries "${s}"`);
+  ok(README.includes(s), `README carries "${s}"`); // consistency with the README (which cites its evidence), not evidence
+// the test count and the commit it was measured on are read from the test-run note, and README + DEMO must name both
+ok(README.includes(`\`npm test\` on ${testsCommit}`), `README names the test commit ${testsCommit}`);
+ok(rd("DEMO.md").includes(`${tests} tests + 1 expected fail, ${testFiles} files`) && rd("DEMO.md").includes(`\`npm test\` on ${testsCommit}`), `DEMO names ${tests} tests on ${testsCommit}`);
 ok(/28\/28/.test(rd("evidence/spikes/spike-G0.md")), "spike-G0 carries 28/28");
-const steering = execFileSync("ls", [ROOT + ".kiro/steering"]).toString().trim().split("\n").length;
+const steering = readdirSync(ROOT + ".kiro/steering").filter((f) => f.endsWith(".md")).length;
 ok(steering === 7, "7 steering files");
 const trust = start.runner.trustTools; ok(trust.length === 6, "agent trusts 6 @c64 tools");
 for (const t of trust) ok(rd("scripts/landing/landing.html").includes(`<code>${t.replace("@c64/", "")}</code>`), `landing lists tool ${t}`);
@@ -140,7 +143,7 @@ const listing = lines.map((l) => {
 const T = []; // terminal rows, from the run's own events
 for (const e of sorted) {
   const at = hms(e.t);
-  if (e.k === "hook") T.push([at, "hook", `${e.hook} (${e.via}) exit ${e.exit}${e.decision ? " · " + e.decision : ""}`, e.hook === "checksum-gate" ? "acc" : ""]);
+  if (e.k === "hook") T.push([at, "hook", `${e.hook} (${e.via}) exit ${e.exit}${e.decision ? " · " + e.decision : ""}`, e.hook === "checksum-gate" ? (e.exit === 0 ? "acc" : "bad") : ""]);
   else if (e.k === "kiro" && e.op === "tool_call") T.push([at, "call", `${e.title}${e.input && e.input.lineno ? " line " + e.input.lineno : ""}`, ""]);
   else if (e.k === "kiro" && e.op === "tool_result" && e.title === "Load skill: petscii-notation") T.push([at, "result", "skill load failed (the permission request failed before it was answered)", "dim"]);
   else if (e.k === "kiro" && e.op === "tool_result" && e.title === "@c64/c64_run") { const f = firstLine(e.text), er = e.text.split("\n")[1]; T.push([at, "c64", `${f} · ${er}`, f.startsWith("RESURRECTED") ? "acc" : "bad"]); }
@@ -154,15 +157,26 @@ const terminal = T.map(([t, k, x, c]) => `<p class="tr ${c}"><time>${t}</time><b
 
 // replay timeline for the hero (ms offsets from the run start, the run's own clock)
 const at = (pred) => off(sorted.find(pred).t);
+// every phase row below is read from the recorded events (arch review 02), and the build fails if an event disagrees
+const hStart = ev.find((e) => e.k === "hook" && e.via === "kiro-session-start");
+const hGate = ev.find((e) => e.k === "hook" && e.hook === "checksum-gate");
+const hStop = ev.find((e) => e.k === "hook" && e.via === "kiro-stop");
+const ckRes = ev.find((e) => e.k === "kiro" && e.title === "@c64/checksum_line" && e.op === "tool_result");
+const ck = ckRes.text.match(/^line (\d+): computed (\d+)\nprinted (\d+)/);
+ok(ck && ck[1] === "20" && ck[3] === V.printed20, "checksum_line result is line 20 with the printed sum");
+const r0 = runs[0].text.split("\n"), r1 = runs[1].text.split("\n");
+ok(/^error: \?SYNTAX {2}ERROR IN 20$/.test(r0[1]), "first c64_run: ?SYNTAX  ERROR IN 20");
+ok(r1[0].startsWith("RESURRECTED") && r1.includes("titleSeen: true") && r1.includes("postTitle: pass"), "second c64_run: RESURRECTED, title seen, post-title pass");
+ok(String(end.result).toUpperCase() === "RESURRECTED", "end: RESURRECTED");
 const TL = [
   { ms: 0, ph: 0, text: `${V.run_start} start · ${V.agent} · ${V.model} · ${V.kiro_cli}` },
-  { ms: at((e) => e.k === "hook" && e.via === "kiro-session-start"), ph: 0, text: "hook listing-context (session start) · 12 lines handed to the agent" },
-  { ms: off(runs[0].t), ph: 1, text: `@c64/c64_run → ?SYNTAX  ERROR IN 20 · ${V.ok_before}/${V.n_lines} checksum-consistent` },
-  { ms: at((e) => e.k === "kiro" && e.title === "@c64/checksum_line" && e.op === "tool_result"), ph: 2, text: `@c64/checksum_line 20 → computed ${V.printed20} · printed ${V.printed20}` },
-  { ms: off(gateRow.t), ph: 3, text: `hook checksum-gate (Pre Tool Use) exit 0 → ${vAgent.reason}` },
+  { ms: at((e) => e.k === "hook" && e.via === "kiro-session-start"), ph: 0, text: `hook listing-context (session start) · ${hStart.lines} lines handed to the agent` },
+  { ms: off(runs[0].t), ph: 1, text: `@c64/c64_run → ${r0[1].replace(/^error: /, "")} · ${V.ok_before}/${V.n_lines} checksum-consistent` },
+  { ms: at((e) => e.k === "kiro" && e.title === "@c64/checksum_line" && e.op === "tool_result"), ph: 2, text: `@c64/checksum_line ${ck[1]} → computed ${ck[2]} · printed ${ck[3]}` },
+  { ms: off(gateRow.t), ph: 3, text: `hook checksum-gate (Pre Tool Use) exit ${hGate.exit} → ${vAgent.reason}` },
   { ms: off(runs[1].t), ph: 4, text: `@c64/c64_run → RESURRECTED · ${V.ok_after}/${V.n_lines} · title seen · post-title pass` },
-  { ms: at((e) => e.k === "hook" && e.via === "kiro-stop"), ph: 5, text: "hook until-title (Agent Stop) exit 0 → allow · RESURRECTED" },
-  { ms: off(end.t), ph: 6, text: `end · RESURRECTED · ${V.iterations} iteration · ${V.wall_s} s wall · ${V.credits} Kiro credits` },
+  { ms: at((e) => e.k === "hook" && e.via === "kiro-stop"), ph: 5, text: `hook until-title (Agent Stop) exit ${hStop.exit} → ${hStop.decision} · ${String(hStop.result).toUpperCase()}` },
+  { ms: off(end.t), ph: 6, text: `end · ${String(end.result).toUpperCase()} · ${V.iterations} iteration · ${V.wall_s} s wall · ${V.credits} Kiro credits` },
 ];
 const rundata = JSON.stringify({ speed: 3, total: off(end.t), tl: TL, listing: lines, expected, l20: { printed: L20.printed, ocr: L20.body, agent: patch.new_body, tm: TM_ONLY } }).replace(/</g, "\\u003c");
 const ticks = TL.map((x, i) => `<button class="tick" type="button" data-i="${i}" style="--x:${(x.ms / off(end.t) * 100).toFixed(2)}%" aria-label="+${(x.ms / 1000).toFixed(1)} s: ${esc(x.text)}"><span>+${(x.ms / 1000).toFixed(1)} s</span></button>`).join("");
