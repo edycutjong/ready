@@ -1,0 +1,4 @@
+npm test on HEAD 549e8d6, 2026-11-26 (P6b; 2026-11-25T18:14Z, node v22.22.0)
+ Test Files  44 passed (44)
+      Tests  508 passed | 1 expected fail (509)
+   Duration  47.56s (tests 99%, import 1%)

@@ -94,6 +94,10 @@ Kiro is the engine, not the decoration. What each `.kiro/` artefact did, and who
 | Hook `prop-tests-on-save` (File Save) | After a save under `src/basic` or `src/gate`, runs `tests/prop` | `evidence/hooks/file-save.jsonl` (4 firings, 1 clean pass) |
 | `.kiro/steering/` (7 files; 6 claude-direct, 4 of them in place before Kiro's first session, `product.md` and `commodore-basic-v2.md` committed after its first two; `resurrector.md` written by Kiro in the resurrect-loop session) | Commodore BASIC V2, Gazette notation, the resurrector's rules | `.kiro/steering/` |
 | `.kiro/skills/petscii-notation` | PETSCII control-code notation the agent must use | `.kiro/skills/` |
+| `.kiro/specs/bugfix-boot-detect/` (bugfix spec) | Current / Expected / Unchanged for two boot-detection bugs we measured (a title shown under 50 frames was missed; printed error-shaped text counted as an error); Kiro wrote the spec and the fix (tasks 1, 4, 5). Our re-judge of every recording then caught a stale-screen bug in that fix, fixed claude-direct | `evidence/boot-detect/` (33/33 recordings re-judge, 0 mismatches) |
+| `.kiro/workflows/resurrect-ab.workflow.yaml` | Two experiment arms in parallel + an aggregator; ran once headless through `run_workflow` | `evidence/experiments/workflow-run-2026-11-26.md` |
+| `powers/c64-resurrect/` (Power) | Packages the skills and the MCP server; the skills load by keyword, the MCP server does not connect from a Power yet (relative path) | `evidence/power/activation-2026-11-26.md` |
+| Experiments E1–E4 | 18 real runs: whole-listing context is what makes the loop converge (E3); Kiro's Agent Stop hook did the looping (E2) | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) |
 
 Credits are metered by `kiro-cli` and logged per session in [`docs/DX-REPORT.md`](docs/DX-REPORT.md), including two spec lines
 that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tasks we then completed were written `claude-direct` and labelled as such (c64-mcp-server task 8 is still open).
@@ -102,9 +106,9 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 
 | Metric | Value | Source |
 |---|---|---|
-| Tests | 492 passing, 41 files (`npm test` on 2b4fadd) | `tests/`, `evidence/tests/npm-test-2026-11-25.txt` |
-| Agent evals, release 1 | 7 of 9 cases run and passing; cases 5 and 6 **not run** | [`docs/EVALS.md`](docs/EVALS.md) |
-| Model runs | 6 of 6 `RESURRECTED` (2 cases × N=3); all 6 re-judge with 0 mismatches (recorded in the freeze note; the case-1 runs are not reproducible from a clone). The live site replays 1 recording; the 3 case-3 runs are in `evidence/evals/runs/`, the 3 case-1 recordings are withheld (rights) | `evidence/evals/` |
+| Tests | 508 passing, 44 files, plus 1 expected fail (the known-limitation marker) (`npm test` on 549e8d6) | `tests/`, `evidence/tests/npm-test-2026-11-26.txt` |
+| Agent evals, release 2 | 9 of 9 cases run and passing; cases 5 (silent DATA fault) and 6 (`?OUT OF DATA`) are original 2026 pages | [`docs/EVALS.md`](docs/EVALS.md) |
+| Model runs | 12 of 12 `RESURRECTED` (4 model cases × N=3). Every recording on disk (18 public, 15 local tier-C) re-judges with 0 mismatches | `scripts/rejudge-runs.mjs`, `evidence/boot-detect/rejudge-after.json`; the case-3, 5 and 6 runs are in `evidence/evals/runs/`; the case-1 recordings are withheld (rights) and cannot be reproduced from a clone |
 | Gate `applyPatch` | p50 0.01 ms, p95 0.03 ms (N=2000, node) | `evidence/bench/bench-2026-11-25.json` (re-run on the current gate; the 11-24 file predates the P1d changes) |
 | Emulator boot | p50 829 ms (N=10, node) | same file |
 | REPLAY of the recorded run in node (incl. a core boot) | p50 2295 ms, range 2.3–2.8 s (N=10) | same file |
@@ -126,7 +130,7 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 2. The 1984 magazine page and its OCR output are not in this repository (rights); that run cannot be reproduced from a clone.
 3. On the real 1984 page the title-path result is `19/28` lines source-exact against a vision-read reference; the other lines are checksum-consistent, not proven identical.
 4. `/scan` flags checksum mismatches but withholds the repair on live pages.
-5. Evals: N=3 per model case on one machine; cases 5 and 6 are not run.
+5. Evals and experiments use small N on one machine (N=3 per eval case, N=2 per experiment arm): directions, not rates.
 6. The MEGA65 Open ROMs spike failed (5/5 syntax probes unimplemented), so the C64 core is the one `c64-ready` ships.
 
 ## 🚀 Getting Started
@@ -144,7 +148,7 @@ npm run dev                   # http://localhost:5173
 ## 🧪 Testing & CI
 
 ```bash
-npm test           # 41 files, 492 tests (unit + property + real-core)
+npm test           # 44 files, 508 tests + 1 expected fail (unit + property + real-core)
 npm run typecheck
 ```
 The KERNAL-equality property (`tests/prop/kernal-equality.prop.ts`) types generated lines and the committed `tests/fixtures/crypt.bas` (100 OCR-style mutations) into

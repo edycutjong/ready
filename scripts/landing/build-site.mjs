@@ -82,13 +82,14 @@ const BENCH_FILE = "evidence/bench/" + readdirSync(ROOT + "evidence/bench").filt
 const bench = JSON.parse(rd(BENCH_FILE));
 const bRow = (re) => { const r = bench.rows.find((x) => re.test(x.name)); ok(r, `bench row ${re}`); return r; };
 const gateB = bRow(/^gate: applyPatch/), bootB = bRow(/^emulator boot/), ocrB = bRow(/^OCR: tesseract/), repB = bRow(/^REPLAY/);
-const testNote = rd("evidence/tests/npm-test-2026-11-25.txt");
+const TEST_NOTE = "evidence/tests/" + readdirSync(ROOT + "evidence/tests").filter((f) => /^npm-test-\d{4}-\d\d-\d\d\.txt$/.test(f)).sort().at(-1);
+const testNote = rd(TEST_NOTE);
 const tests = +testNote.match(/Tests\s+(\d+) passed/)[1], testFiles = +testNote.match(/Test Files\s+(\d+) passed/)[1];
 const testsCommit = testNote.match(/on HEAD ([0-9a-f]{7})/)[1], noteDate = testNote.match(/(\d{4}-\d\d-\d\d)/)[1];
 const evals = rd("docs/EVALS.md"), c1 = evals.match(/^\| 1 \| Random Number Test[^\n]*\*\*(\d+)\/(\d+)\*\* TITLE-PATH RESURRECTED/m);
 ok(c1, "EVALS.md case 1 tally");
 const README = rd("README.md");
-for (const s of ["6 of 6 `RESURRECTED`", "19/28", "search fixed 3 of 18 failing lines", "made all 18 checksum-consistent",
+for (const s of ["12 of 12 `RESURRECTED`", "19/28", "search fixed 3 of 18 failing lines", "made all 18 checksum-consistent",
   "51.26 of 50", "68.71 of 70", `${tests} passing, ${testFiles} files`])
   ok(README.includes(s), `README carries "${s}"`);
 ok(/28\/28/.test(rd("evidence/spikes/spike-G0.md")), "spike-G0 carries 28/28");
@@ -102,7 +103,7 @@ ok(/^PASS .*TITLE-PATH RESURRECTED in both attempts/.test(spikeG.verdict) && spi
 ok(/Measured 43\/43 on a real June 1984 page/.test(rd("src/basic/checksum.ts")), "checksum.ts carries the 43/43 measurement");
 // reproducible version stamp: a hash of every input the pages are built from (not git HEAD, which moves on each commit)
 const siteVer = createHash("sha256").update(["scripts/landing/landing.html", "scripts/landing/deck.html", "scripts/landing/build-site.mjs", RUN_FILE, BENCH_FILE,
-  "evidence/tests/npm-test-2026-11-25.txt", "README.md", "docs/EVALS.md"].filter((f) => existsSync(ROOT + f)).map((f) => rd(f)).join("\u0000")).digest("hex").slice(0, 7);
+  TEST_NOTE, "README.md", "docs/EVALS.md"].filter((f) => existsSync(ROOT + f)).map((f) => rd(f)).join("\u0000")).digest("hex").slice(0, 7);
 const head = siteVer;
 
 const V = {
