@@ -29,6 +29,7 @@ h2 { font-size: 1.5rem; }
 .err { font-family: var(--font-data); color: var(--before); letter-spacing: 0.18em; text-shadow: 0 0 14px color-mix(in srgb, var(--before) 55%, transparent); margin: 0 0 0.3rem; font-weight: 700; }
 .mode { max-width: 78ch; margin: 0.8rem 0 0.4rem; color: var(--ink); }
 .mode b { font-family: var(--font-data); letter-spacing: 0.06em; color: var(--ink); border: 1px solid var(--muted); padding: 0.05rem 0.4rem; border-radius: 2px; }
+.mode-stack { display: grid; } .mode-stack > span { grid-area: 1 / 1; } .mode-stack > .off { visibility: hidden; }
 .note { color: var(--muted); font-size: 0.85rem; max-width: 80ch; }
 .nav { display: flex; gap: 1.2rem; font-family: var(--font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.95rem; margin-bottom: 1.4rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.7rem; }
 .nav a { color: var(--muted); text-decoration: none; padding: 0.25rem 0; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }

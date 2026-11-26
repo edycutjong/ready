@@ -64,6 +64,7 @@ function mark(l: CanonicalLine): { sym: string; cls: string } {
 
 function Desk() {
   const [runs, setRuns] = useState<RunRef[]>([]);
+  const [runsSettled, setRunsSettled] = useState(false); // the static stones appear with the run stones, not before them (no layout shift)
   const [sel, setSel] = useState<string | null>(new URLSearchParams(location.search).get("run"));
   const [events, setEvents] = useState<RunEvent[] | null>(null);
   const [booted, setBooted] = useState<Booted | undefined>(undefined);
@@ -100,7 +101,7 @@ function Desk() {
     return () => clearTimeout(t);
   }, [result]);
 
-  useEffect(() => { fetch("/runs/index.json").then((r) => r.json()).then((j) => { setRuns(j.runs ?? []); if (!sel && j.runs?.[0]) setSel(j.runs[0].id); }).catch(() => setErr("no recorded runs index")); }, []);
+  useEffect(() => { fetch("/runs/index.json").then((r) => r.json()).then((j) => { setRuns(j.runs ?? []); if (!sel && j.runs?.[0]) setSel(j.runs[0].id); }).catch(() => setErr("no recorded runs index")).finally(() => setRunsSettled(true)); }, []);
   useEffect(() => { setMode("booting"); bootCore().then(setBooted); }, []);
   useEffect(() => {
     const ref = runs.find((r) => r.id === sel);
@@ -181,17 +182,18 @@ function Desk() {
       <Nav here="raise" />
       <header>
         <p class="kicker">Kiroween 2026 · Resurrection</p>
-        {errText && <p class="err" data-testid="first-error">{errText}</p>}
+        <p class="err" data-testid="first-error">{errText || "\u00a0"}</p>{/* line reserved before the run loads: no layout shift */}
         <h1>Syntax error in 20</h1>
         <p class="note" style="font-size:1.05rem;color:var(--ink);max-width:62ch">A type-in listing in the 1984 magazine format refuses to run. Those magazines printed a checksum on most program lines; a Kiro agent proposes the fix, a deterministic gate decides, and an emulated Commodore 64 runs the result. Below: three recorded real runs on pages we typeset in that format, played back. Then try to beat the gate yourself.</p>
+        {/* every mode sentence shares one grid cell, so the line has its final height from the first paint (no layout shift) */}
         <p class="mode" data-testid="mode">
-          {mode === "replay" && <><b>REPLAY</b> — a recorded real Kiro run, re-executed now: the gate re-judges every patch and this browser's C64 re-runs the program (replaying recorded OCR input).</>}
-          {mode === "recorded" && <><b>RECORDED PLAYBACK</b> — captured screens of a recorded real Kiro run. The gate re-judges every patch in your browser; nothing runs on a C64 here (Commodore ROM rights not cleared).</>}
-          {mode === "booting" && "booting the C64…"}
-          {mode === "loading" && "loading…"}
-          {mode === "error" && `error: ${err}`}
+          <span class="mode-stack">
+            <span class={mode === "replay" ? undefined : "off"} aria-hidden={mode !== "replay"}><b>REPLAY</b> — a recorded real Kiro run, re-executed now: the gate re-judges every patch and this browser's C64 re-runs the program (replaying recorded OCR input).</span>
+            <span class={mode === "recorded" ? undefined : "off"} aria-hidden={mode !== "recorded"}><b>RECORDED PLAYBACK</b> — captured screens of a recorded real Kiro run. The gate re-judges every patch in your browser; nothing runs on a C64 here (Commodore ROM rights not cleared).</span>
+            <span class={mode === "replay" || mode === "recorded" ? "off" : undefined} aria-hidden={mode === "replay" || mode === "recorded"}>{mode === "booting" ? "booting the C64…" : mode === "error" ? `error: ${err}` : "loading…"}</span>
+          </span>
         </p>
-        {runLabel && <p class="note" data-testid="run-label">{runLabel}</p>}
+        <p class="note" data-testid="run-label">{runLabel || "\u00a0"}</p>
       </header>
       <ul class="stones" aria-label="recorded listings">
         {runs.map((r) => (
@@ -203,8 +205,10 @@ function Desk() {
             </button>
           </li>
         ))}
+        {runsSettled && <>
         <li><a class="stone" style="display:block;text-decoration:none" href="/scan"><span class="t">Random Number Test</span><span class="m">COMPUTE!'s Gazette, June 1984 · the real scan</span><span class="cod">checksum-flagged live · fix by hand · agent repair withheld (rights)</span></a></li>
         <li><a class="stone" style="display:block;text-decoration:none" href="/scan"><span class="t">Your own page</span><span class="m">ASSISTED: OCR + the magazine's checksum, in your tab, 0 credits</span></a></li>
+        </>}
       </ul>
       {result && <p><button data-testid="resurrect" disabled={playing} onClick={() => play()}>{playing ? "raising…" : step >= result.steps.length ? "Resurrect again (replay the run)" : "Resurrect"}</button> <span class="note">replays the recorded run step by step; or drag the slider.</span></p>}
       {result && view && (
