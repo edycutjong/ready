@@ -10,8 +10,9 @@
  *   ... --arm shipped|haiku|stop-hook|error-line|no-basic-steering   (docs/EXPERIMENTS.md E1–E4; default shipped)
  */
 import { spawnSync } from "node:child_process";
-import { appendFileSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { applyPatch } from "../src/gate/checksum-gate.ts";
 import { cheat } from "../src/replay/replay.ts";
 import { runListing, untypeableLines } from "../src/emu/session.ts";
@@ -89,8 +90,7 @@ if (a.model) {
   if (armCfg.workspace) {
     // steering with `inclusion: always` loads into every session, so removing it from the profile's resources is not
     // enough: the arm runs in a copy of the tree (node_modules linked) with the file deleted and the resource dropped.
-    workspace = "/tmp/ready-e4-workspace";
-    rmSync(workspace, { recursive: true, force: true });
+    workspace = mkdtempSync(join(tmpdir(), "ready-e4-workspace-")); // private 0700 dir with a random name, not a fixed /tmp path
     const rs = spawnSync("rsync", ["-a", "--exclude", "node_modules", "--exclude", ".git", "--exclude", "runs", "--exclude", "work", "--exclude", "evidence", "./", `${workspace}/`]);
     if (rs.status !== 0) throw new Error("rsync failed");
     symlinkSync(resolve("node_modules"), `${workspace}/node_modules`);

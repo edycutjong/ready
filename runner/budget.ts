@@ -1,5 +1,5 @@
 /** Per-run caps and the local daily credit ledger (recorder only, never deployed). Caps: README, Kiro integration, hook `until-title`. */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 export const CAPS = { iterations: 15, credits: 8, wallMs: 600_000 } as const;
@@ -20,7 +20,8 @@ export type Ledger = { runs: number; credits: number; totalCredits: number };
 export function addToLedger(dir: string, credits: number | null, day = new Date().toISOString().slice(0, 10)): Ledger {
   mkdirSync(dir, { recursive: true });
   const f = join(dir, `${day}.json`);
-  const cur: Ledger = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")) : { runs: 0, credits: 0, totalCredits: 0 };
+  let cur: Ledger = { runs: 0, credits: 0, totalCredits: 0 };
+  try { cur = JSON.parse(readFileSync(f, "utf8")); } catch (e) { if ((e as NodeJS.ErrnoException).code !== "ENOENT") throw e; } // read, never check-then-read (CodeQL js/file-system-race)
   const next: Ledger = { runs: cur.runs + 1, credits: cur.credits + (credits ?? 0), totalCredits: cur.totalCredits + (credits ?? 0) };
   writeFileSync(f, JSON.stringify(next, null, 1) + "\n");
   return next;

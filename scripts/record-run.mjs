@@ -183,12 +183,15 @@ function stopCheck() {
  */
 async function finalJudgeIfStale() {
   const lf = join(runDir, "listing.json"), ef = join(runDir, "events.jsonl");
-  if (!existsSync(lf) || !existsSync(ef) || !runInput) return;
-  const ev = readFileSync(ef, "utf8").split("\n").filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return {}; } });
+  // read, never check-then-read (CodeQL js/file-system-race): a missing file means nothing to judge
+  const readIf = (f) => { try { return readFileSync(f, "utf8"); } catch (e) { if (e.code === "ENOENT") return null; throw e; } };
+  const evText = readIf(ef), listingText = readIf(lf);
+  if (evText === null || listingText === null || !runInput) return;
+  const ev = evText.split("\n").filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return {}; } });
   const lastRun = ev.findLastIndex((e) => e.k === "emu" && e.op === "run");
   const lastChange = ev.findLastIndex((e) => e.k === "gate" && (e.verdict === "accepted" || e.verdict === "forced"));
   if (lastChange <= lastRun) return;
-  const l = JSON.parse(readFileSync(lf, "utf8"));
+  const l = JSON.parse(listingText);
   const lines = l.lines.map(({ n, body, printed, status, source }) => ({ n, body, printed, status, source }));
   const facts = runListing(await bootNodeCore(), lines, runInput.spec, 3000); // the c64_run default; recorded as maxFrames
   const prov = new Set(facts.postTitle === "pass" ? [] : l.lines.filter((x) => x.provisional).map((x) => x.n));
