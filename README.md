@@ -18,6 +18,12 @@
   ![Kiro](https://img.shields.io/badge/Kiro-agent_+_MCP_+_hooks-8b5cf6?style=flat)
   ![Vercel](https://img.shields.io/badge/Vercel-black?style=flat&logo=vercel)
   [![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
+  [![CI](https://github.com/edycutjong/ready/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/ci.yml)
+  [![E2E](https://github.com/edycutjong/ready/actions/workflows/e2e.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/e2e.yml)
+  [![CodeQL](https://github.com/edycutjong/ready/actions/workflows/codeql.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/codeql.yml)
+  [![Security](https://github.com/edycutjong/ready/actions/workflows/security.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/security.yml)
+  [![Quality](https://github.com/edycutjong/ready/actions/workflows/quality.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/quality.yml)
+  [![Deploy](https://github.com/edycutjong/ready/actions/workflows/deploy.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/deploy.yml)
 
 </div>
 
