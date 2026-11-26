@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/edycutjong/ready/security/advisories/new
+    about: Please report vulnerabilities privately, not in a public issue (see SECURITY.md).
+  - name: Try the live demo first
+    url: https://ready.edycu.dev
+    about: The recorded runs, the gate and /scan run in your browser.

@@ -63,4 +63,4 @@ flowchart TB
 | Landing + deck | `scripts/landing/build-site.mjs` → `public/landing/`, `public/deck/` | figures read from the run log and evidence files; `gate.js` is the real gate, bundled |
 | Page proxy | `api/page.js` | plain JS (the build tool cannot read TypeScript 7); host allow-list (`data/pages.json`), https-only redirects checked per hop, streamed byte cap |
 | Evidence | `scripts/rejudge-runs.mjs`, `scripts/live-judge-path.mjs`, `scripts/eval-agents.mjs`, `scripts/bench.mjs`, `evidence/` | every recording re-judged by current code, the judge path on the live URL, agent evals, benchmarks; `evidence/freeze/` pins the sha256 of the files the agent and the gate run on |
-| Hosting + CI | `vercel.json`, `.github/workflows/` | Vercel only; see the workflow files |
+| Hosting + CI | `vercel.json`, `.github/workflows/` | Vercel only; six workflows: `CI`, `E2E`, `CodeQL`, `Security`, `Quality`, `Deploy` (deploys `main` after `CI` passes, refuses the ROM WASM by sha256, smoke-tests the live routes) |

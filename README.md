@@ -167,6 +167,17 @@ npm run typecheck
 The KERNAL-equality property (`tests/prop/kernal-equality.prop.ts`) types generated lines and the committed `tests/fixtures/crypt.bas` (100 OCR-style mutations) into
 the real C64 core and compares its memory with our tokenizer.
 
+Six GitHub Actions pipelines run on every push to `main` (the first five also on pull requests):
+
+| Workflow | What it proves |
+|---|---|
+| [`CI`](.github/workflows/ci.yml) | every script parses, every JSON file parses, actionlint; `tsc --noEmit`; the test suite on Node 22 and 24; the production build carries no ROM WASM |
+| [`E2E`](.github/workflows/e2e.yml) | per commit, `scripts/verify_offline.mjs` replays the recorded run to RESURRECTED on a real in-browser C64 and OCRs a page on `/scan` with every non-local request blocked; after each deploy, `scripts/live-judge-path.mjs` walks the judge path on ready.edycu.dev |
+| [`CodeQL`](.github/workflows/codeql.yml) | static analysis of the TypeScript/JavaScript and of the workflow files (`security-extended`) |
+| [`Security`](.github/workflows/security.yml) | gitleaks over the whole git history, `npm audit`, dependency review on pull requests |
+| [`Quality`](.github/workflows/quality.yml) | Lighthouse CI on `/`, `/kiro`, `/scan`, `/landing/`, `/deck/` (performance ≥ 90, accessibility, best practices and SEO ≥ 95, CLS ≤ 0.1; [`lighthouserc.json`](lighthouserc.json)) and a gzip budget for the judge-path bundle ([`scripts/bundle-budget.mjs`](scripts/bundle-budget.mjs)) |
+| [`Deploy`](.github/workflows/deploy.yml) | after `CI` passes on `main`: Vercel build, the ROM WASM refused by sha256, production deploy, a smoke test of the live routes |
+
 ## 📁 Project Structure
 
 ```
