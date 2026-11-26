@@ -60,7 +60,8 @@ jobs:
         with:
           name: lighthouse-reports
           path: .lighthouseci/
-          if-no-files-found: ignore
+          include-hidden-files: true   # .lighthouseci is a dot-directory, which upload-artifact skips by default
+          if-no-files-found: warn
 
   bundle:
     name: bundle budget
