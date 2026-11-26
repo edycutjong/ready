@@ -186,7 +186,7 @@ The demo video was cut on 2026-11-25 at evals release 1, so its receipts read 49
 
 ## 📄 License
 
-MIT for the code in this repository; see [`LICENSE`](LICENSE) for what it does not cover (emulator ROMs, magazine text).
+MIT for the code in this repository ([`LICENSE`](LICENSE)); [`NOTICE`](NOTICE) states what it does not cover (the Commodore ROMs embedded in the `c64-ready` emulator WASM, magazine pages and listing text).
 
 ## 🙏 Acknowledgments
 

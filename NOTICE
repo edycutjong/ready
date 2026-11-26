@@ -1,0 +1,5 @@
+NOTICE
+
+This licence covers the code in this repository only. The emulator dependency `c64-ready` (MIT, installed from
+npm, never committed here) ships a WASM build that embeds Commodore's KERNAL/BASIC ROM images, which are not
+covered by this licence. Magazine pages and listing text belong to their rights holders and are not in this repo.
