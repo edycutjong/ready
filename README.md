@@ -1,8 +1,8 @@
 <div align="center">
-  <img src="docs/icon.svg" alt="SYNTAX ERROR IN 20 icon" width="144">
+  <img src="docs/icon-animated.svg" alt="SYNTAX ERROR IN 20 icon" width="144">
   <h1>SYNTAX ERROR IN 20 🕯️</h1>
   <p><em>Resurrect 1984 magazine type-in programs: the magazine's own printed checksums flag the lines OCR misread, a Kiro agent proposes fixes, a deterministic gate accepts a fix only when it is typeable on a C64 and matches its printed checksum (allowing for OCR misreads of the printed digits), and a real C64 core then runs the program and decides the verdict.</em></p>
-  <img src="docs/readme-hero.png" alt="SYNTAX ERROR IN 20: a singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen" width="100%">
+  <img src="docs/readme-hero-animated.svg" alt="SYNTAX ERROR IN 20: a singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen" width="100%">
 
   <br/>
 
