@@ -1,14 +1,40 @@
-name: codeql
+name: CodeQL
+# Static analysis of the TypeScript/JavaScript sources and of these workflow files.
 on:
-  push: { branches: [main] }
+  push:
+    branches: [main]
   pull_request:
-  schedule: [{ cron: "17 3 * * 1" }]
-permissions: { contents: read, security-events: write }
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   analyze:
+    name: analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, actions]
     steps:
-      - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
-        with: { languages: javascript-typescript }
-      - uses: github/codeql-action/analyze@v3
+      - uses: actions/checkout@v7
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-extended
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:${{ matrix.language }}

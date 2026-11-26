@@ -1,31 +1,64 @@
-name: deploy
-# Production deploy of main to the Vercel project `ready` (ready.edycu.dev) after the tests pass.
+name: Deploy
+# Production deploy of main to the Vercel project `ready` (https://ready.edycu.dev) after CI passes on that commit,
+# then a smoke test of the live routes. The ROM-bearing emulator WASM is refused by content hash before anything ships.
 on:
   workflow_run:
-    workflows: [ci]
+    workflows: [CI]
     types: [completed]
     branches: [main]
   workflow_dispatch:
-permissions: { contents: read }
-concurrency: { group: deploy-production, cancel-in-progress: false }
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
   deploy:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    name: deploy to production
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: https://ready.edycu.dev
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
-        with: { ref: "${{ github.event.workflow_run.head_sha || github.sha }}" }
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm }
-      - run: npm i -g vercel@latest
-      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install the Vercel CLI (pinned major)
+        run: npm install --global vercel@53
+      - run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - run: vercel build --prod --token="$VERCEL_TOKEN"
       - name: The ROM-bearing emulator WASM never ships until the rights line is signed
+        run: node scripts/check-no-rom.mjs .vercel/output
+      - run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+      - name: Smoke test the live routes
         run: |
-          # c64-ready@3.4.0 public/c64.wasm (embeds Commodore ROMs) — blocked by content hash, whatever its filename
-          if find .vercel/output -type f -exec shasum -a 256 {} + | grep -q dad5965346c0e72e82611e87ecf8358d11fa068977958ef854f74289f87e0f46; then
-            echo "ROM-bearing c64.wasm found in the deploy output"; exit 1; fi
-      - run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+          base=https://ready.edycu.dev
+          fail=0
+          check() {
+            local path=$1 want=$2 got
+            got=$(curl -s -o /dev/null -w '%{http_code}' --retry 3 --retry-delay 5 "$base$path")
+            echo "$path -> $got (want $want)"
+            echo "| \`$path\` | $got | $want |" >> "$GITHUB_STEP_SUMMARY"
+            if [ "$got" != "$want" ]; then fail=1; fi
+          }
+          { echo "### Live smoke test"; echo; echo "| route | status | expected |"; echo "|---|---:|---:|"; } >> "$GITHUB_STEP_SUMMARY"
+          for p in / /scan /kiro /landing/ /deck/ /runs/index.json /robots.txt; do check "$p" 200; done
+          check /c64.wasm 404
+          exit "$fail"

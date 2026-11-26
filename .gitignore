@@ -24,3 +24,5 @@ graphify-out/
 # vendored by scripts/vendor-ocr.mjs at build time
 public/ocr/worker.min.js
 public/ocr/core/
+# Lighthouse CI output
+.lighthouseci/

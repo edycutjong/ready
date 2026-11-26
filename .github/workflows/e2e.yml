@@ -1,0 +1,95 @@
+name: E2E
+# Two browser runs (Playwright, Chromium):
+#  - offline: on every push/PR, scripts/verify_offline.mjs serves this commit with vite dev, blocks every non-local
+#    request, plays the recorded run to RESURRECTED on a real in-browser C64 core, and OCRs a page on /scan.
+#  - live: after each production deploy (and weekly), scripts/live-judge-path.mjs walks the judge path on
+#    https://ready.edycu.dev: playback, certificate, Cheat refused, fix it yourself, .PRG, /kiro, no ROM served, /api/page.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_run:
+    workflows: [Deploy]
+    types: [completed]
+  schedule:
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  offline:
+    name: offline replay + OCR (this commit)
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Cache Playwright browsers
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npx playwright install --with-deps chromium
+      - name: Vendor the self-hosted tesseract.js worker
+        run: node scripts/vendor-ocr.mjs
+      - name: verify_offline
+        run: node scripts/verify_offline.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: verify-offline
+          path: evidence/offline/verify-offline.json
+          if-no-files-found: ignore
+
+  live:
+    name: judge path on ready.edycu.dev
+    if: (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Cache Playwright browsers
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npx playwright install --with-deps chromium
+      - name: live-judge-path
+        run: node scripts/live-judge-path.mjs https://ready.edycu.dev live-judge-path.json
+      - name: Summary
+        if: always()
+        run: |
+          # shellcheck disable=SC2016  # the single-quoted block is JavaScript; its ${...} are template literals
+          if [ -f live-judge-path.json ]; then
+            node -e '
+              const r = require("./live-judge-path.json");
+              const rows = r.checks.map((c) => `| ${c.pass ? "pass" : "FAIL"} | ${c.name.replace(/\|/g, "/")} |`);
+              console.log(["### Live judge path: " + r.checks.filter((c) => c.pass).length + "/" + r.checks.length, "", "| result | check |", "|---|---|", ...rows].join("\n"));
+            ' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: live-judge-path
+          path: live-judge-path.json
+          if-no-files-found: ignore

@@ -1,0 +1,77 @@
+name: Quality
+# Lighthouse CI on the five judge-facing routes of the production build (budgets in lighthouserc.json), and a gzip
+# bundle budget for the JavaScript and CSS the judge path loads (scripts/bundle-budget.mjs).
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # scoped package on purpose: the unscoped `lhci` name on npm is not the Lighthouse CI project
+      - name: lhci autorun (@lhci/cli 0.16.1)
+        run: npx --yes @lhci/cli@0.16.1 autorun
+      - name: Summary
+        if: always()
+        run: |
+          # shellcheck disable=SC2016  # the single-quoted block is JavaScript; its ${...} are template literals
+          if compgen -G ".lighthouseci/lhr-*.json" > /dev/null; then
+            node -e '
+              const fs = require("node:fs");
+              const by = {};
+              for (const f of fs.readdirSync(".lighthouseci").filter((x) => /^lhr-.*\.json$/.test(x))) {
+                const r = JSON.parse(fs.readFileSync(".lighthouseci/" + f, "utf8"));
+                (by[r.finalDisplayedUrl] ??= []).push(r);
+              }
+              const med = (a) => a.slice().sort((x, y) => x - y)[Math.floor(a.length / 2)];
+              const rows = Object.entries(by).map(([u, rs]) => {
+                const s = (k) => Math.round(med(rs.map((r) => r.categories[k].score)) * 100);
+                const cls = med(rs.map((r) => r.audits["cumulative-layout-shift"].numericValue)).toFixed(3);
+                return `| ${new URL(u).pathname} | ${s("performance")} | ${s("accessibility")} | ${s("best-practices")} | ${s("seo")} | ${cls} |`;
+              });
+              console.log(["### Lighthouse (median of 3 runs, mobile)", "", "| route | perf | a11y | best practices | SEO | CLS |", "|---|---:|---:|---:|---:|---:|", ...rows].join("\n"));
+            ' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          if-no-files-found: ignore
+
+  bundle:
+    name: bundle budget
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: node scripts/bundle-budget.mjs dist
