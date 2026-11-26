@@ -18,6 +18,7 @@
   ![Kiro](https://img.shields.io/badge/Kiro-agent_+_MCP_+_hooks-8b5cf6?style=flat)
   ![Vercel](https://img.shields.io/badge/Vercel-black?style=flat&logo=vercel)
   [![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
+  [![Release](https://img.shields.io/github/v/release/edycutjong/ready?sort=semver)](https://github.com/edycutjong/ready/releases/latest)
   [![CI](https://github.com/edycutjong/ready/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/ci.yml)
   [![E2E](https://github.com/edycutjong/ready/actions/workflows/e2e.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/e2e.yml)
   [![CodeQL](https://github.com/edycutjong/ready/actions/workflows/codeql.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/codeql.yml)
@@ -47,6 +48,10 @@
 > gate (`src/gate`, claude-direct): the agent has no file, shell or web tools, only six C64 tools.
 
 ## 📸 See it in Action
+
+<p align="center">
+  <img src="docs/broll/resurrect.gif" width="100%" alt="Captured from ready.edycu.dev at 1x speed: The Last Seance, a recorded real Kiro run played back (no C64 runs on the site). Line 20 of our typeset listing, PRIMT™ ** THE LAST SEANCE **&quot;, is ringed in red and the C64 pane reports ?SYNTAX ERROR IN 20. The agent's patch PRINT&quot; ** THE LAST SEANCE **&quot; is written beneath the struck line and re-inks from red to blue as the gate accepts it; the recorded C64 screen then shows the program's title, THE SPIRITS ANSWER down to IT LIVES. The view pans past the run strip (ACCEPTED, 20: checksum 159 = printed 159) to the certificate: RESURRECTED (RECORDED), an IT LIVES stamp captioned as recorded, not re-run on a C64 here.">
+</p>
 
 The 60-second judge path:
 
@@ -79,6 +84,13 @@ The model chooses where to look; code decides what is true. A patch is only acce
 C64 keyboard and (2) its Gazette checksum matches the printed one, or fits only a misread printed digit, and it stays within the 40% edit cap (or the patch is marked `forced`, which can never be
 certified); a program only counts as resurrected when (3) the emulated C64 then runs it. The verdict (`RESURRECTED`, `BOOTED-PARTIAL`, `NOT-RESURRECTED`) is
 computed from the machine's screen and memory plus the listing's checksums, not from the model's say-so.
+
+The Ossuary shows why the printed checksum, not the error message, says where to look: the C64 blames line 19, line 19
+already matches its printed sum, and the checksum points at DATA line 890.
+
+<p align="center">
+  <img src="docs/broll/ossuary.gif" width="100%" alt="Captured from ready.edycu.dev at 1x speed: The Ossuary, a recorded real Kiro run played back, stepped with the page's own step slider. Before anything runs, DATA line 890 (DATA 5,3,5.8,9,7,9,3) is ringed in red with a checksum cross while line 19 is ticked. The recorded C64 screen reports ?OUT OF DATA ERROR IN 19. Judging the prefilled line 19 in the browser answers: Line 19, as read, already matches its printed checksum (135 = 135): the misprint is not in this line. The gate-accepted patch to line 890 (DATA 5,3,5,8,9,7,9,3) re-inks from red to blue, and the recorded screen shows 24 BONES, SUM 115 and IT LIVES.">
+</p>
 
 ## 🏗️ Architecture & Tech Stack
 
@@ -133,6 +145,10 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 | Experiment E0 (does search beat the model?) | On the real 1984 page search fixed 3 of 18 failing lines; the agent made all 18 checksum-consistent (N=2) | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) |
 
 ### Attacks defeated
+
+<p align="center">
+  <img src="docs/broll/beat-the-gate.gif" width="560" alt="Captured from ready.edycu.dev at 1x speed: the gate on the home page, the same applyPatch code the Kiro Pre Tool Use hook calls, running in the browser; no C64 runs the line. Pressing Cheat: delete the error line answers REFUSED (R4.4): deletion is a hard refusal. In the fix-it-yourself box, which holds line 20 as OCR read it (20 PRIMT™ ** THE LAST SEANCE **&quot;), the trademark sign is replaced with a quote and Judge my line answers REFUSED (R4.15): checksum mismatch, printed :rem 159, computed 158. Then the M is replaced with N, and the gate answers ACCEPTED: 20: checksum 159 = printed 159.">
+</p>
 
 | Control | Why it matters | Test |
 |---|---|---|
@@ -198,6 +214,10 @@ docs/             # DX report, evals, experiments
 ## 📽️ Demo Materials
 
 [`DEMO.md`](DEMO.md) has the exact commands behind every number. Live: https://ready.edycu.dev
+
+The three GIFs in this README ([`docs/broll/`](docs/broll/)) are captures of the live site at 1× speed (Playwright, Chromium,
+2× pixels, nothing on the page altered; the pointer in the gate GIF marks where the scripted clicks landed). The Last Seance and
+The Ossuary are the recorded runs the site plays back; the gate GIF is the gate running in the browser.
 
 The demo video was cut on 2026-11-25 at evals release 1, so its receipts read 492 tests and 6 of 6 model runs; the figures in this README are from the later code (release 2 added eval cases 5 and 6).
 
