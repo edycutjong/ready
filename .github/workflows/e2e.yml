@@ -32,6 +32,10 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # picocolors colors vite's output when CI is set, so its "Local:" line (the readiness signal
+      # verify_offline.mjs waits for) would carry ANSI codes; plain output keeps the signal matchable
+      NO_COLOR: "1"
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
