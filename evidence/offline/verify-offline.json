@@ -1,5 +1,5 @@
 {
- "date": "2026-11-25T21:02:50.488Z",
+ "date": "2026-11-27T08:45:32.412Z",
  "ok": true,
  "checks": [
   {
@@ -18,7 +18,7 @@
     "done": true,
     "lines": 12,
     "ok": 9,
-    "ms": 1160,
+    "ms": 888,
     "width": 1600,
     "source": "your upload (line20.page.png)"
    }

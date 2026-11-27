@@ -1,7 +1,7 @@
 # SYNTAX ERROR IN 20, for judges
 
 Written for a judge with three minutes. No setup: no account, no install, no key. Every claim below points at the page
-or the file that shows it.
+or the file that shows it. The same guide as a page, with the video by chapter: **https://ready.edycu.dev/judge**.
 
 ## The 30-second test
 
@@ -18,6 +18,7 @@ a patch with exit 2, the Agent Stop one will not let the agent quit early), 7 st
 **Video:** [2 min 46 s on YouTube](https://youtu.be/Jv69K3jQ6QI). Kiro is on screen at
 [1:05](https://youtu.be/Jv69K3jQ6QI?t=65) (the specs, and what Kiro caught) and
 [1:22](https://youtu.be/Jv69K3jQ6QI?t=82) (the agent, its tools and its hooks).
+Chapters: [0:00 It lives (cold open)](https://youtu.be/Jv69K3jQ6QI?t=0) · [0:21 Check a page against its own checksum (live)](https://youtu.be/Jv69K3jQ6QI?t=21) · [0:43 Who is allowed to fix it: the gate](https://youtu.be/Jv69K3jQ6QI?t=43) · [1:05 Kiro specs, and what Kiro caught](https://youtu.be/Jv69K3jQ6QI?t=65) · [1:22 The agent, its tools and its hooks](https://youtu.be/Jv69K3jQ6QI?t=82) · [1:50 The patch, and a cheat refused](https://youtu.be/Jv69K3jQ6QI?t=110) · [2:12 The death certificate, reversed](https://youtu.be/Jv69K3jQ6QI?t=132) · [2:23 Receipts, honest limits, try it](https://youtu.be/Jv69K3jQ6QI?t=143).
 
 ## Where each judging criterion is answered
 
@@ -25,7 +26,7 @@ a patch with exit 2, the Agent Stop one will not let the agent quit early), 7 st
 |---|---|---|
 | Potential Impact | [`/scan`](https://ready.edycu.dev/scan) | A real June 1984 COMPUTE!'s Gazette page (archive.org's scan, fetched on demand) or your own scan, read by tesseract.js in your tab. A line gets ✓ if its recomputed sum equals the printed `:rem` (or ✓ digits misread if it fits only a misread printed digit); you fix the flagged lines by hand and export a `.bas` and an errata sheet. MIT licensed, nothing to install |
 | Technological Implementation | [Kiro, impossible to miss](#kiro-impossible-to-miss), [`/kiro`](https://ready.edycu.dev/kiro), [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) | 4 Kiro specs, a custom agent limited to 6 MCP tools, 4 hooks (one refuses a patch with exit 2), steering, a skill, a workflow and a Power; 18 experiment runs, each arm changing one thing (model, loop control, context, steering) |
-| Design | [`/`](https://ready.edycu.dev) | A candle-lit galley proof: the failing line is struck in blood-red proof ink and re-inks blue when the gate accepts the patch; each listing is a headstone with its cause of death; the run ends in a certificate of resurrection and an **IT LIVES** stamp (the README's GIFs show the re-ink, certificate and stamp; the headstone picker is on `/`). Lighthouse CI gates all five routes on every push ([`lighthouserc.json`](lighthouserc.json)) |
+| Design | [`/`](https://ready.edycu.dev) | A candle-lit galley proof: the failing line is struck in blood-red proof ink and re-inks blue when the gate accepts the patch; each listing is a headstone with its cause of death; the run ends in a certificate of resurrection and an **IT LIVES** stamp (the README's GIFs show the re-ink, certificate and stamp; the headstone picker is on `/`). Lighthouse CI gates all six routes on every push ([`lighthouserc.json`](lighthouserc.json)) |
 | Innovation | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) (E0) | The judge is the checksum printed in 1984 plus the machine's own screen and memory: the model chooses where to look, code decides what is true. On the real 1984 page, search without a model fixed 3 of 18 failing lines; the agent made all 18 checksum-consistent (N=2) |
 | Presentation | [video](https://youtu.be/Jv69K3jQ6QI), [README](README.md), [landing](https://ready.edycu.dev/landing/), [deck](https://ready.edycu.dev/deck/) | The README's three GIFs are captures of the live site at 1× speed |
 
@@ -47,8 +48,9 @@ recorded, and no C64 runs in your browser (see [Honest limits](#honest-limits)).
    `PRINT`: ACCEPTED, 159 = 159. `THE LOST SEANCE` is refused by the checksum, `20 PRINT"IT LIVES"` by the 40% edit cap.
 4. **The checksum knows where to look.** Pick **The Ossuary**: the C64 blames line 19, but the red checksum
    cross is on DATA line 890 (we printed a period for a comma). Judge line 19 as read: "already matches its printed
-   checksum (135 = 135): the misprint is not in this line". **The Ninth Knock** has a DATA misprint that runs with no
-   error and prints `IT NIVES`: the C64 never complains, the printed checksum flags it.
+   checksum (135 = 135): the misprint is not in this line". **The Ninth Knock** has two faults: OCR broke line 40, so the
+   C64 first stops with `?UNDEF'D STATEMENT  ERROR IN 40`; once that is fixed, a DATA misprint in line 80 runs with no
+   error and prints `IT NIVES` (measured in eval case 5d, not on screen in the recording): only its printed checksum flags it.
 5. **Kiro's own log.** Open **/KIRO HOOKS** ([`/kiro`](https://ready.edycu.dev/kiro)): every hook firing of the three
    runs in time order, written by the hook processes, not the model, with the tool calls and credits from Kiro's own
    stream between them. Look for
@@ -81,7 +83,7 @@ were written claude-direct (Claude Code) and are labelled so; who wrote what, se
 | Session Start hook `listing-context` | [`scripts/hooks/listing-context.mjs`](scripts/hooks/listing-context.mjs) | Hands the agent the listing with each line's printed checksum and status; never a reference transcript | the `listing-context` rows in [`public/runs/`](public/runs/) and on [`/kiro`](https://ready.edycu.dev/kiro) |
 | File Save hook `prop-tests-on-save` | [`.kiro/hooks/prop-tests-on-save.json`](.kiro/hooks/prop-tests-on-save.json) | After a save under `src/basic` or `src/gate`, runs the property tests | [`evidence/hooks/file-save.jsonl`](evidence/hooks/file-save.jsonl): 4 firings: the first 3 exited 1 (the property-test include was not configured yet), the 4th passed 11 property tests |
 | Steering | [`.kiro/steering/`](.kiro/steering/) (7 files) | Commodore BASIC V2, Gazette notation and the resurrector's rules; three files are resources of the agent. Six were written claude-direct, `resurrector.md` by Kiro | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) E4: removing `commodore-basic-v2.md` showed no measurable difference at N=2 |
-| Skill | [`.kiro/skills/petscii-notation/`](.kiro/skills/petscii-notation/) | PETSCII control-code notation; the agent loads it at run time | `Load skill: petscii-notation` in two of the three recorded runs on [`/kiro`](https://ready.edycu.dev/kiro) (The Last Seance, The Ninth Knock) |
+| Skill | [`.kiro/skills/petscii-notation/`](.kiro/skills/petscii-notation/) | PETSCII control-code notation, declared as a resource of the agent (`skill://petscii-notation`) | In the two recorded runs where the agent tried `Load skill: petscii-notation` (The Last Seance, The Ninth Knock, on [`/kiro`](https://ready.edycu.dev/kiro)), kiro-cli's call failed on a permission error, so no recorded run shows the skill body loaded |
 | Workflow | [`.kiro/workflows/resurrect-ab.workflow.yaml`](.kiro/workflows/resurrect-ab.workflow.yaml) | Two experiment arms in parallel plus an aggregator (recipe written claude-direct); ran once headless through `run_workflow` | [`evidence/experiments/workflow-run-2026-11-26.md`](evidence/experiments/workflow-run-2026-11-26.md) |
 | Power | [`powers/c64-resurrect/`](powers/c64-resurrect/) | Packages the skills and the MCP server. Installed, both skills appear; its MCP server does not connect | [`evidence/power/activation-2026-11-26.md`](evidence/power/activation-2026-11-26.md) |
 
@@ -112,8 +114,8 @@ recordings; the README's 35 include 15 Gazette-derived ones that stay on the bui
    (`npm run dev`, `rejudge-runs.mjs`).
 2. **The three runs on `/` are pages we typeset** in the 1984 format with planted misprints, read by real OCR. The one
    real 1984 page the agent repaired (eval case 1, 3 of 3 TITLE-PATH RESURRECTED) is not in this repository, nor are its
-   OCR output and run files (rights), so it cannot be reproduced from a clone. On it, 19 of 28 lines are source-exact
-   against a vision-read reference; the rest are checksum-consistent, not proven identical.
+   OCR output and run files (rights), so it cannot be reproduced from a clone. In the earlier spike G runs on the same page (N=2), 19 of 28 lines were
+   source-exact against a vision-read reference; the rest are checksum-consistent, not proven identical.
 3. **`/scan` withholds the agent's repair** and leaves the fixing to you. It fetches the 1984 page from archive.org on
    request through [`api/page.js`](api/page.js), which writes nothing to disk; its CDN keeps a copy for up to a day (and may serve a stale one for up to a week while it refreshes). On that page tesseract.js misreads most lines: at 1600 px, 16 of the 83 lines it read
    matched their printed checksum ([`evidence/spikes/spike-P-ocr-live.json`](evidence/spikes/spike-P-ocr-live.json)).
@@ -134,7 +136,7 @@ recordings; the README's 35 include 15 Gazette-derived ones that stay on the bui
 
 ## Links
 
-- Live: https://ready.edycu.dev · [`/scan`](https://ready.edycu.dev/scan) · [`/kiro`](https://ready.edycu.dev/kiro) · [landing](https://ready.edycu.dev/landing/) · [deck](https://ready.edycu.dev/deck/)
+- Live: https://ready.edycu.dev · [`/judge`](https://ready.edycu.dev/judge) · [`/scan`](https://ready.edycu.dev/scan) · [`/kiro`](https://ready.edycu.dev/kiro) · [landing](https://ready.edycu.dev/landing/) · [deck](https://ready.edycu.dev/deck/)
 - Video: https://youtu.be/Jv69K3jQ6QI
 - Write-up: [I gave a Kiro agent a Commodore 64 and a checksum it can't argue with](https://dev.to/edycutjong/i-gave-a-kiro-agent-a-commodore-64-and-a-checksum-it-cant-argue-with-5hbn) (dev.to)
 - Repository (MIT): https://github.com/edycutjong/ready · [`README.md`](README.md) · [`DEMO.md`](DEMO.md) · [`ARCHITECTURE.md`](ARCHITECTURE.md)

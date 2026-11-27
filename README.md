@@ -7,7 +7,7 @@
 
   <br/>
 
-  [![For judges](https://img.shields.io/badge/For_judges-the_judge_path-1F4E79?style=for-the-badge)](JUDGE.md)
+  [![For judges](https://img.shields.io/badge/For_judges-the_judge_path-1F4E79?style=for-the-badge)](https://ready.edycu.dev/judge)
   [![Live Demo](https://img.shields.io/badge/🚀_Live-Demo-06b6d4?style=for-the-badge)](https://ready.edycu.dev)
   [![Demo Video](https://img.shields.io/badge/▶_Demo-Video-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/Jv69K3jQ6QI)
   [![Landing](docs/badges/production-landing.svg)](https://ready.edycu.dev/landing/)
@@ -43,13 +43,13 @@
   <img src="docs/broll/resurrect.gif" width="100%" alt="Captured from ready.edycu.dev at 1x speed: The Last Seance, a recorded real Kiro run played back (no C64 runs on the site). Line 20 of our typeset listing, PRIMT™ ** THE LAST SEANCE **&quot;, is ringed in red and the C64 pane reports ?SYNTAX ERROR IN 20. The agent's patch PRINT&quot; ** THE LAST SEANCE **&quot; is written beneath the struck line and re-inks from red to blue as the gate accepts it; the recorded C64 screen then shows the program's title, THE SPIRITS ANSWER down to IT LIVES. The view pans past the run strip (ACCEPTED, 20: checksum 159 = printed 159) to the certificate: RESURRECTED (RECORDED), an IT LIVES stamp captioned as recorded, not re-run on a C64 here.">
 </p>
 
-The 60-second judge path (the three-minute version, with every Kiro file mapped to its evidence, is [`JUDGE.md`](JUDGE.md)):
+The 60-second judge path (the three-minute version, with every Kiro file mapped to its evidence, is [`JUDGE.md`](JUDGE.md), and the same guide as a page at [ready.edycu.dev/judge](https://ready.edycu.dev/judge)):
 
 | Seconds | Do | You see |
 |---|---|---|
 | 0–20 | Open [ready.edycu.dev](https://ready.edycu.dev) | A 2026-typeset listing (our own page, read by real OCR) under candle light; the recorded run plays itself once (`?still=1` keeps it still): the C64 pane reports `?SYNTAX  ERROR IN 20`, the misread line is struck in red; the agent's patch appears beneath it and re-inks to blue once the gate accepts it. **Resurrect** replays it |
 | 20–30 | Press **Cheat** (empties the error line), then edit the line in **fix it yourself** and press **Judge my line** | The gate refuses the deletion; your line is ACCEPTED only if it is typeable, within the 40% edit cap, and its checksum equals the printed one (or fits only a misread printed digit); no C64 runs it |
-| 30–40 | Pick **The Ossuary** or **The Ninth Knock** | Harder recorded runs: the C64 blames line 19 while the misprint sits in DATA line 890; a DATA misprint that runs silently is caught by its checksum alone |
+| 30–40 | Pick **The Ossuary** or **The Ninth Knock** | Harder recorded runs: the C64 blames line 19 while the misprint sits in DATA line 890; in The Ninth Knock, OCR broke line 40 first, and behind it a DATA misprint that would run silently is caught by its checksum alone |
 | 40–50 | Read the certificate | The certificate of resurrection, then the **IT LIVES** stamp, captioned as recorded, not re-run |
 | 50–60 | Open [`/kiro`](https://ready.edycu.dev/kiro) | The Kiro hook rows and tool calls of the three recorded runs, in time order |
 
@@ -112,7 +112,7 @@ Kiro is the engine, not the decoration. What each `.kiro/` artefact did, and who
 | Hook `listing-context` (Session Start) | Hands the agent the flagged listing | `scripts/hooks/` |
 | Hook `prop-tests-on-save` (File Save) | After a save under `src/basic` or `src/gate`, runs `tests/prop` | `evidence/hooks/file-save.jsonl` (4 firings, 1 clean pass) |
 | `.kiro/steering/` (7 files; 6 claude-direct, 4 of them in place before Kiro's first session, `product.md` and `commodore-basic-v2.md` committed after its first two; `resurrector.md` written by Kiro in the resurrect-loop session) | Commodore BASIC V2, Gazette notation, the resurrector's rules | `.kiro/steering/` |
-| `.kiro/skills/petscii-notation` | PETSCII control-code notation the agent must use | `.kiro/skills/` |
+| `.kiro/skills/petscii-notation` | PETSCII control-code notation, declared as an agent resource (in the two recorded runs that tried to load it, kiro-cli's `Load skill` call failed on a permission error) | `.kiro/skills/` |
 | `.kiro/specs/bugfix-boot-detect/` (bugfix spec) | Current / Expected / Unchanged for two boot-detection bugs we measured (a title shown under 50 frames was missed; printed error-shaped text counted as an error); Kiro wrote the spec and the fix (tasks 1, 4, 5). Our probe and re-judge then caught a stale-screen bug in that fix, fixed claude-direct | `evidence/boot-detect/` (every recording re-judges, 0 mismatches) |
 | `.kiro/workflows/resurrect-ab.workflow.yaml` | Two experiment arms in parallel + an aggregator (written claude-direct); ran once headless through `run_workflow` | `evidence/experiments/workflow-run-2026-11-26.md` |
 | `powers/c64-resurrect/` (Power) | Packages the skills and the MCP server. Installed, both skills appear in the session catalogue; the Power's MCP server does not connect (suspected causes, not tested: its relative server path, and `RUN_DIR`, without which the server exits) | `evidence/power/activation-2026-11-26.md` |
@@ -125,7 +125,7 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 
 | Metric | Value | Source |
 |---|---|---|
-| Tests | 520 passing, 45 files, plus 1 expected fail (the known-limitation marker, Honest limits 7) (`npm test` on 8d26d13) | `tests/`, `evidence/tests/npm-test-2026-11-26-p7.txt` |
+| Tests | 520 passing, 45 files, plus 1 expected fail (the known-limitation marker, Honest limits 7) (`npm test` on e7f58ac) | `tests/`, `evidence/tests/npm-test-2026-11-27.txt` |
 | Agent evals, release 2 | 9 of 9 cases run and passing; cases 5 (silent DATA fault) and 6 (`?OUT OF DATA`) are original 2026 pages | [`docs/EVALS.md`](docs/EVALS.md) |
 | Model runs | 12 of 12 `RESURRECTED` with the shipped profile (4 model cases × N=3; the E1–E4 ablation arms are not counted here and include failures). Every recording on disk (35: 20 public, 15 local tier-C) re-judges with 0 mismatches, a run counting only when its recorded and recomputed verdicts are both present and equal | `scripts/rejudge-runs.mjs`, `evidence/boot-detect/rejudge-p6d.json`; the case-3, 5 and 6 runs are in `evidence/evals/runs/`; the case-1 recordings are withheld (rights) and cannot be reproduced from a clone |
 | Gate `applyPatch` | p50 0.01 ms, p95 0.05 ms (N=2000, node) | `evidence/bench/bench-2026-11-26-p7.json` (re-run on HEAD 8d26d13 on 2026-11-26; the 11-24 file predates the P1d gate changes and the 11-25 file predates the `src/emu` boot-detect changes) |
@@ -201,7 +201,7 @@ Six GitHub Actions pipelines run on every push to `main` (the first five also on
 | [`E2E`](.github/workflows/e2e.yml) | per commit, `scripts/verify_offline.mjs` replays the recorded run to RESURRECTED on a real in-browser C64 and OCRs a page on `/scan` with every non-local request blocked; after each deploy, `scripts/live-judge-path.mjs` walks the judge path on ready.edycu.dev |
 | [`CodeQL`](.github/workflows/codeql.yml) | static analysis of the TypeScript/JavaScript and of the workflow files (`security-extended`) |
 | [`Security`](.github/workflows/security.yml) | gitleaks over the whole git history, `npm audit`, dependency review on pull requests |
-| [`Quality`](.github/workflows/quality.yml) | Lighthouse CI on `/`, `/kiro`, `/scan`, `/landing/`, `/deck/` (performance ≥ 90, accessibility, best practices and SEO ≥ 95, CLS ≤ 0.1; [`lighthouserc.json`](lighthouserc.json)) and a gzip budget for the judge-path bundle ([`scripts/bundle-budget.mjs`](scripts/bundle-budget.mjs)) |
+| [`Quality`](.github/workflows/quality.yml) | Lighthouse CI on `/`, `/kiro`, `/scan`, `/landing/`, `/deck/`, `/judge/` (performance ≥ 90, accessibility, best practices and SEO ≥ 95, CLS ≤ 0.1; [`lighthouserc.json`](lighthouserc.json)) and a gzip budget for the judge-path bundle ([`scripts/bundle-budget.mjs`](scripts/bundle-budget.mjs)) |
 | [`Deploy`](.github/workflows/deploy.yml) | after `CI` passes on `main`: Vercel build, the ROM WASM refused by sha256, production deploy, a smoke test of the live routes |
 
 ## 📁 Project Structure
@@ -217,7 +217,7 @@ docs/             # DX report, evals, experiments
 
 ## 📽️ Demo Materials
 
-[`JUDGE.md`](JUDGE.md) is the three-minute judge path; [`DEMO.md`](DEMO.md) has the exact commands behind every number. Live: https://ready.edycu.dev
+[`JUDGE.md`](JUDGE.md) is the three-minute judge path (as a page: https://ready.edycu.dev/judge); [`DEMO.md`](DEMO.md) has the exact commands behind every number. Live: https://ready.edycu.dev
 
 The three GIFs in this README ([`docs/broll/`](docs/broll/)) are captures of the live site at 1× speed (Playwright, Chromium,
 2× pixels, nothing on the page altered; the pointer in the gate GIF marks where the scripted clicks landed). The Last Seance and

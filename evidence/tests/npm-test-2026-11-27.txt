@@ -1,0 +1,10 @@
+npm test on HEAD e7f58ac, 2026-11-27 (2026-11-27T08:36Z, node v22.22.0); working tree differs from HEAD only in scripts/landing/ and JUDGE.md, which no test imports
+
+ RUN  v5.1.1 <repo>
+
+
+ Test Files  45 passed (45)
+      Tests  520 passed | 1 expected fail (521)
+   Start at  15:36:41
+   Duration  52.57s (tests 99%, import 1%)
+

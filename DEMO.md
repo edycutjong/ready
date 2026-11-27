@@ -53,7 +53,7 @@ the hero run (`public/runs/`) and the case-3, 5 and 6 runs (`evidence/evals/runs
 
 | Claim | File |
 |---|---|
-| 520 tests + 1 expected fail, 45 files | `npm test` on 8d26d13 (`evidence/tests/npm-test-2026-11-26-p7.txt`) |
+| 520 tests + 1 expected fail, 45 files | `npm test` on e7f58ac (`evidence/tests/npm-test-2026-11-27.txt`) |
 | gate p50 0.01 ms (p95 0.05) · boot p50 807 ms · REPLAY p50 2730 ms · OCR p50 1199 ms (N = 2000 / 10 / 10 / 5) | `evidence/bench/bench-2026-11-26-p7.json` |
 | evals: 9 of 9 cases run and passing; 12 of 12 model runs RESURRECTED with the shipped profile (the E1–E4 ablation arms are not counted and include failures) | `evidence/evals/evals-2026-11-2{4,5}.jsonl`, `docs/EVALS.md` |
 | experiments E1–E4 (18 new runs, N=2 per arm and case; the shipped case-6 row reuses release 2's 3 runs) | `node scripts/experiments-table.mjs` → `evidence/experiments/e1-e4.json`, `docs/EXPERIMENTS.md` |
