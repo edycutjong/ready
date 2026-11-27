@@ -14,7 +14,8 @@
   [![Scan](docs/badges/production-scan.svg)](https://ready.edycu.dev/scan)
   [![Kiro view](docs/badges/production-kiro.svg)](https://ready.edycu.dev/kiro)
   [![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-f59e0b?style=for-the-badge)](https://ready.edycu.dev/deck/)
-  [![Built for Kiroween](https://img.shields.io/badge/Devpost-Kiroween_2026_·_Resurrection-ef4444?style=for-the-badge)](https://kiroween.devpost.com/)
+  [![Track: Kiroween 2026 Resurrection](https://img.shields.io/badge/Track-Kiroween_2026_·_Resurrection-ef4444?style=for-the-badge)](https://kiroween.devpost.com/)
+  [![Devpost entry](https://img.shields.io/badge/Devpost-View_entry-003E54?style=for-the-badge&logo=devpost&logoColor=white)](https://devpost.com/software/syntax-error-in-20)
 
 </div>
 
