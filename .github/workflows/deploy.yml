@@ -61,6 +61,7 @@ jobs:
           { echo "### Live smoke test"; echo; echo "| route | status | expected |"; echo "|---|---:|---:|"; } >> "$GITHUB_STEP_SUMMARY"
           for p in / /scan /kiro /landing/ /deck/ /judge /runs/index.json /robots.txt; do check "$p" 200; done
           # /judge must be the judge guide itself, not the SPA shell
-          if curl -s --retry 3 "$base/judge" | grep -q '<h1 id="h1">Three minutes with a listing'; then echo "/judge carries the judge guide"; else echo "/judge is not the judge guide"; fail=1; fi
+          judge_html=$(curl -s --retry 3 "$base/judge")  # read whole first: grep -q on a pipe SIGPIPEs curl under pipefail
+          if grep -q '<h1 id="h1">Three minutes with a listing' <<<"$judge_html"; then echo "/judge carries the judge guide"; else echo "/judge is not the judge guide"; fail=1; fi
           check /c64.wasm 404
           exit "$fail"
