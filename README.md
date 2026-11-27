@@ -1,8 +1,8 @@
 <div align="center">
   <img src="docs/icon-animated.svg" alt="SYNTAX ERROR IN 20 icon" width="144">
   <h1>SYNTAX ERROR IN 20 🕯️</h1>
-  <p><em>One misread character kills a 1984 magazine program. A Kiro agent may fix the line only if it matches the checksum the magazine printed beside it, and a Commodore 64 core then decides whether the program lives. The live site plays back recorded real runs; you can try to beat the gate yourself.</em></p>
-  <p><strong>Kiro, used here:</strong> 4 specs (3 feature + 1 bugfix) · a custom agent limited to 6 MCP tools · 4 hooks (one refuses a patch with exit 2) · 7 steering files · a skill · a workflow · a Power (tried) · 18 experiment runs. <a href="JUDGE.md#kiro-impossible-to-miss">Feature → file → evidence</a>.</p>
+  <p><em>One wrong character (<code>PRIMT</code> for <code>PRINT</code>) kills a 1984 magazine program with <code>?SYNTAX ERROR IN 20</code>. A Kiro agent may fix the line only if it matches the checksum the magazine printed beside it, and a Commodore 64 core then decides whether the program lives. The live site plays back recorded real runs; you can try to beat the gate yourself.</em></p>
+  <p><strong>Kiro, used here:</strong> probing the real C64 while building the checksum, Kiro found three places our own spec was wrong about the machine. 4 specs (3 feature + 1 bugfix) · a custom agent limited to 6 MCP tools · 4 hooks (one refuses a patch with exit 2) · 7 steering files · a skill · a workflow · a Power (tried) · 18 experiment runs. <a href="JUDGE.md#kiro-impossible-to-miss">Feature → file → evidence</a>.</p>
   <img src="docs/readme-hero-animated.svg" alt="SYNTAX ERROR IN 20: a singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen" width="100%">
 
   <br/>
@@ -63,7 +63,7 @@ COMPUTE!'s Gazette (1984) printed programs for you to type in, and the program l
 those pages are OCR'd with errors, and a single wrong character gives `?SYNTAX  ERROR IN 20` on a machine nobody owns
 any more. Nothing stops an LLM asked to "fix the listing" from inventing a line that runs and is wrong.
 
-**Who it is for:** anyone typing a listing back in from a scan. [`/scan`](https://ready.edycu.dev/scan) already checks
+**Who it is for:** retro-computing hobbyists and archivists typing a listing back in from a scan. [`/scan`](https://ready.edycu.dev/scan) already checks
 each line of a Gazette page or your own scan against its printed `:rem` and flags the mismatches (a sum that fits only a
 misread printed digit is marked "digits misread" instead), in the browser (no install, no ROM); you fix a flagged line by hand,
 it is rechecked as you type, and you export the `.bas` and an errata sheet. The agent's gated repair is proven on recorded
