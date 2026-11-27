@@ -157,6 +157,13 @@ const e0 = README.match(/search fixed (\d+) of (\d+) failing lines; the agent ma
 ok(e0 && e0[2] === e0[3], "README E0 tally");
 ok(/\| June 1984 Gazette title path[^\n]*\| 18 \| 3 \| 15 \|/.test(EXP), "EXPERIMENTS.md E0 row 18 / 3 / 15");
 const eRuns = README.match(/\| Experiments E1–E4 \| (\d+) new real runs/); ok(eRuns, "README E1–E4 run count");
+// source-exact split on the real page (counts only; scripts/source-split.mjs over the local tier-C runs): every run must agree
+const SX_FILE = "evidence/source-check/case1-split-2026-11-27.json", SX = jsonOf(SX_FILE), sx = SX.rows[0];
+const sxKey = (r) => JSON.stringify([r.sourceExact, r.total, r.repaired, r.untouched, r.notExact]);
+ok(SX.rows.length >= 3 && SX.rows.every((r) => sxKey(r) === sxKey(sx)), "source split: every run gives the same split");
+ok(sx.notExact.every((x) => x.diff !== "text") && sx.notExact.filter((x) => x.repaired).every((x) => x.diff === "spaces inside quotes"), "source split: non-exact lines differ only in spaces");
+ok(sx.repaired.lines === +e0[2] && sx.sourceExact === sx.repaired.exact + sx.untouched.exact && sx.total === sx.repaired.lines + sx.untouched.lines, "source split adds up and matches E0");
+ok(README.includes(`\`${sx.sourceExact}/${sx.total}\` lines source-exact against a vision-read reference (${sx.repaired.exact} of the ${sx.repaired.lines} lines the agent repaired, ${sx.untouched.exact} of the ${sx.untouched.lines} it left alone)`), "README carries the source split");
 const fsRows = rd("evidence/hooks/file-save.jsonl").trim().split("\n").map((l) => JSON.parse(l));
 ok(fsRows.slice(0, -1).every((r) => r.exit === 1) && fsRows.at(-1).exit === 0, "file-save: earlier firings exit 1, last exit 0");
 const specsN = readdirSync(ROOT + ".kiro/specs").filter((d) => statSync(ROOT + ".kiro/specs/" + d).isDirectory()).length;
@@ -188,6 +195,8 @@ Object.assign(V, {
   b_gate_p50: J_gate50, b_gate_p95: J_gate95, b_gate_n: String(jg.n), b_boot: String(Math.round(jb.p50)), b_boot_n: String(jb.n),
   b_replay: String(Math.round(jr.p50)), b_replay_n: String(jr.n), b_ocr: String(Math.round(jo.p50)), b_ocr_n: String(jo.n),
   scan_ok: String(spP.ok), scan_lines: String(spP.lines),
+  sx_runs: ["zero","one","two","three","four","five","six"][SX.rows.length] ?? String(SX.rows.length), sx_exact: String(sx.sourceExact), sx_total: String(sx.total), sx_rep_exact: String(sx.repaired.exact), sx_rep_space: String(sx.repaired.lines - sx.repaired.exact),
+  sx_kept: String(sx.untouched.lines), sx_kept_exact: String(sx.untouched.exact), sx_not: String(sx.notExact.length),
 });
 const chapters = CHAPTERS.map((c) => `          <li${/Kiro|agent/.test(c.label) ? ' class="kiro"' : ""}><a href="https://youtu.be/Jv69K3jQ6QI?t=${c.t}" data-t="${c.t}"><time datetime="PT${Math.floor(c.t / 60)}M${c.t % 60}S">${c.at}</time><span>${esc(c.label)}</span></a></li>`).join("\n");
 

@@ -27,7 +27,7 @@ Chapters: [0:00 It lives (cold open)](https://youtu.be/Jv69K3jQ6QI?t=0) · [0:21
 | Potential Impact | [`/scan`](https://ready.edycu.dev/scan) | A real June 1984 COMPUTE!'s Gazette page (archive.org's scan, fetched on demand) or your own scan, read by tesseract.js in your tab. A line gets ✓ if its recomputed sum equals the printed `:rem` (or ✓ digits misread if it fits only a misread printed digit); you fix the flagged lines by hand and export a `.bas` and an errata sheet. MIT licensed, nothing to install |
 | Technological Implementation | [Kiro, impossible to miss](#kiro-impossible-to-miss), [`/kiro`](https://ready.edycu.dev/kiro), [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) | 4 Kiro specs, a custom agent limited to 6 MCP tools, 4 hooks (one refuses a patch with exit 2), steering, a skill, a workflow and a Power; 18 experiment runs, each arm changing one thing (model, loop control, context, steering) |
 | Design | [`/`](https://ready.edycu.dev) | A candle-lit galley proof: the failing line is struck in blood-red proof ink and re-inks blue when the gate accepts the patch; each listing is a headstone with its cause of death; the run ends in a certificate of resurrection and an **IT LIVES** stamp (the README's GIFs show the re-ink, certificate and stamp; the headstone picker is on `/`). Lighthouse CI gates all six routes on every push ([`lighthouserc.json`](lighthouserc.json)) |
-| Innovation | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) (E0) | The judge is the checksum printed in 1984 plus the machine's own screen and memory: the model chooses where to look, code decides what is true. On the real 1984 page, search without a model fixed 3 of 18 failing lines; the agent made all 18 checksum-consistent (N=2) |
+| Innovation | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) (E0) | The judge is the checksum printed in 1984 plus the machine's own screen and memory: the model chooses where to look, code decides what is true. On the real 1984 page, search without a model fixed 3 of 18 failing lines; the agent made all 18 checksum-consistent (N=2), 10 of them source-exact against a vision-read reference and 8 differing from it only in spaces inside a PRINT string |
 | Presentation | [video](https://youtu.be/Jv69K3jQ6QI), [README](README.md), [landing](https://ready.edycu.dev/landing/), [deck](https://ready.edycu.dev/deck/) | The README's three GIFs are captures of the live site at 1× speed |
 
 ## In the browser (about 60 s)
@@ -59,7 +59,7 @@ recorded, and no C64 runs in your browser (see [Honest limits](#honest-limits)).
    the program.
 
 **Then, the part you could use tomorrow:** open **CHECK A PAGE (ASSISTED)**
-([`/scan`](https://ready.edycu.dev/scan)) and press **Read the real 1984 page** (or **Read our authored page**, or
+([`/scan`](https://ready.edycu.dev/scan)) and press **Read our authored page** (or **Read the real 1984 page**, or
 upload your own scan). tesseract.js reads it in your tab; each line gets ✓ or ✗ against its printed `:rem`; edit a ✗
 line and its checksum is rechecked on every keystroke; download the `.bas` and the errata. No Kiro call, 0 credits.
 
@@ -74,12 +74,12 @@ were written claude-direct (Claude Code) and are labelled so; who wrote what, se
 
 | Kiro feature | In this repo | What it did here | Evidence |
 |---|---|---|---|
-| Feature specs | [`.kiro/specs/checksum-oracle/`](.kiro/specs/checksum-oracle/), [`c64-mcp-server/`](.kiro/specs/c64-mcp-server/), [`resurrect-loop/`](.kiro/specs/resurrect-loop/) | Kiro wrote all three (requirements, design with correctness properties, tasks), then built the tokenizer and checksum (`src/basic/`, tasks 1–6) and the MCP tool layer (tasks 1–5). Before writing the tokenizer it probed the real C64 core and found three places where our spec was wrong about the machine | [`docs/DX-REPORT.md`](docs/DX-REPORT.md) (day 1, P1b), [`tests/unit/tokenizer-rom.test.ts`](tests/unit/tokenizer-rom.test.ts), [`prompts/README.md`](prompts/README.md) |
+| Feature specs | [`.kiro/specs/checksum-oracle/`](.kiro/specs/checksum-oracle/), [`c64-mcp-server/`](.kiro/specs/c64-mcp-server/), [`resurrect-loop/`](.kiro/specs/resurrect-loop/) | Kiro wrote all three (requirements, design with correctness properties, tasks), then built the tokenizer and checksum (`src/basic/`, tasks 1–6) and the MCP tool layer (tasks 1–5). Before writing the tokenizer it probed the real C64 core and found three places where our spec was wrong about the machine: a shifted letter abbreviates a keyword only before its last letter (`I`+shift-`F` is not `IF`); stray shifted bytes are dropped, not copied; and `P`+shift-`R` types `PRINT#`, not `PRINT` (so `PRINT`, `INPUT` and `GOSUB` are never abbreviated) | [`docs/DX-REPORT.md`](docs/DX-REPORT.md) (day 1, P1b), [`tests/unit/tokenizer-rom.test.ts`](tests/unit/tokenizer-rom.test.ts), [`prompts/README.md`](prompts/README.md) |
 | Bugfix spec | [`.kiro/specs/bugfix-boot-detect/`](.kiro/specs/bugfix-boot-detect/) | Current / Expected / Unchanged for two boot-detection bugs we measured; Kiro wrote the spec and the fix (tasks 1, 4, 5). Our re-judge then caught a stale-screen bug in that fix, fixed claude-direct | [`tests/unit/boot-detect.test.ts`](tests/unit/boot-detect.test.ts), [`evidence/boot-detect/`](evidence/boot-detect/) |
 | Custom agent | [`.kiro/agents/resurrector.json`](.kiro/agents/resurrector.json) | The runtime agent (claude-sonnet-5.5): its only tools are `@c64`; file read, shell, file write and web are denied; three hooks are declared inline | [`tests/unit/resurrector-profile.test.ts`](tests/unit/resurrector-profile.test.ts), [`evidence/spikes/spike-G.json`](evidence/spikes/spike-G.json) |
 | MCP server | [`.kiro/settings/mcp.json`](.kiro/settings/mcp.json) → [`mcp/c64-server/`](mcp/c64-server/) | Six tools over a headless C64: `c64_reload`, `c64_run`, `c64_read_screen`, `c64_press`, `checksum_line`, `apply_patch` | [`tests/unit/mcp-tools.test.ts`](tests/unit/mcp-tools.test.ts), [`tests/unit/mcp-stdio.test.ts`](tests/unit/mcp-stdio.test.ts); the tool calls on [`/kiro`](https://ready.edycu.dev/kiro) |
 | Pre Tool Use hook `checksum-gate` | [`scripts/hooks/checksum-gate.mjs`](scripts/hooks/checksum-gate.mjs) → [`src/gate/checksum-gate.ts`](src/gate/checksum-gate.ts) | Runs the same gate as the server and the browser on every `apply_patch` before it reaches the server: exit 2, with the gate's reason on STDERR, refuses it and the server never sees the call | [`tests/unit/hooks.test.ts`](tests/unit/hooks.test.ts) (exit 2 on a deletion and on a checksum mismatch), [`evidence/spikes/spike-K1.md`](evidence/spikes/spike-K1.md) (real `kiro-cli`: the refused call is absent from the server's log) |
-| Agent Stop hook `until-title` | [`scripts/hooks/until-title.mjs`](scripts/hooks/until-title.mjs) | The model cannot declare success: the hook blocks the stop until the server's contract says RESURRECTED, only unfixable lines remain, or a cap hits (15 attempts, 8 credits, 600 s) | [`evidence/spikes/spike-K2.md`](evidence/spikes/spike-K2.md); [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) E2: it blocked a premature stop in 13 of the 17 runs outside E3 |
+| Agent Stop hook `until-title` | [`scripts/hooks/until-title.mjs`](scripts/hooks/until-title.mjs) | The model cannot declare success: the hook blocks the stop until the server's contract says RESURRECTED, only unfixable lines remain, or a cap hits (15 attempts, 8 credits, 600 s; checked between cycles, so one cycle can overshoot the credit cap) | [`evidence/spikes/spike-K2.md`](evidence/spikes/spike-K2.md); [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) E2: it blocked a premature stop in 13 of the 17 runs outside E3 |
 | Session Start hook `listing-context` | [`scripts/hooks/listing-context.mjs`](scripts/hooks/listing-context.mjs) | Hands the agent the listing with each line's printed checksum and status; never a reference transcript | the `listing-context` rows in [`public/runs/`](public/runs/) and on [`/kiro`](https://ready.edycu.dev/kiro) |
 | File Save hook `prop-tests-on-save` | [`.kiro/hooks/prop-tests-on-save.json`](.kiro/hooks/prop-tests-on-save.json) | After a save under `src/basic` or `src/gate`, runs the property tests | [`evidence/hooks/file-save.jsonl`](evidence/hooks/file-save.jsonl): 4 firings: the first 3 exited 1 (the property-test include was not configured yet), the 4th passed 11 property tests |
 | Steering | [`.kiro/steering/`](.kiro/steering/) (7 files) | Commodore BASIC V2, Gazette notation and the resurrector's rules; three files are resources of the agent. Six were written claude-direct, `resurrector.md` by Kiro | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) E4: removing `commodore-basic-v2.md` showed no measurable difference at N=2 |
@@ -97,7 +97,7 @@ Node ≥ 22.18. No Kiro account, no key, no credits.
 ```bash
 git clone https://github.com/edycutjong/ready && cd ready && npm ci
 npm test                                      # Test Files 45 passed (45) · Tests 520 passed | 1 expected fail (521), about a minute
-node scripts/eval-agents.mjs --deterministic  # last line: {"summary":{"deterministic":"7/7","model":"0/0"}}
+node scripts/eval-agents.mjs --deterministic  # last line: {"summary":{"deterministic":"7/7","model":"0/0"}}: cases 2, 4, 7, 8, 9 + halves 5d, 6d; model cases 1, 3, 5, 6 need kiro-cli and credits
 node scripts/rejudge-runs.mjs                 # {"runs":20,"ok":20,"mismatches":0,...}: every public recording re-run on the real C64 core
 npm run dev                                   # http://localhost:5173 now says REPLAY: your browser's C64 re-runs every accepted patch
 ```
@@ -113,17 +113,21 @@ recordings; the README's 35 include 15 Gazette-derived ones that stay on the bui
    browser there; the page says RECORDED PLAYBACK and the stamp says "as recorded". A clone does run the C64
    (`npm run dev`, `rejudge-runs.mjs`).
 2. **The three runs on `/` are pages we typeset** in the 1984 format with planted misprints, read by real OCR. The one
-   real 1984 page the agent repaired (eval case 1, 3 of 3 TITLE-PATH RESURRECTED) is not in this repository, nor are its
-   OCR output and run files (rights), so it cannot be reproduced from a clone. In the earlier spike G runs on the same page (N=2), 19 of 28 lines were
-   source-exact against a vision-read reference; the rest are checksum-consistent, not proven identical.
-3. **`/scan` withholds the agent's repair** and leaves the fixing to you. It fetches the 1984 page from archive.org on
+   real 1984 page the agent repaired (eval case 1, 3 of 3 TITLE-PATH RESURRECTED: the RESURRECTED verdict with the contract
+   scoped to the 28 lines the program runs to reach its title screen and first post-title prompt) is not in this repository, nor are its
+   OCR output and run files (rights), so it cannot be reproduced from a clone. In the five runs on that page checked line by line (spike G's second attempt, the shipped-profile smoke and the three
+   case-1 runs), 19 of 28 lines are
+   source-exact against a vision-read reference: 10 of the 18 lines the agent repaired and 9 of the 10 it left alone. The
+   other 9 are checksum-consistent and differ from that reference only in spaces (8 inside a PRINT string, 1 outside
+   quotes), not proven identical ([`evidence/source-check/case1-split-2026-11-27.json`](evidence/source-check/case1-split-2026-11-27.json)).
+3. **`/scan` does not run the agent** (Kiro runs only in kiro-cli on the builder's machine; there is no hosted Kiro run) and leaves the fixing to you. It fetches the 1984 page from archive.org on
    request through [`api/page.js`](api/page.js), which writes nothing to disk; its CDN keeps a copy for up to a day (and may serve a stale one for up to a week while it refreshes). On that page tesseract.js misreads most lines: at 1600 px, 16 of the 83 lines it read
    matched their printed checksum ([`evidence/spikes/spike-P-ocr-live.json`](evidence/spikes/spike-P-ocr-live.json)).
 4. **No recorded run of the shipped agent contains a hook refusal.** The agent is told to test each candidate with
    `checksum_line` before sending it, and every gate event in [`public/runs/`](public/runs/) and
    [`evidence/evals/runs/`](evidence/evals/runs/) is `accepted`. The exit-2 path is shown by the tests and by the day-1
    probe sessions ([`spike-K1.md`](evidence/spikes/spike-K1.md), [`record-run-probe.jsonl`](evidence/spikes/record-run-probe.jsonl));
-   the refusal you see on screen is Cheat.
+   the refusal you see on screen is Cheat. So in the recorded runs the hook is a backstop, not a wall the agent was seen hitting.
 5. **Headless, Kiro's Agent Stop hook forces one more turn per prompt, not a loop**, so `scripts/record-run.mjs`
    resumes the session between cycles. In the 17 runs outside E3 it never had to.
 6. **The video is older than this repo.** It was cut on 2026-11-25 at evals release 1, so its receipts read 492 tests

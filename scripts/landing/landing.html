@@ -618,7 +618,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
     <div>
       <p class="eyebrow">Experiment E0 · the real June 1984 page · N=2</p>
       <h2 id="e0-h" style="margin-top:16px">Search fixed 3 of 18 failing lines. The agent made all 18 consistent.</h2>
-      <p class="lede2">The same 18 OCR-failed lines: a deterministic search with no model fixed 3; the gated Kiro agent made all 18 checksum-consistent (not proven identical). On the authored page, search alone fixes its one line.</p>
+      <p class="lede2">The same 18 OCR-failed lines: a deterministic search with no model fixed 3; the gated Kiro agent made all 18 checksum-consistent: 10 match a vision-read reference exactly, 8 differ only in spaces inside a PRINT string. On the authored page, search alone fixes its one line.</p>
     </div>
     <div class="e0-rows" role="img" aria-label="Two rows of 18 marks. Search: 3 of 18 fixed. Agent: 18 of 18 checksum-consistent.">
       <p class="e0-l">search</p><div class="marks"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p class="e0-n">3<small>/18</small></p>
@@ -759,7 +759,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
       <p class="credit">Claude-direct, labelled in commits and <code>docs/DX-REPORT.md</code>: <code>src/gate</code> and its contract, the recorder, REPLAY, the UI, the hook scripts, and tasks left after two spec lines hit or neared their caps (51.26 of 50, 68.71 of 70).</p>
     </div>
     <div class="tree">
-      <div><code>.kiro/specs/checksum-oracle/</code><p>7 properties, 12 tasks. Kiro built the tokenizer and checksum (tasks 1–6) and caught three spec errors against the real C64.</p></div>
+      <div><code>.kiro/specs/checksum-oracle/</code><p>7 properties, 12 tasks. Kiro built the tokenizer and checksum (tasks 1–6) and caught three spec errors against the real C64: abbreviation position, stray shifted bytes, and <code>P</code>+shift-<code>R</code> = <code>PRINT#</code>.</p></div>
       <div><code>.kiro/specs/c64-mcp-server/</code><p>11 properties, 8 tasks. Kiro wrote the schemas, run-dir contract and tools (tasks 1–5).</p></div>
       <div><code>.kiro/specs/resurrect-loop/</code><p>The agent loop; the profile and steering came from it (T1 done, T2–T6 open).</p></div>
       <div><code>.kiro/agents/{{agent}}.json</code><p>Only <code>@c64</code>. Hooks: listing-context (Session Start), checksum-gate (Pre Tool Use), until-title (Stop).</p></div>
@@ -784,7 +784,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
     <div class="limits">
       <blockquote>The live site is recorded playback; no C64 ROM is hosted (rights), so "IT LIVES" there is captioned "as recorded".<cite>README · limit 1</cite></blockquote>
       <blockquote>The 1984 magazine page and its OCR output are not in this repository (rights); that run cannot be reproduced from a clone.<cite>README · limit 2</cite></blockquote>
-      <blockquote>On the real 1984 page the title-path result is 19/28 lines source-exact against a vision-read reference; the other lines are checksum-consistent, not proven identical.<cite>README · limit 3</cite></blockquote>
+      <blockquote>On the real 1984 page the title-path result is 19/28 lines source-exact against a vision-read reference (10 of the 18 the agent repaired); the other 9 differ from it only in spaces, not proven identical.<cite>README · limit 3</cite></blockquote>
       <blockquote>Evals and experiments use small N on one machine (N=3 per eval case, N=2–3 per experiment arm): directions, not rates.<cite>README · limit 5</cite></blockquote>
     </div>
   </div>
@@ -796,7 +796,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
     <div class="qs">
       <details><summary>Is the C64 on this page real?</summary><p>Recorded from {{emulator}}'s screen memory. No C64 ROM is served (rights), so the stamp says "as recorded"; the gate panel is live.</p></details>
       <details><summary>Can the agent cheat its way to IT LIVES?</summary><p>Not by the shortcuts we tested: an emptied line, an untypeable character and a rewrite are refused, and a forced patch is never certified (eval cases 4 and 9, unit tests). A wrong line whose sum matches and runs would pass: results say consistent, not identical.</p></details>
-      <details><summary>Does it work on a real 1984 page?</summary><p>On the June 1984 Gazette's Random Number Test: TITLE-PATH RESURRECTED in {{case1}} eval runs. In two earlier spike runs, 19 of 28 lines matched a vision-read reference exactly. The recordings are withheld (rights).</p></details>
+      <details><summary>Does it work on a real 1984 page?</summary><p>On the June 1984 Gazette's Random Number Test: TITLE-PATH RESURRECTED in {{case1}} eval runs. In the five runs checked, 19 of 28 lines matched a vision-read reference exactly (10 of the 18 the agent repaired); the other 9 differ only in spaces. The recordings are withheld (rights).</p></details>
     </div>
   </div>
 </section>

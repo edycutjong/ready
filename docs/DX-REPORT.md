@@ -23,9 +23,12 @@ Every Kiro session in this report ran in kiro-cli. The Kiro IDE, Kiro Web and Ki
 
 ### What Kiro did that we would not have
 - **It checked the spec against the machine.** Before writing the tokenizer, Kiro wrote probe scripts that typed
-  lines into the real C64 core and read memory back. It found three places where our own spec was wrong
-  (abbreviation shape: `P`+shift-R is `PRINT#`, not `PRINT`; stray bytes ≥ `$80` are dropped, not copied; which
-  keywords are safe to abbreviate) and locked each one in `tests/unit/tokenizer-rom.test.ts`.
+  lines into the real C64 core and read memory back. It found three places where our own spec was wrong:
+  (1) abbreviation shape: R3.7 said any byte ≥ `$80` after a keyword prefix abbreviates it, but the ROM takes a shifted
+  letter only before the keyword's last letter (`I`+shift-F is not `IF`); (2) R3.8 said a stray byte ≥ `$80` is copied
+  unchanged, but the ROM drops it outside quotes and REM; (3) which keywords are safe to abbreviate: tasks.md used
+  `P`+shift-R for `PRINT`, but it types `PRINT#`, so `PRINT`, `INPUT` and `GOSUB` are never abbreviated. Each is locked
+  in `tests/unit/tokenizer-rom.test.ts` (and the first two are written up in `src/basic/keywords.ts`).
 - **The result is exact on what we can check.** Checked outside the repo against machine-read transcripts of the
   June 1984 page (vision OCR, not a hand read): the checksum oracle matches 111/111 printed `:rem` values (43 + 68
   lines), and the tokenizer's image of the 28-line title path is byte-equal to what the C64 holds after typing it
@@ -101,7 +104,8 @@ day-1 production deploys were made with `npm run deploy:prod` (`vercel build`, `
   reached the C64. The authored page plants `PRIMT` instead; OCR also read its quote as `™` (`fixtures/authored/`).
 - Search without a model (E0) made 3 of the 18 failing title-path lines checksum-consistent; the agent made all 18
   checksum-consistent and the title path RESURRECTED (`evidence/experiments/e0.json`, `docs/EXPERIMENTS.md`).
-- Checksum-consistent is not source-exact: 19/28 of the resurrected title path equal the reference transcript.
+- Checksum-consistent is not source-exact: 19/28 of the resurrected title path equal the reference transcript (10 of the
+  18 repaired lines, 9 of the 10 untouched); the other 9 differ from it only in spaces (`evidence/source-check/`).
 - Both G recordings ran with the first profile (built-in `read` trusted, 0 read calls made); the shipped profile is the
   tightened one, re-smoked before the hero recording.
 

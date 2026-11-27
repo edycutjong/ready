@@ -2,7 +2,7 @@
   <img src="docs/icon-animated.svg" alt="SYNTAX ERROR IN 20 icon" width="144">
   <h1>SYNTAX ERROR IN 20 🕯️</h1>
   <p><em>One wrong character (<code>PRIMT</code> for <code>PRINT</code>) kills a 1984 magazine program with <code>?SYNTAX ERROR IN 20</code>. A Kiro agent may fix the line only if it matches the checksum the magazine printed beside it, and a Commodore 64 core then decides whether the program lives. The live site plays back recorded real runs; you can try to beat the gate yourself.</em></p>
-  <p><strong>Kiro, used here:</strong> probing the real C64 while building the checksum, Kiro found three places our own spec was wrong about the machine. 4 specs (3 feature + 1 bugfix) · a custom agent limited to 6 MCP tools · 4 hooks (one refuses a patch with exit 2) · 7 steering files · a skill · a workflow · a Power (tried) · 18 experiment runs. <a href="JUDGE.md#kiro-impossible-to-miss">Feature → file → evidence</a>.</p>
+  <p><strong>Kiro, used here:</strong> probing the real C64 while building the checksum, Kiro found three places our own spec was wrong about the machine: a shifted letter abbreviates a keyword only before its last letter (<code>I</code>+shift-<code>F</code> is not <code>IF</code>); stray shifted bytes are dropped, not copied; and <code>P</code>+shift-<code>R</code> types <code>PRINT#</code>, not <code>PRINT</code>. 4 specs (3 feature + 1 bugfix) · a custom agent limited to 6 MCP tools · 4 hooks (one refuses a patch with exit 2) · 7 steering files · a skill · a workflow · a Power (tried) · 18 experiment runs. <a href="JUDGE.md#kiro-impossible-to-miss">Feature → file → evidence</a>.</p>
   <img src="docs/readme-hero-animated.svg" alt="SYNTAX ERROR IN 20: a singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen" width="100%">
 
   <br/>
@@ -35,7 +35,7 @@
 > so nothing on the site runs on a C64 live; the recordings are labelled as recordings.
 >
 > **Why Kiro:** Kiro specs built the tokenizer/checksum oracle and the MCP tool layer, and Kiro found three places where our own
-> spec was wrong about the machine; a Kiro Pre Tool Use hook and the agent's permission profile sit in front of the deterministic
+> spec was wrong about the machine (abbreviation position, stray shifted bytes, `P`+shift-`R` = `PRINT#`); a Kiro Pre Tool Use hook and the agent's permission profile sit in front of the deterministic
 > gate (`src/gate`, claude-direct): the agent has no file, shell or web tools, only six C64 tools.
 
 ## 📸 See it in Action
@@ -55,7 +55,7 @@ The 60-second judge path (the three-minute version, with every Kiro file mapped 
 | 50–60 | Open [`/kiro`](https://ready.edycu.dev/kiro) | The Kiro hook rows and tool calls of the three recorded runs, in time order |
 
 Then try [`/scan`](https://ready.edycu.dev/scan): pick one of two June 1984 Gazette pages on archive.org (n177, n178), or upload a scan. Tesseract.js
-(self-hosted, in your tab) reads it and each line's recomputed sum is checked against the printed one and the mismatches are flagged. Fix a flagged line by hand and its checksum is rechecked on every keystroke; export the result as `.bas` (unverified lines commented out) plus an errata sheet. The agent's repair is withheld there (see Honest limits).
+(self-hosted, in your tab) reads it and each line's recomputed sum is checked against the printed one and the mismatches are flagged. Fix a flagged line by hand and its checksum is rechecked on every keystroke; export the result as `.bas` (unverified lines commented out) plus an errata sheet. `/scan` does not run the agent: Kiro runs only in kiro-cli on the builder's machine, and there is no hosted Kiro run (see Honest limits).
 
 ## 💡 The Problem & Solution
 
@@ -67,8 +67,8 @@ any more. Nothing stops an LLM asked to "fix the listing" from inventing a line 
 **Who it is for:** retro-computing hobbyists and archivists typing a listing back in from a scan. [`/scan`](https://ready.edycu.dev/scan) already checks
 each line of a Gazette page or your own scan against its printed `:rem` and flags the mismatches (a sum that fits only a
 misread printed digit is marked "digits misread" instead), in the browser (no install, no ROM); you fix a flagged line by hand,
-it is rechecked as you type, and you export the `.bas` and an errata sheet. The agent's gated repair is proven on recorded
-runs (Engineering Rigor) and withheld on live pages (Honest limits, 4).
+it is rechecked as you type, and you export the `.bas` and an errata sheet. The agent's gated repair is shown on recorded
+runs (Engineering Rigor); the live pages do not run the agent (Honest limits, 4).
 
 ### The Solution
 The model chooses where to look; code decides what is true. A patch is only accepted when (1) it is typeable on a real
@@ -104,11 +104,11 @@ Kiro is the engine, not the decoration. What each `.kiro/` artefact did, and who
 
 | Artefact | What it did | Evidence |
 |---|---|---|
-| `.kiro/specs/checksum-oracle/` | Requirements, 7-property design and 12 tasks; Kiro built the tokenizer + checksum (tasks 1–6) and found three places our spec disagreed with the real C64 | [`docs/DX-REPORT.md`](docs/DX-REPORT.md) Day 1 |
+| `.kiro/specs/checksum-oracle/` | Requirements, 7-property design and 12 tasks; Kiro built the tokenizer + checksum (tasks 1–6) and found three places our spec disagreed with the real C64 (where a shifted letter abbreviates a keyword; stray shifted bytes dropped, not copied; `P`+shift-`R` is `PRINT#`, not `PRINT`), each locked in `tests/unit/tokenizer-rom.test.ts` | [`docs/DX-REPORT.md`](docs/DX-REPORT.md) Day 1 |
 | `.kiro/specs/c64-mcp-server/` | Spec (11 properties, 8 tasks) and the zod schemas, run-dir contract and tools (tasks 1–5) | DX report, P1b |
 | `.kiro/specs/resurrect-loop/` | The agent loop spec; the agent profile and steering came out of it (T1 done, T2–T6 open) | DX report, P1b |
 | `.kiro/agents/resurrector.json` | The shipped agent: only the `@c64` MCP tools; file read, shell, write and web are denied | `tests/unit/resurrector-profile.test.ts`, `evidence/spikes/spike-G.json`, `.kiro/agents/resurrector.json` |
-| Hook `checksum-gate` (Pre Tool Use) | Exit 2 refuses an `apply_patch` before it reaches the server | `scripts/hooks/checksum-gate.mjs`, `evidence/spikes/spike-K1.md` (probe profile) |
+| Hook `checksum-gate` (Pre Tool Use) | Exit 2 refuses an `apply_patch` before it reaches the server (shown in the day-1 probe and the tests; no recorded run of the shipped agent was refused, because it checks each candidate with `checksum_line` first, so the hook is a backstop) | `scripts/hooks/checksum-gate.mjs`, `evidence/spikes/spike-K1.md` (probe profile) |
 | Hook `until-title` (Agent Stop) | Blocks the agent's stop while the contract is not RESURRECTED, unless only unfixable lines remain or a cap hits (15 attempts, 8 credits, 600 s). Kiro honours one block per prompt (one forced turn), so `scripts/record-run.mjs` resumes the session between cycles (a safety net: outside E3 it never had to, `docs/EXPERIMENTS.md`); caps are checked between cycles, so one cycle can overshoot the credit cap (E3: 15.21 and 16.68 credits) | `evidence/spikes/spike-K2.md` |
 | Hook `listing-context` (Session Start) | Hands the agent the flagged listing | `scripts/hooks/` |
 | Hook `prop-tests-on-save` (File Save) | After a save under `src/basic` or `src/gate`, runs `tests/prop` | `evidence/hooks/file-save.jsonl` (4 firings, 1 clean pass) |
@@ -128,12 +128,12 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 |---|---|---|
 | Tests | 520 passing, 45 files, plus 1 expected fail (the known-limitation marker, Honest limits 7) (`npm test` on e7f58ac) | `tests/`, `evidence/tests/npm-test-2026-11-27.txt` |
 | Agent evals, release 2 | 9 of 9 cases run and passing; cases 5 (silent DATA fault) and 6 (`?OUT OF DATA`) are original 2026 pages | [`docs/EVALS.md`](docs/EVALS.md) |
-| Model runs | 12 of 12 `RESURRECTED` with the shipped profile (4 model cases × N=3; the E1–E4 ablation arms are not counted here and include failures). Every recording on disk (35: 20 public, 15 local tier-C) re-judges with 0 mismatches, a run counting only when its recorded and recomputed verdicts are both present and equal | `scripts/rejudge-runs.mjs`, `evidence/boot-detect/rejudge-p6d.json`; the case-3, 5 and 6 runs are in `evidence/evals/runs/`; the case-1 recordings are withheld (rights) and cannot be reproduced from a clone |
+| Model runs | 12 of 12 `RESURRECTED` with the shipped profile (4 model cases × N=3; case 1's three are `TITLE-PATH RESURRECTED`, the same verdict with the contract scoped to the 28 lines the 1984 program runs to reach its title screen and first post-title prompt; the E1–E4 ablation arms are not counted here and include failures). Every recording on disk (35: 20 public, 15 local tier-C) re-judges with 0 mismatches, a run counting only when its recorded and recomputed verdicts are both present and equal | `scripts/rejudge-runs.mjs`, `evidence/boot-detect/rejudge-p6d.json`; the case-3, 5 and 6 runs are in `evidence/evals/runs/`; the case-1 recordings are withheld (rights) and cannot be reproduced from a clone |
 | Gate `applyPatch` | p50 0.01 ms, p95 0.05 ms (N=2000, node) | `evidence/bench/bench-2026-11-26-p7.json` (re-run on HEAD 8d26d13 on 2026-11-26; the 11-24 file predates the P1d gate changes and the 11-25 file predates the `src/emu` boot-detect changes) |
 | Emulator boot | p50 807 ms (N=10, node) | same file |
 | REPLAY of the recorded run in node (incl. a core boot) | p50 2730 ms, range 2.6–3.0 s (N=10) | same file |
 | OCR, tesseract.js 7 on the authored page | p50 1199 ms (N=5, warm worker, node) | same file |
-| Experiment E0 (does search beat the model?) | On the real 1984 page search fixed 3 of 18 failing lines; the agent made all 18 checksum-consistent (N=2) | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) |
+| Experiment E0 (does search beat the model?) | On the real 1984 page search fixed 3 of 18 failing lines; the agent made all 18 checksum-consistent (N=2). Against a vision-read reference, 10 of those 18 are source-exact and the other 8 differ only in spaces inside a PRINT string (the checksum ignores spaces) | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md), `evidence/source-check/case1-split-2026-11-27.json` |
 
 ### Attacks defeated
 
@@ -152,8 +152,8 @@ that reached or neared their cap (51.26 of 50, 68.71 of 70), after which the tas
 
 1. The live site is **recorded playback**; no C64 ROM is hosted (rights), so "IT LIVES" there is captioned "as recorded".
 2. The 1984 magazine page and its OCR output are not in this repository (rights); that run cannot be reproduced from a clone.
-3. On the real 1984 page the title-path result is `19/28` lines source-exact against a vision-read reference; the other lines are checksum-consistent, not proven identical.
-4. `/scan` flags checksum mismatches and lets you fix and export lines by hand, but withholds the agent's repair on live pages. On `/`, **fix it yourself** runs your line through the gate only (typeable, checksum, edit cap); no C64 runs it.
+3. On the real 1984 page the title-path result is `19/28` lines source-exact against a vision-read reference (10 of the 18 lines the agent repaired, 9 of the 10 it left alone); the other 9 are checksum-consistent and differ from that reference only in spaces (8 inside a PRINT string, which the screen shows; 1 outside quotes), not proven identical (`evidence/source-check/case1-split-2026-11-27.json`).
+4. `/scan` flags checksum mismatches and lets you fix and export lines by hand; it does not run the agent (Kiro runs only in kiro-cli on the builder's machine; there is no hosted Kiro run). On `/`, **fix it yourself** runs your line through the gate only (typeable, checksum, edit cap); no C64 runs it.
 5. Evals and experiments use small N on one machine (N=3 per eval case, N=2–3 per experiment arm): directions, not rates.
 6. The MEGA65 Open ROMs spike failed (5/5 syntax probes unimplemented), so the C64 core is the one `c64-ready` ships.
 7. Title detection reads the program's output below the last screen row that is exactly `RUN`; a program that itself prints a row `RUN` before its title is judged as never reaching the title (measured, probe b in `.kiro/specs/bugfix-boot-detect/bugfix.md`; kept as the 1 expected-fail test).
@@ -194,7 +194,7 @@ the real C64 core and compares its memory with our tokenizer.
 [![Quality](https://github.com/edycutjong/ready/actions/workflows/quality.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/quality.yml)
 [![Deploy](https://github.com/edycutjong/ready/actions/workflows/deploy.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/deploy.yml)
 
-Six GitHub Actions pipelines run on every push to `main` (the first five also on pull requests):
+Five GitHub Actions workflows run on every push to `main` and on pull requests (CI, E2E, CodeQL, Security, Quality); Deploy runs after `CI` passes on `main` (E2E runs again after it), and a seventh, Release, also follows a green CI but cuts nothing unless `AUTO_RELEASE` is on:
 
 | Workflow | What it proves |
 |---|---|

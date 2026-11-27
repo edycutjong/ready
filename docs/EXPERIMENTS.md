@@ -17,7 +17,9 @@ arm only: no search pre-pass ships. Script: `scripts/e0-search.mjs`.
 | June 1984 Gazette title path (28 lines, same input as spike G) | 18 | 3 | 15 | NOT RESURRECTED, 13/28 checksum-consistent, no title |
 
 Same input, the `resurrector` agent (spike G, `evidence/spikes/spike-G.json`): 18/18 failing lines made checksum-
-consistent, TITLE-PATH RESURRECTED in both attempts (N = 2), 19/28 source-exact against the reference transcript.
+consistent, TITLE-PATH RESURRECTED in both attempts (N = 2), 19/28 source-exact against the reference transcript: 10 of the
+18 repaired lines and 9 of the 10 untouched ones; all 9 others differ from it only in spaces (8 inside a PRINT string, 1
+outside quotes; `evidence/source-check/case1-split-2026-11-27.json`, `scripts/source-split.mjs`).
 On an easy page, search is enough; on the real 1984 page it is not.
 
 ## E1–E4 — what changes the outcome? (2026-11-26, 18 new runs, 68.89 credits — a lower bound: one Haiku run was unmetered; the `shipped` case-6 row reuses release 2's 3 runs, so the `credits total` column sums to 71.596 = 68.89 + 2.709)

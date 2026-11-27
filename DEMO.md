@@ -26,7 +26,7 @@ The three-minute version, with every Kiro file mapped to its evidence: [`JUDGE.m
    and `eval-case6-1-1795625707333.jsonl` (`evidence/boot-detect/rejudge-p6d.json`, `identicalCopiesNotCounted`).
 5. Open `/kiro`: the Pre Tool Use / Agent Stop / Session Start hook rows of the three recorded runs, in time order.
 6. Open `/scan`: pick one of two June 1984 Gazette pages on archive.org (n177, n178; fetched through `/api/page`) or upload a scan. Self-hosted tesseract.js reads it in
-   your tab; each line is checked against its printed checksum and the mismatches are flagged. No Kiro call, 0 credits, repair withheld.
+   your tab; each line is checked against its printed checksum and the mismatches are flagged. No Kiro call, 0 credits, no agent repair (the agent runs only in kiro-cli).
    Or press **Read our authored page** (our typeset line-20 page, not a 1984 scan): in Chrome 158 it flags 2 of 12 lines, line 20 (the
    planted `PRIMT`) and line 60 (the OCR's own misread, `THEN5®`); Playwright's bundled Chromium 147 also flags line 90. Both builds
    OCR the same page after a canvas resample (`imageSmoothingQuality = "high"`); we attribute the difference to that resampler, which
@@ -58,7 +58,7 @@ the hero run (`public/runs/`) and the case-3, 5 and 6 runs (`evidence/evals/runs
 | evals: 9 of 9 cases run and passing; 12 of 12 model runs RESURRECTED with the shipped profile (the E1–E4 ablation arms are not counted and include failures) | `evidence/evals/evals-2026-11-2{4,5}.jsonl`, `docs/EVALS.md` |
 | experiments E1–E4 (18 new runs, N=2 per arm and case; the shipped case-6 row reuses release 2's 3 runs) | `node scripts/experiments-table.mjs` → `evidence/experiments/e1-e4.json`, `docs/EXPERIMENTS.md` |
 | every recording re-judges, 0 mismatches (35 on the builder's machine; a clone has only the 20 public ones, and `experiments-table.mjs` needs the local tier-C files) | `node scripts/rejudge-runs.mjs` |
-| E0: search fixed 3 of 18 failing lines on the real page; the agent 18 of 18 (N=2) | `evidence/experiments/e0.json`, `docs/EXPERIMENTS.md` |
+| E0: search fixed 3 of 18 failing lines on the real page; the agent made 18 of 18 checksum-consistent (N=2), not proven source-exact. Against a vision-read reference: 19 of 28 title-path lines source-exact = 10 of the 18 the agent repaired + 9 of the 10 it left alone; the other 9 differ only in spaces (8 inside a PRINT string) | `evidence/experiments/e0.json`, `docs/EXPERIMENTS.md`; split: `node scripts/source-split.mjs` (needs the local tier-C run files and reference) → `evidence/source-check/case1-split-2026-11-27.json` |
 | Live judge path, interaction and first-viewport checks | `evidence/e2e/` |
 | Kiro credits per session | `docs/DX-REPORT.md` |
 
