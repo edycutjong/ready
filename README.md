@@ -6,11 +6,14 @@
 
   <br/>
 
+  [![For judges](https://img.shields.io/badge/For_judges-the_judge_path-1F4E79?style=for-the-badge)](JUDGE.md)
   [![Live Demo](https://img.shields.io/badge/🚀_Live-Demo-06b6d4?style=for-the-badge)](https://ready.edycu.dev)
 
   [![Demo Video](https://img.shields.io/badge/▶_Demo-Video-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/Jv69K3jQ6QI)
-  [![For judges](https://img.shields.io/badge/For_judges-the_judge_path-1F4E79?style=for-the-badge)](JUDGE.md)
-  [![Kiro view](https://img.shields.io/badge/👻_Kiro-view-8b5cf6?style=for-the-badge)](https://ready.edycu.dev/kiro)
+  [![Landing](docs/badges/production-landing.svg)](https://ready.edycu.dev/landing/)
+  [![Scan](docs/badges/production-scan.svg)](https://ready.edycu.dev/scan)
+  [![Kiro view](docs/badges/production-kiro.svg)](https://ready.edycu.dev/kiro)
+  [![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-f59e0b?style=for-the-badge)](https://ready.edycu.dev/deck/)
   [![Built for Kiroween](https://img.shields.io/badge/Devpost-Kiroween_2026_·_Resurrection-ef4444?style=for-the-badge)](https://kiroween.devpost.com/)
 
   <br/>
