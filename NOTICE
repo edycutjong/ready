@@ -3,3 +3,21 @@ NOTICE
 This licence covers the code in this repository only. The emulator dependency `c64-ready` (MIT, installed from
 npm, never committed here) ships a WASM build that embeds Commodore's KERNAL/BASIC ROM images, which are not
 covered by this licence. Magazine pages and listing text belong to their rights holders and are not in this repo.
+
+Third-party files committed in this repository, each under its own licence:
+
+- `public/fonts/*.woff` (6 files): byte-identical (sha256) to the latin subsets in the npm packages
+  `@fontsource/rokkitt`, `@fontsource/atkinson-hyperlegible-next` and `@fontsource/atkinson-hyperlegible-mono`
+  (5.3.0). SIL Open Font License 1.1; the licence text with each family's copyright line ships next to the fonts:
+  `public/fonts/OFL-rokkitt.txt` (Copyright 2016 The Rokkitt Project Authors),
+  `public/fonts/OFL-atkinson-hyperlegible-next.txt` and `public/fonts/OFL-atkinson-hyperlegible-mono.txt`
+  (Copyright 2020-2024 The Atkinson Hyperlegible Next / Mono Project Authors).
+- `public/ocr/eng.traineddata.gz`: the English LSTM model tesseract.js loads by default. Its decompressed content
+  (5,199,098 bytes, sha256 5dc5d8d640a212c9d6184921ba103b186f50e0fed9ee716c53e6b312b400d747) is byte-identical to
+  `4.0.0_best_int/eng.traineddata.gz` in the npm package `@tesseract.js-data/eng` 1.0.0 (repository naptha/tessdata,
+  package licence field MIT), which describes it as an integerized version of tesseract-ocr's "tessdata_best"
+  (Apache License 2.0). The gzip wrapper differs, so the compressed file's own sha256 is
+  e8765cfd8432f05571dea5d0c116c8532699b6e859b140acccd6710b764e8447.
+
+Not committed, but served by the live site: the tesseract.js worker and WASM cores in `public/ocr/`, copied from the
+`tesseract.js` / `tesseract.js-core` npm packages (Apache License 2.0) by `scripts/vendor-ocr.mjs` before each build.
