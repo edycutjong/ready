@@ -21,7 +21,7 @@
   ![Kiro](https://img.shields.io/badge/Kiro-agent_+_MCP_+_hooks-8b5cf6?style=flat)
   ![Vercel](https://img.shields.io/badge/Vercel-black?style=flat&logo=vercel)
   [![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
-  [![Release](https://img.shields.io/github/v/release/edycutjong/ready?sort=semver)](https://github.com/edycutjong/ready/releases/latest)
+  [![Release](docs/badges/release.svg)](https://github.com/edycutjong/ready/releases/latest)
   [![CI](https://github.com/edycutjong/ready/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/ci.yml)
   [![E2E](https://github.com/edycutjong/ready/actions/workflows/e2e.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/e2e.yml)
   [![CodeQL](https://github.com/edycutjong/ready/actions/workflows/codeql.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/codeql.yml)
