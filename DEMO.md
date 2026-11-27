@@ -2,6 +2,8 @@
 
 Live: https://ready.edycu.dev · No account, no install, no key.
 
+The three-minute version, with every Kiro file mapped to its evidence: [`JUDGE.md`](JUDGE.md).
+
 ## In the browser (about 60 s)
 
 1. Open `/`. The recorded run starts by itself once (`/?still=1` and reduced-motion keep it still). Press **Resurrect** to

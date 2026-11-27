@@ -1,7 +1,7 @@
 <div align="center">
   <img src="docs/icon-animated.svg" alt="SYNTAX ERROR IN 20 icon" width="144">
   <h1>SYNTAX ERROR IN 20 🕯️</h1>
-  <p><em>Resurrect 1984 magazine type-in programs: the magazine's own printed checksums flag the lines OCR misread, a Kiro agent proposes fixes, a deterministic gate accepts a fix only when it is typeable on a C64 and matches its printed checksum (allowing for OCR misreads of the printed digits), and a real C64 core then runs the program and decides the verdict.</em></p>
+  <p><em>A Kiro agent repairs the lines OCR misread in 1984 magazine type-in programs, but only through a gate: a fix must be typeable on a C64 and match its printed checksum (allowing for OCR misreads of the printed digits), and a real C64 core then runs the program and decides the verdict; the live site plays back recorded runs.</em></p>
   <img src="docs/readme-hero-animated.svg" alt="SYNTAX ERROR IN 20: a singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen" width="100%">
 
   <br/>
@@ -9,6 +9,7 @@
   [![Live Demo](https://img.shields.io/badge/🚀_Live-Demo-06b6d4?style=for-the-badge)](https://ready.edycu.dev)
 
   [![Demo Video](https://img.shields.io/badge/▶_Demo-Video-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/Jv69K3jQ6QI)
+  [![For judges](https://img.shields.io/badge/For_judges-the_judge_path-1F4E79?style=for-the-badge)](JUDGE.md)
   [![Kiro view](https://img.shields.io/badge/👻_Kiro-view-8b5cf6?style=for-the-badge)](https://ready.edycu.dev/kiro)
   [![Built for Kiroween](https://img.shields.io/badge/Devpost-Kiroween_2026_·_Resurrection-ef4444?style=for-the-badge)](https://kiroween.devpost.com/)
 
@@ -32,8 +33,8 @@
 
 ---
 
-> **The problem.** A 1984 type-in listing read back from a scan dies on one wrong character (`?SYNTAX  ERROR IN 20`), and and
-> nothing stops an LLM asked to fix it from inventing a line that runs and is wrong.
+> **The problem, and who has it.** Anyone typing a 1984 type-in listing back in from a scan: one character the OCR misread
+> and the program dies (`?SYNTAX  ERROR IN 20`), and nothing in a plain LLM fix loop stops the model from inventing a line that runs and is wrong.
 >
 > **What this is.** A Kiro agent that may only change a line through a gate: typeable on a C64 keyboard, within the 40% edit cap, and its checksum
 > equals the printed one (or fits only a misread printed digit). The C64 then runs the patched program, and its screen and memory decide the verdict.
@@ -55,7 +56,7 @@
   <img src="docs/broll/resurrect.gif" width="100%" alt="Captured from ready.edycu.dev at 1x speed: The Last Seance, a recorded real Kiro run played back (no C64 runs on the site). Line 20 of our typeset listing, PRIMT™ ** THE LAST SEANCE **&quot;, is ringed in red and the C64 pane reports ?SYNTAX ERROR IN 20. The agent's patch PRINT&quot; ** THE LAST SEANCE **&quot; is written beneath the struck line and re-inks from red to blue as the gate accepts it; the recorded C64 screen then shows the program's title, THE SPIRITS ANSWER down to IT LIVES. The view pans past the run strip (ACCEPTED, 20: checksum 159 = printed 159) to the certificate: RESURRECTED (RECORDED), an IT LIVES stamp captioned as recorded, not re-run on a C64 here.">
 </p>
 
-The 60-second judge path:
+The 60-second judge path (the three-minute version, with every Kiro file mapped to its evidence, is [`JUDGE.md`](JUDGE.md)):
 
 | Seconds | Do | You see |
 |---|---|---|
@@ -120,7 +121,7 @@ Kiro is the engine, not the decoration. What each `.kiro/` artefact did, and who
 | `.kiro/specs/resurrect-loop/` | The agent loop spec; the agent profile and steering came out of it (T1 done, T2–T6 open) | DX report, P1b |
 | `.kiro/agents/resurrector.json` | The shipped agent: only the `@c64` MCP tools; file read, shell, write and web are denied | `tests/unit/resurrector-profile.test.ts`, `evidence/spikes/spike-G.json`, `.kiro/agents/resurrector.json` |
 | Hook `checksum-gate` (Pre Tool Use) | Exit 2 refuses an `apply_patch` before it reaches the server | `scripts/hooks/checksum-gate.mjs`, `evidence/spikes/spike-K1.md` (probe profile) |
-| Hook `until-title` (Agent Stop) | Blocks the agent's stop while the contract is not RESURRECTED, unless only unfixable lines remain or a cap hits (15 patches, 8 credits, 600 s). Kiro honours one block per prompt (one forced turn), so `scripts/record-run.mjs` resumes the session between cycles (a safety net: outside E3 it never had to, `docs/EXPERIMENTS.md`); caps are checked between cycles, so one cycle can overshoot the credit cap (E3: 15.21 and 16.68 credits) | `evidence/spikes/spike-K2.md` |
+| Hook `until-title` (Agent Stop) | Blocks the agent's stop while the contract is not RESURRECTED, unless only unfixable lines remain or a cap hits (15 attempts, 8 credits, 600 s). Kiro honours one block per prompt (one forced turn), so `scripts/record-run.mjs` resumes the session between cycles (a safety net: outside E3 it never had to, `docs/EXPERIMENTS.md`); caps are checked between cycles, so one cycle can overshoot the credit cap (E3: 15.21 and 16.68 credits) | `evidence/spikes/spike-K2.md` |
 | Hook `listing-context` (Session Start) | Hands the agent the flagged listing | `scripts/hooks/` |
 | Hook `prop-tests-on-save` (File Save) | After a save under `src/basic` or `src/gate`, runs `tests/prop` | `evidence/hooks/file-save.jsonl` (4 firings, 1 clean pass) |
 | `.kiro/steering/` (7 files; 6 claude-direct, 4 of them in place before Kiro's first session, `product.md` and `commodore-basic-v2.md` committed after its first two; `resurrector.md` written by Kiro in the resurrect-loop session) | Commodore BASIC V2, Gazette notation, the resurrector's rules | `.kiro/steering/` |
@@ -215,7 +216,7 @@ docs/             # DX report, evals, experiments
 
 ## 📽️ Demo Materials
 
-[`DEMO.md`](DEMO.md) has the exact commands behind every number. Live: https://ready.edycu.dev
+[`JUDGE.md`](JUDGE.md) is the three-minute judge path; [`DEMO.md`](DEMO.md) has the exact commands behind every number. Live: https://ready.edycu.dev
 
 The three GIFs in this README ([`docs/broll/`](docs/broll/)) are captures of the live site at 1× speed (Playwright, Chromium,
 2× pixels, nothing on the page altered; the pointer in the gate GIF marks where the scripted clicks landed). The Last Seance and

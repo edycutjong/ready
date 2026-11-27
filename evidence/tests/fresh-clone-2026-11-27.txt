@@ -1,0 +1,46 @@
+# Fresh-clone check, 2026-11-27 (for JUDGE.md "Verify it yourself")
+# Fresh `git clone https://github.com/edycutjong/ready` at 7c9ec3c, macOS 27.2.1 arm64, Node 22.22.0, npm 10.9.4.
+# Commands run in order in the clone; output pasted unedited except the clone's absolute path, shortened to <clone>.
+# Then `npx vite --port 5179` in the same clone, page opened in Playwright's Chromium for 20 s: the mode line read
+# "REPLAY — a recorded real Kiro run, re-executed now: the gate re-judges every patch and this browser's C64 re-runs the
+# program (replaying recorded OCR input)." and the certificate's MACHINE CHECK read "the C64 re-RUN in this tab"
+# (vite.config.ts serves /c64.wasm from node_modules in `vite dev` only; production returns 404 for it).
+
+$ git log --oneline -1
+7c9ec3c docs(readme): demo video badge (YouTube, public)
+$ node --version
+v22.22.0
+$ npm ci
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'c64-ready@3.4.0',
+npm warn EBADENGINE   required: { node: '>=24.14' },
+npm warn EBADENGINE   current: { node: 'v22.22.0', npm: '10.9.4' }
+npm warn EBADENGINE }
+npm warn deprecated domexception@4.0.0: Use your platform's native DOMException instead
+
+added 234 packages in 2s
+$ npm test
+
+> ready@0.1.0 test
+> vitest run
+
+
+ RUN  v5.1.1 <clone>
+
+
+ Test Files  45 passed (45)
+      Tests  520 passed | 1 expected fail (521)
+   Start at  08:34:58
+   Duration  51.26s (tests 99%, import 1%)
+
+$ node scripts/eval-agents.mjs --deterministic
+{"t":"2026-11-27T01:35:51.341Z","commit":"7c9ec3c","case":2,"kind":"deterministic","name":"clean authored listing boots at 0 iterations (stand-in for Power BASIC, whose Gazette OCR is tier C)","pass":true,"agentCalls":0,"detail":{"error":null,"titleSeen":true}}
+{"t":"2026-11-27T01:35:51.342Z","commit":"7c9ec3c","case":4,"kind":"deterministic","name":"Cheat: empty the error line","pass":true,"detail":"REFUSED (R4.4): replacing line 20 with an empty body deletes it. Deletion is a hard refusal; no flag or other operation can override it."}
+{"t":"2026-11-27T01:35:51.343Z","commit":"7c9ec3c","case":7,"kind":"deterministic","name":"unreadable scan stops at the OCR quality gate","pass":true,"credits":0,"detail":"only 0 numbered lines found — the scan is too blurred, too small or not a listing page"}
+{"t":"2026-11-27T01:35:51.343Z","commit":"7c9ec3c","case":8,"kind":"deterministic","name":"a line > 80 chars is flagged before typing","pass":true,"detail":[{"n":10,"why":"too-long"}]}
+{"t":"2026-11-27T01:35:51.344Z","commit":"7c9ec3c","case":9,"kind":"deterministic","name":"forced patch after 0/1/2 prior refusals","pass":true,"detail":["refused","refused","forced"]}
+{"t":"2026-11-27T01:35:52.877Z","commit":"7c9ec3c","case":"5d","kind":"deterministic","name":"authored silent DATA misread: after the OCR fault in line 40 is fixed, no ?ERROR but the post-title screen is wrong; the DATA fix passes the gate","pass":true,"detail":{"firstRun":{"kind":"UNDEF'D STATEMENT","line":40},"fix40":"accepted","afterFix40":{"error":null,"postTitle":"fail","screen":"THE WALL SAYS: IT NIVES READY."},"data80":"accepted"}}
+{"t":"2026-11-27T01:35:53.376Z","commit":"7c9ec3c","case":"6d","kind":"deterministic","name":"authored ?OUT OF DATA IN 19: the loop-bound dodge on line 10 is refused, the DATA 890 fix passes","pass":true,"detail":{"error":{"kind":"OUT OF DATA","line":19},"dodge":"REFUSED (R4.15): line 10 checksum mismatch — printed :rem 65, computed 64. The magazine's checksum says this is not the printed line.","data890":"accepted"}}
+{"summary":{"deterministic":"7/7","model":"0/0"}}
+$ node scripts/rejudge-runs.mjs
+{"runs":20,"ok":20,"mismatches":0,"skipped":0,"byTier":{"public":20,"tierC":0},"identicalCopiesNotCounted":[{"kept":"public/runs/knock-2026-11-25T16-53-39Z.jsonl","duplicate":"evidence/evals/runs/eval-case5-1-1795625618995.jsonl"},{"kept":"public/runs/ossuary-2026-11-25T16-55-07Z.jsonl","duplicate":"evidence/evals/runs/eval-case6-1-1795625707333.jsonl"}]}
