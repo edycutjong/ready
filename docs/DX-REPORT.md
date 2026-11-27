@@ -137,8 +137,8 @@ the recorder fixes; `scripts/{make-run-input,typeset-authored,e0-search,source-c
 
 ### Open (spec tasks not done yet, stated so nothing reads as finished)
 P1c shipped the listing picker (a recorded run plus `/scan` for the 1984 page or your own), the in-tab tesseract.js worker with
-the live checksum-flag rate and the design pass; there is still no `powerbasic` page. No recorded agent run contains a gate
-refusal: every gate event in all recorded runs is `accepted`. The refusal on screen is Cheat (and eval case 9 / the K1 probe).
+the live checksum-flag rate and the design pass; there is still no `powerbasic` page. No recorded run of the shipped agent contains a gate
+refusal: every gate event in the recordings in this repo is `accepted`. The refusal on screen is Cheat (and eval case 9 / the K1 probe).
 Nothing sets `eye-verified` yet
 (the gate and contract accept it; the "a person marks it against the crop" step is P3).
 

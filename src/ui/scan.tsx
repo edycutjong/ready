@@ -81,7 +81,7 @@ export function ScanView() {
           <button data-testid="read-authored" disabled={!!busy} onClick={readAuthored}>Read our authored page</button>
           <label>or your own scan <input type="file" accept="image/*" data-testid="upload" disabled={!!busy} onChange={(e) => { const f = (e.target as HTMLInputElement).files?.[0]; if (f) run(f, `your upload (${f.name})`); }} /></label>
         </div>
-        <p class="note">Source width stops are measured in pixels of the source image, not dpi. The page image is archive.org's own public scan, fetched on demand and never stored here.</p>
+        <p class="note">Source width stops are measured in pixels of the source image, not dpi. The page image is archive.org's own public scan, fetched on demand; this site writes no copy to disk; its CDN keeps a copy for up to a day (and may serve a stale one for up to a week while it refreshes).</p>
         {busy && <p data-testid="busy"><progress max={1} value={pct} /> {busy}</p>}
         {msg && <p class="refused" data-testid="scan-msg">{msg}</p>}
         {img && <details><summary>the scan being read</summary><img class="page" src={img} alt="the scanned magazine page being read" /></details>}
