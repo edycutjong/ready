@@ -217,6 +217,9 @@ function Desk() {
             <section class="galley" aria-label="galley">
               <p class="paper-note">{mode === "replay" ? "The printed page, as read. Blood-red = the line the C64 rejects or the checksum disagrees with; it re-inks C64 blue when the gate accepts the patch and this C64 re-runs." : "The printed page, as read. Blood-red = the line the C64 rejected or the checksum disagrees with; it re-inks blue when the gate accepts the patch (in the recorded run the C64 then ran it)."}</p>
               <table>
+                <thead style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" }}>
+                  <tr><th scope="col">Line</th><th scope="col">Listing</th><th scope="col">Printed checksum</th><th scope="col">Mark</th><th scope="col">Source</th></tr>
+                </thead>
                 <tbody>
                   {view.listing.slice().sort((a, b) => a.n - b.n).map((l) => {
                     const m = mark(l);

@@ -18,6 +18,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="brand frame: the error this project is named after. A singed listing slip under one candle, a blood-red proof mark on line 20 and a blue C64 screen.">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@edycutjong">
 <meta name="twitter:title" content="SYNTAX ERROR IN 20 — the dead listing rises only when the checksum agrees">
 <meta name="twitter:description" content="A Kiro agent proposes the fix, a checksum gate decides, an emulated C64 runs it.">
 <meta name="twitter:image" content="https://ready.edycu.dev/landing/og.jpg?v=p4">
@@ -682,7 +683,7 @@ footer .stampline{width:100%;font:500 12px/1.4 var(--font-data)}
     <div class="bento">
       <article class="card c1">
         <p class="k"><svg class="gl" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5z M8 10h8 M8 14h5 M8 18h7"/><path class="r" d="M15 14l3 3"/></svg>I · READ</p><h3>The page is read</h3>
-        <a class="mini-scan" href="/scan" aria-label="Open the live /scan page"><picture><source media="(max-width:480px)" srcset="/landing/img/scan-m.webp" width="716" height="450"><img src="/landing/img/scan.webp" width="1600" height="824" loading="lazy" decoding="async" alt="The live /scan page after reading the authored page in the tab (Playwright's bundled Chromium 147): 9 of 12 lines match their printed checksum, 3 are flagged as mismatches (Chrome 158 flags 2); on a phone, rows 10 to 30 with line 20 flagged."></picture><span class="open">open /scan ↗</span></a>
+        <a class="mini-scan" href="/scan" aria-label="open /scan: the live checksum scanner"><picture><source media="(max-width:480px)" srcset="/landing/img/scan-m.webp" width="716" height="450"><img src="/landing/img/scan.webp" width="1600" height="824" loading="lazy" decoding="async" alt="The live /scan page after reading the authored page in the tab (Playwright's bundled Chromium 147): 9 of 12 lines match their printed checksum, 3 are flagged as mismatches (Chrome 158 flags 2); on a phone, rows 10 to 30 with line 20 flagged."></picture><span class="open">open /scan ↗</span></a>
         <p>Tesseract reads the scan in your tab and checks each line's sum against its printed <code>:rem</code>.</p>
         <span class="pill">tesseract.js 7 · p50 {{ocr_p50}} ms in node</span>
       </article>
