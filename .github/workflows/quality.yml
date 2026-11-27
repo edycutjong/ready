@@ -1,5 +1,5 @@
 name: Quality
-# Lighthouse CI on the five judge-facing routes of the production build (budgets in lighthouserc.json), and a gzip
+# Lighthouse CI on the six judge-facing routes of the production build (budgets in lighthouserc.json), and a gzip
 # bundle budget for the JavaScript and CSS the judge path loads (scripts/bundle-budget.mjs).
 on:
   push:

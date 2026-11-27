@@ -2,6 +2,7 @@
 // Builds the judge-facing pages from the run log and the evidence files, then asserts every figure:
 //   scripts/landing/landing.html  ->  public/landing/index.html   (+ public/landing/gate.js, the real gate)
 //   scripts/landing/deck.html     ->  public/deck/index.html      (when present)
+//   scripts/landing/judge.html    ->  public/judge/index.html     (/judge: the judge guide; every GitHub link must be a tracked file)
 // Nothing on either page is typed by hand if it can be read from a file: the C64 screens are the recorded screens
 // (drawn with our own 8x8 alphabet, not the ROM), the terminal rows are the run's own events, the numbers are read
 // from the jsonl, bench JSON, README and the test-run note. Run: node scripts/landing/build-site.mjs
@@ -78,7 +79,7 @@ const ocrSum = G.checkLine(20, L20.body, L20.printed).computed;
 const gateKb = (statSync(ROOT + "public/landing/gate.js").size / 1024).toFixed(1);
 
 // ---------- evidence numbers ----------
-const BENCH_FILE = "evidence/bench/" + readdirSync(ROOT + "evidence/bench").filter((f) => /^bench-\d{4}-\d\d-\d\d\.json$/.test(f)).sort().at(-1);
+const BENCH_FILE = "evidence/bench/" + readdirSync(ROOT + "evidence/bench").filter((f) => /^bench-\d{4}-\d\d-\d\d(-[a-z0-9]+)?\.json$/.test(f)).sort().at(-1);
 const bench = JSON.parse(rd(BENCH_FILE));
 const bRow = (re) => { const r = bench.rows.find((x) => re.test(x.name)); ok(r, `bench row ${re}`); return r; };
 const gateB = bRow(/^gate: applyPatch/), bootB = bRow(/^emulator boot/), ocrB = bRow(/^OCR: tesseract/), repB = bRow(/^REPLAY/);
@@ -105,7 +106,7 @@ const spikeG = JSON.parse(rd("evidence/spikes/spike-G.json"));
 ok(/^PASS .*TITLE-PATH RESURRECTED in both attempts/.test(spikeG.verdict) && spikeG.attempts.length === 2, "spike G: title path raised in both attempts");
 ok(/Measured 43\/43 on a real June 1984 page/.test(rd("src/basic/checksum.ts")), "checksum.ts carries the 43/43 measurement");
 // reproducible version stamp: a hash of every input the pages are built from (not git HEAD, which moves on each commit)
-const siteVer = createHash("sha256").update(["scripts/landing/landing.html", "scripts/landing/deck.html", "scripts/landing/build-site.mjs", RUN_FILE, BENCH_FILE,
+const siteVer = createHash("sha256").update(["scripts/landing/landing.html", "scripts/landing/deck.html", "scripts/landing/judge.html", "scripts/landing/build-site.mjs", RUN_FILE, BENCH_FILE,
   TEST_NOTE, "README.md", "docs/EVALS.md"].filter((f) => existsSync(ROOT + f)).map((f) => rd(f)).join("\u0000")).digest("hex").slice(0, 7);
 const head = siteVer;
 
@@ -113,7 +114,7 @@ const V = {
   wall_s: (end.wallMs / 1000).toFixed(1), wall_ms: String(end.wallMs), credits: creditsTotal.toFixed(2),
   ok_after: mA[1], n_lines: mA[2], ok_before: mB[1], printed20: String(L20.printed), ocr_sum: String(ocrSum),
   iterations: String(end.iterations), tests: String(tests), test_files: String(testFiles),
-  gate_p50: String(gateB.p50), gate_p95: String(gateB.p95), gate_n: String(gateB.n), boot_p50: String(Math.round(bootB.p50)),
+  gate_p50: String(+gateB.p50.toFixed(2)), gate_p95: String(+gateB.p95.toFixed(2)), gate_n: String(gateB.n), boot_p50: String(Math.round(bootB.p50)),
   boot_n: String(bootB.n), ocr_p50: String(Math.round(ocrB.p50)), ocr_n: String(ocrB.n), replay_p50: (repB.p50 / 1000).toFixed(1),
   gate_kb: gateKb, steering: String(steering), tools: String(trust.length), tm_naive: String(naive),
   run_date: start.t.slice(0, 10), run_hm: start.t.slice(11, 16), run_start: hms(start.t), run_end: hms(end.t),
@@ -127,9 +128,68 @@ const V = {
   build_date: noteDate, site_ver: siteVer, tests_commit: testsCommit, bench_date: bench.date.slice(0, 10), bench_file: BENCH_FILE,
   case1: `${c1[1]} of ${c1[2]}`, err_at: "+" + (off(runs[0].t) / 1000).toFixed(1), res_at: "+" + (off(runs[1].t) / 1000).toFixed(1),
   stop_row: esc((() => { const h = ev.find((e) => e.k === "hook" && e.via === "kiro-stop"); return `${hms(h.t)} until-title (kiro-stop) exit ${h.exit} · ${h.decision} · ${h.reason}`; })()),
-  gate_p95_ms: String(gateB.p95),
+  gate_p95_ms: String(+gateB.p95.toFixed(2)),
   cap_s: String(start.runner.caps.wallMs / 1000), patch_reason: esc(patch.reason ?? ev.find((e) => e.k === "proposal").reason),
 };
+
+// ---------- the judge page (/judge): every figure read from its evidence file or checked against the prose ----------
+const jsonOf = (p) => JSON.parse(rd(p));
+const FC_FILE = "evidence/tests/fresh-clone-2026-11-27.txt", fc = rd(FC_FILE);
+const fcT = fc.match(/Tests\s+(\d+) passed \| (\d+) expected fail \((\d+)\)/), fcF = fc.match(/Test Files\s+(\d+) passed \((\d+)\)/);
+const fcC = fc.match(/at ([0-9a-f]{7}),/);
+ok(fcT && fcF && fcC && +fcT[1] + +fcT[2] === +fcT[3], "fresh-clone note: tests, expected fail, files, commit");
+ok(/"deterministic":"7\/7"/.test(fc) && /\{"runs":20,"ok":20,"mismatches":0/.test(fc), "fresh-clone note: evals 7/7 and 20 public re-judges");
+const evM = evals.match(/\*\*Pass count: (\d+) of (\d+) cases run and passing\.\*\* Model cases at N=3: (\d+) of (\d+) runs RESURRECTED/);
+ok(evM && evM[1] === evM[2] && evM[3] === evM[4], "EVALS.md pass count");
+const RJ_FILE = "evidence/boot-detect/rejudge-p6d.json", rj = jsonOf(RJ_FILE).summary;
+ok(rj.runs === rj.ok && rj.mismatches === 0 && rj.byTier.public === 20, "re-judge: all ok, 20 public");
+ok(README.includes(`(${rj.runs}: ${rj.byTier.public} public, ${rj.byTier.tierC} local tier-C) re-judges with 0 mismatches`), "README carries the re-judge split");
+const offJ = jsonOf("evidence/offline/verify-offline.json"), ljJ = jsonOf("evidence/e2e/live-judge-path.json");
+ok(offJ.ok && offJ.checks.every((c) => c.pass) && ljJ.ok && ljJ.checks.every((c) => c.pass), "verify_offline + live judge path all pass");
+const B7_FILE = "evidence/bench/bench-2026-11-26-p7.json", b7 = jsonOf(B7_FILE);
+const b7r = (re) => { const r = b7.rows.find((x) => re.test(x.name)); ok(r, `bench p7 row ${re}`); return r; };
+const jg = b7r(/^gate: applyPatch/), jb = b7r(/^emulator boot/), jr = b7r(/^REPLAY/), jo = b7r(/^OCR: tesseract/);
+const J_gate50 = jg.p50.toFixed(2), J_gate95 = jg.p95.toFixed(2);
+ok(README.includes(`p50 ${J_gate50} ms, p95 ${J_gate95} ms (N=${jg.n}, node) | \`${B7_FILE}\``), "README cites the same p7 gate bench");
+const EXP = rd("docs/EXPERIMENTS.md");
+const e2 = EXP.match(/blocked a premature stop in (\d+) of the\s+(\d+) runs outside E3/); ok(e2, "EXPERIMENTS.md E2 tally");
+const e0 = README.match(/search fixed (\d+) of (\d+) failing lines; the agent made all (\d+) checksum-consistent \(N=2\)/);
+ok(e0 && e0[2] === e0[3], "README E0 tally");
+ok(/\| June 1984 Gazette title path[^\n]*\| 18 \| 3 \| 15 \|/.test(EXP), "EXPERIMENTS.md E0 row 18 / 3 / 15");
+const eRuns = README.match(/\| Experiments E1–E4 \| (\d+) new real runs/); ok(eRuns, "README E1–E4 run count");
+const fsRows = rd("evidence/hooks/file-save.jsonl").trim().split("\n").map((l) => JSON.parse(l));
+ok(fsRows.slice(0, -1).every((r) => r.exit === 1) && fsRows.at(-1).exit === 0, "file-save: earlier firings exit 1, last exit 0");
+const specsN = readdirSync(ROOT + ".kiro/specs").filter((d) => statSync(ROOT + ".kiro/specs/" + d).isDirectory()).length;
+const profile = jsonOf(".kiro/agents/resurrector.json");
+const hooksN = profile.hooks.length + readdirSync(ROOT + ".kiro/hooks").filter((f) => f.endsWith(".json")).length;
+ok(specsN === 4 && hooksN === 4 && profile.model === start.model, "4 specs, 4 hooks, the profile's model is the recorded run's");
+const spP = jsonOf("evidence/spikes/spike-P-ocr-live.json").results.find((r) => r.width === 1600); ok(spP, "spike P 1600 px row");
+const JUDGE_MD = rd("JUDGE.md");
+const CHAPTERS = [...JUDGE_MD.matchAll(/\[(\d):(\d\d) ([^\]]+)\]\(https:\/\/youtu\.be\/Jv69K3jQ6QI\?t=(\d+)\)/g)].map((m) => ({ t: +m[4], at: `${m[1]}:${m[2]}`, label: m[3] }));
+ok(CHAPTERS.length === 8 && CHAPTERS.every((c) => c.t === +c.at.split(":")[0] * 60 + +c.at.slice(-2)), "JUDGE.md lists 8 video chapters whose ?t= matches the label");
+ok(CHAPTERS.some((c) => c.at === "1:05") && CHAPTERS.some((c) => c.at === "1:22"), "Kiro chapters at 1:05 and 1:22");
+const vl = JUDGE_MD.match(/\[(\d) min (\d+) s on YouTube\]/); ok(vl, "JUDGE.md video length");
+const TM_FIXED = L20.body.replace("™", '"'), vTmFixed = judge(TM_FIXED);
+ok(vTmFixed.verdict === "refused", "™ → quote still refused (checksum)");
+const tmFixedSum = G.checkLine(20, TM_FIXED, L20.printed).computed;
+ok(tmFixedSum !== L20.printed, "™ → quote sum differs from printed");
+for (const s of ["51.26 of 50", "68.71 of 70"]) ok(README.includes(s), `README carries ${s}`);
+Object.assign(V, {
+  video_len: `${vl[1]}:${vl[2].padStart(2, "0")}`, tm_fixed_sum: String(tmFixedSum), n_specs: String(specsN), n_hooks: String(hooksN),
+  e_runs: eRuns[1], tools_word: ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven"][trust.length] ?? String(trust.length),
+  e0_search: e0[1], e0_failing: e0[2], e2_blocked: e2[1], e2_runs: e2[2],
+  fs_n: String(fsRows.length), fs_fail: String(fsRows.length - 1), fs_passed: String(fsRows.at(-1).passed),
+  cap_line1: "51.26 of 50", cap_line2: "68.71 of 70",
+  fc_tests: fcT[1], fc_xfail: fcT[2], fc_total: fcT[3], fc_files: fcF[1], fc_commit: fcC[1],
+  ev_cases: `${evM[1]} of ${evM[2]}`, ev_model: `${evM[3]} of ${evM[4]}`,
+  rj_ok: String(rj.ok), rj_runs: String(rj.runs), rj_mis: String(rj.mismatches), rj_pub: String(rj.byTier.public), rj_local: String(rj.byTier.tierC),
+  off_ok: String(offJ.checks.filter((c) => c.pass).length), off_n: String(offJ.checks.length),
+  lj_ok: String(ljJ.checks.filter((c) => c.pass).length), lj_n: String(ljJ.checks.length), lj_date: ljJ.date.slice(0, 10),
+  b_gate_p50: J_gate50, b_gate_p95: J_gate95, b_gate_n: String(jg.n), b_boot: String(Math.round(jb.p50)), b_boot_n: String(jb.n),
+  b_replay: String(Math.round(jr.p50)), b_replay_n: String(jr.n), b_ocr: String(Math.round(jo.p50)), b_ocr_n: String(jo.n),
+  scan_ok: String(spP.ok), scan_lines: String(spP.lines),
+});
+const chapters = CHAPTERS.map((c) => `          <li${/Kiro|agent/.test(c.label) ? ' class="kiro"' : ""}><a href="https://youtu.be/Jv69K3jQ6QI?t=${c.t}" data-t="${c.t}"><time datetime="PT${Math.floor(c.t / 60)}M${c.t % 60}S">${c.at}</time><span>${esc(c.label)}</span></a></li>`).join("\n");
 
 // ---------- fragments ----------
 const TICK = '<svg class="g" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5 5 9.5 10 2.5"/></svg>';
@@ -139,6 +199,13 @@ const listing = lines.map((l) => {
   const bad = l.body.slice(0, 6), rest = l.body.slice(6);
   return `<div class="ln l20"><span class="no">20</span><span class="bd"><span class="mis">${esc(bad)}<svg class="ring" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M8 22C6 9 32 3 54 4s42 5 40 18-30 15-52 14S10 34 8 22Z"/></svg><span class="fix" aria-hidden="true">${esc(patch.new_body.slice(0, 6))}</span></span>${esc(rest)}</span><span class="rem">:rem ${l.printed}</span><span class="st" role="img" aria-label="line 20: checksum gate verdict"><span class="x">${CROSS}</span><span class="v">${TICK}</span></span></div>`;
 }).join("\n");
+
+// the judge page's proof slip: the recorded listing's lines around 20, as handed to the agent
+const slipLines = lines.filter((l) => l.n >= 10 && l.n <= 40);
+ok(slipLines.some((l) => l.n === 20) && slipLines.length >= 3, "slip has line 20 and neighbours");
+const slip = slipLines.map((l) => l.n !== 20
+  ? `      <div class="ln"><span class="no">${l.n}</span><span class="bd">${esc(l.body)}</span><span class="rem">:rem ${l.printed}</span><span class="st" role="img" aria-label="checksum verified">${TICK}</span></div>`
+  : `      <div class="ln l20"><span class="no">20</span><span class="bd"><span class="mis"><span class="sr">as OCR read it: </span>${esc(l.body.slice(0, 6))}<span class="fix"><span class="sr">, the agent's fix: </span>${esc(patch.new_body.slice(0, 6))}</span></span>${esc(l.body.slice(6))}</span><span class="rem">:rem ${l.printed}</span><span class="st v" role="img" aria-label="line 20: accepted by the checksum gate">${TICK}</span></div>`).join("\n");
 
 const T = []; // terminal rows, from the run's own events
 for (const e of sorted) {
@@ -186,7 +253,13 @@ function fill(tpl, name) {
   for (const k of ["error", "title", "post"]) h = h.split(`<!--@screen:${k}-->`).join(`<path d="${screenPath(SCREENS[k])}"/>${cursorRow(SCREENS[k])}`);
   h = h.split("<!--@listing60-->").join(listing.split("\n").filter((r) => !r.includes('class="ln more"')).join("\n"))
   h = h.split("<!--@listing-->").join(listing).split("<!--@terminal-->").join(terminal).split("<!--@ticks-->").join(ticks)
-       .split("<!--@rundata-->").join(rundata);
+       .split("<!--@rundata-->").join(rundata).split("<!--@slip-->").join(slip).split("<!--@chapters-->").join(chapters);
+  // {{gh:path}} -> the file or folder on GitHub; the build fails if the path is not in the repo (no dead links for judges)
+  h = h.replace(/\{\{gh:([^}]+)\}\}/g, (m, p) => {
+    ok(existsSync(ROOT + p), `${name}: linked path ${p} is not in the repo`);
+    ok(spawnGitTracked(p), `${name}: linked path ${p} is not tracked by git`);
+    return `https://github.com/edycutjong/ready/${statSync(ROOT + p).isDirectory() ? "tree" : "blob"}/main/${p}`;
+  });
   h = h.replace(/\{\{(\w+)\}\}/g, (m, k) => { ok(k in V, `${name}: unknown placeholder ${m}`); return V[k]; });
   ok(!/\{\{|<!--@/.test(h), `${name}: unfilled marker`);
   // private working paths never appear on a public page (.kiro/specs/ is a required public Kiro artefact, so it is allowed)
@@ -195,7 +268,10 @@ function fill(tpl, name) {
   for (const bad of [/(?<!\.kiro\/)\bspecs\//, /\bassets\//, /_ideas/, /_specs/, ...priv]) ok(!bad.test(h), `${name}: private string ${bad}`);
   return h;
 }
-const outs = [["scripts/landing/landing.html", "public/landing/index.html"], ["scripts/landing/deck.html", "public/deck/index.html"]];
+const tracked = new Set(execFileSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8" }).split("\n").filter(Boolean));
+function spawnGitTracked(p) { return tracked.has(p) || [...tracked].some((f) => f.startsWith(p.replace(/\/$/, "") + "/")); }
+const outs = [["scripts/landing/landing.html", "public/landing/index.html"], ["scripts/landing/deck.html", "public/deck/index.html"],
+  ["scripts/landing/judge.html", "public/judge/index.html"]];
 for (const [src, dst] of outs) {
   if (!existsSync(ROOT + src)) { console.log(`build-site: ${src} absent, skipped`); continue; }
   mkdirSync(ROOT + dst.replace(/\/[^/]+$/, ""), { recursive: true });

@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYNTAX ERROR IN 20, for judges: the 60-second path, the receipts, the limits</title>
+<meta name="description" content="For Kiroween judges: what SYNTAX ERROR IN 20 is in one line, the 60-second path through the live site, where each judging criterion is answered, every Kiro feature linked to its file and its evidence, the video by chapter, the receipts and the honest limits.">
+<meta name="author" content="edycutjong">
+<meta name="theme-color" content="#110C0A">
+<link rel="icon" href="/landing/icon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://ready.edycu.dev/judge">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SYNTAX ERROR IN 20">
+<meta property="og:title" content="SYNTAX ERROR IN 20, for judges">
+<meta property="og:description" content="The 60-second path, the five criteria, every Kiro feature with its file and evidence, the receipts, what is real and what is recorded playback.">
+<meta property="og:url" content="https://ready.edycu.dev/judge">
+<meta property="og:image" content="https://ready.edycu.dev/landing/og.jpg?v=p4">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="brand frame: the error this project is named after. A singed listing slip under one candle, a blood-red proof mark on line 20 and a blue C64 screen.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@edycutjong">
+<meta name="twitter:title" content="SYNTAX ERROR IN 20, for judges">
+<meta name="twitter:description" content="The 60-second path, the five criteria, every Kiro feature with its file and evidence, the receipts and the limits.">
+<meta name="twitter:image" content="https://ready.edycu.dev/landing/og.jpg?v=p4">
+<link rel="preload" href="/fonts/rokkitt-latin-800-normal.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="/fonts/atkinson-hyperlegible-next-latin-400-normal.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="/fonts/atkinson-hyperlegible-mono-latin-500-normal.woff" as="font" type="font/woff" crossorigin>
+<style>
+@font-face{font-family:"Rokkitt";font-weight:800;font-display:swap;src:url(/fonts/rokkitt-latin-800-normal.woff) format("woff")}
+@font-face{font-family:"Rokkitt";font-weight:500;font-display:swap;src:url(/fonts/rokkitt-latin-500-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:400;font-display:swap;src:url(/fonts/atkinson-hyperlegible-next-latin-400-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-weight:700;font-display:swap;src:url(/fonts/atkinson-hyperlegible-next-latin-700-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Mono";font-weight:500;font-display:swap;src:url(/fonts/atkinson-hyperlegible-mono-latin-500-normal.woff) format("woff")}
+@font-face{font-family:"Atkinson Hyperlegible Mono";font-weight:700;font-display:swap;src:url(/fonts/atkinson-hyperlegible-mono-latin-700-normal.woff) format("woff")}
+/* crypt-galley tokens, identical to the landing page, the deck and the SPA (design system; dark only, like the rest of the site) */
+:root {
+  --bg:      #110C0A;
+  --ink:     #EFE4CC;
+  --muted:   #A3937C;
+  --before:  #EC4A34;
+  --after:   #9D8FF2;
+  --rule:    #3A2A22;
+  --screen:  #352879;
+  --candle:  #F4A13A;
+  --paper:   #E6D5B0;
+  --paper-ink: #1E1611;
+  --before-on-paper: #A32A1E;
+  --after-on-paper:  #4A3CA0;
+  --stone:   #2A211C;
+  --font-display: "Rokkitt", "Rockwell", "Roboto Slab", serif;
+  --font-body:    "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --font-data:    "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --soot-2: color-mix(in srgb, var(--stone) 55%, var(--bg));
+  --paper-dim: color-mix(in srgb, var(--paper-ink) 66%, var(--paper));
+  --w: 1180px;
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{color-scheme:dark;overflow-x:clip;scroll-behavior:smooth;scroll-padding-top:72px;scrollbar-color:var(--rule) var(--bg);background:var(--bg)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+body{margin:0;background:radial-gradient(1100px 520px at 10% -6%,color-mix(in srgb,var(--candle) 10%,transparent),transparent 70%),var(--bg);color:var(--ink);font:400 17.5px/1.6 var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:clip}
+::selection{background:var(--before);color:var(--bg)}
+:focus-visible{outline:2px solid var(--after);outline-offset:3px}
+a{color:inherit;text-underline-offset:.2em;text-decoration-thickness:1px;text-decoration-color:color-mix(in srgb,var(--ink) 45%,transparent);transition:color .2s,text-decoration-color .2s}
+a:hover{color:var(--paper);text-decoration-color:var(--before);text-decoration-thickness:2px}
+p,h1,h2,h3,figure,ol,ul,dl,dd{margin:0}
+h1,h2,h3{font-family:var(--font-display);font-weight:800;line-height:1;letter-spacing:-.005em;text-wrap:balance}
+code,kbd,samp,time,.mono{font-family:var(--font-data);font-variant-ligatures:none}
+code{font-size:.9em;background:color-mix(in srgb,var(--rule) 60%,transparent);padding:1px 5px;border-radius:3px;overflow-wrap:anywhere}
+kbd{font:700 .86em var(--font-data);padding:1px 6px;border:1px solid var(--muted);border-bottom-width:2px;border-radius:3px;white-space:nowrap}
+img{display:block;max-width:100%;height:auto}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 clamp(16px,4.4vw,56px)}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;z-index:50;background:var(--ink);color:var(--bg);padding:10px 14px;font-weight:700;text-decoration:none}
+.skip:focus{top:10px}
+.eyebrow{display:flex;align-items:center;gap:12px;font:500 12.5px/1.3 var(--font-data);letter-spacing:.2em;text-transform:uppercase;color:var(--before)}
+.eyebrow::before{content:"";flex:none;width:26px;height:2px;background:currentColor}
+.btn{display:inline-flex;align-items:center;gap:10px;font:700 16px/1 var(--font-body);padding:14px 18px;border:1px solid var(--rule);background:color-mix(in srgb,var(--bg) 70%,transparent);color:var(--ink);text-decoration:none;transition:transform .16s var(--ease),border-color .2s,background-color .2s,color .2s}
+.btn:hover{border-color:var(--ink);color:var(--ink);transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary:hover{background:var(--paper);border-color:var(--paper);color:var(--bg)}
+.btn svg{width:18px;height:18px;flex:none}
+
+/* ---------- top bar ---------- */
+.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid color-mix(in srgb,var(--rule) 70%,transparent)}
+.top nav{display:flex;align-items:center;gap:clamp(12px,2vw,26px);height:60px}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;text-decoration:none;font:800 19px/1 var(--font-display);letter-spacing:.01em;white-space:nowrap}
+.brand img{width:26px;height:26px}
+.brand small{font:500 11px/1 var(--font-data);letter-spacing:.18em;text-transform:uppercase;color:var(--before);border:1px solid color-mix(in srgb,var(--before) 60%,transparent);padding:4px 6px 3px}
+.top a.nl{font:500 12px/1 var(--font-data);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:8px 0;border-bottom:1px solid transparent}
+.top a.nl:hover{color:var(--ink);border-bottom-color:var(--before)}
+.top .btn{padding:10px 14px;font-size:14px}
+@media (max-width:1020px){.top a.nl{display:none}}
+@media (max-width:420px){.brand .bt{display:none}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;isolation:isolate;padding:clamp(30px,5vw,64px) 0 clamp(30px,4vw,52px)}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.18;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(28px,4.4vw,64px);align-items:center}
+.hero h1{font-size:clamp(38px,5vw,66px);line-height:.95;margin:18px 0 18px;letter-spacing:-.012em}
+.hero h1 .re{color:var(--after);text-decoration:underline solid var(--after);text-decoration-thickness:.06em;text-underline-offset:.12em}
+.one{font-size:clamp(18px,1.45vw,21px);line-height:1.5;max-width:31em;color:var(--ink)}
+.one b{color:var(--paper)}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 18px}
+.facts{display:flex;flex-wrap:wrap;gap:8px 18px;font:500 13px/1.5 var(--font-data);color:var(--muted)}
+.facts li{list-style:none;display:flex;align-items:center;gap:8px}
+.facts li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--after)}
+.facts{padding:0}
+
+/* the proof slip: line 20 as OCR read it, struck in red; the agent's fix re-inked in blue; IT LIVES */
+.slip{position:relative;color:var(--paper-ink);padding:clamp(18px,2.4vw,30px) clamp(16px,2.2vw,28px) clamp(70px,7vw,92px);transform:rotate(-1.1deg)}
+.slip-paper{position:absolute;inset:0;z-index:-1;background:radial-gradient(70% 55% at 4% 100%,color-mix(in srgb,var(--candle) 34%,transparent),transparent 66%),linear-gradient(172deg,color-mix(in srgb,var(--paper) 90%,var(--ink)),var(--paper) 46%,color-mix(in srgb,var(--paper) 86%,var(--paper-ink)));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--paper-ink) 80%,var(--candle)),inset 0 0 30px 9px color-mix(in srgb,var(--paper-ink) 55%,transparent),0 28px 50px rgb(0 0 0 / .55);filter:url(#burn)}
+.slip .prog{font:800 clamp(17px,1.6vw,22px)/1.1 var(--font-display)}
+.slip .src{font:500 12px/1.4 var(--font-data);color:var(--paper-dim);margin:4px 0 12px}
+.ln{display:grid;grid-template-columns:3ch minmax(0,1fr) 7ch 14px;gap:0 10px;align-items:baseline;padding:.2em 0;font:500 clamp(12.5px,1.15vw,15px)/1.5 var(--font-data);font-variant-ligatures:none}
+.ln .bd{overflow-wrap:anywhere}
+.ln .no,.ln .rem{text-align:right;color:var(--paper-dim);white-space:nowrap}
+.ln .st{display:grid;place-items:center;align-self:center;color:var(--paper-dim)}
+.ln .st.v{color:var(--after-on-paper)}
+.g{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.l20{margin:.1em -10px;padding:1.3em 10px .25em;background:color-mix(in srgb,var(--after-on-paper) 8%,transparent)}
+.mis{position:relative;display:inline-block;color:var(--before-on-paper);text-decoration:line-through solid var(--before-on-paper) 2px}
+.mis .fix{position:absolute;left:0;bottom:92%;font:800 1.15em/1 var(--font-display);color:var(--after-on-paper);transform:rotate(-5deg);transform-origin:0 100%;white-space:nowrap}
+.verdict-line{margin-top:14px;padding-top:10px;border-top:1px dashed color-mix(in srgb,var(--paper-ink) 45%,transparent);font:700 clamp(12.5px,1.1vw,14.5px)/1.45 var(--font-data);color:var(--after-on-paper)}
+.verdict-line span{color:var(--paper-dim);font-weight:500}
+.lives{position:absolute;right:clamp(14px,3vw,34px);bottom:clamp(14px,1.8vw,22px);display:grid;justify-items:center;font:800 clamp(24px,2.6vw,34px)/1 var(--font-display);letter-spacing:.09em;color:var(--after-on-paper);padding:.2em .5em .16em;border:.11em double currentColor;transform:rotate(-8deg);filter:url(#ink);mix-blend-mode:multiply}
+.lives small{font:700 max(11px,.34em)/1.2 var(--font-data);letter-spacing:.16em;margin-top:.34em}
+.c64err{display:inline-block;margin-top:14px;padding:6px 10px;background:var(--screen);color:#A59EE6;font:700 13px/1.3 var(--font-data);letter-spacing:.12em;border:6px solid #6C5EB5;transform:rotate(1.2deg)}
+
+/* ---------- contents (proof tabs) ---------- */
+.toc{border-block:1px solid var(--rule);background:color-mix(in srgb,var(--stone) 40%,var(--bg))}
+.toc ol{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));padding:0;list-style:none}
+.toc li{border-left:1px solid var(--rule)}
+.toc li:last-child{border-right:1px solid var(--rule)}
+.toc a{display:flex;flex-direction:column;gap:6px;height:100%;padding:14px 12px 15px;text-decoration:none;font:700 14.5px/1.25 var(--font-body);color:var(--ink);transition:background-color .2s,color .2s}
+.toc a b{font:500 11.5px/1 var(--font-data);letter-spacing:.16em;color:var(--before)}
+.toc a:hover{background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--paper)}
+@media (max-width:980px){.toc ol{grid-template-columns:repeat(4,minmax(0,1fr))}.toc li{border-bottom:1px solid var(--rule)}.toc li:nth-child(4n){border-right:1px solid var(--rule)}}
+@media (max-width:560px){.toc ol{grid-template-columns:repeat(2,minmax(0,1fr))}.toc li:nth-child(2n){border-right:1px solid var(--rule)}.toc a{padding:12px 10px}}
+
+/* ---------- sections ---------- */
+section.sec{padding:clamp(52px,7vw,96px) 0}
+section.sec + section.sec{border-top:1px solid color-mix(in srgb,var(--rule) 70%,transparent)}
+.sec h2{font-size:clamp(30px,3.6vw,48px);margin:14px 0 0}
+.sec .lede{max-width:44em;margin-top:14px;color:color-mix(in srgb,var(--ink) 85%,var(--muted))}
+.sec .lede b{color:var(--ink)}
+.note{font-size:15px;color:var(--muted);max-width:60em}
+.note a{color:var(--ink)}
+
+/* ---------- 01 the path, on paper ---------- */
+.paper{position:relative;color:var(--paper-ink);isolation:isolate;border-top:0!important}
+.paper::before{content:"";position:absolute;inset:0 clamp(0px,1.6vw,24px);z-index:-1;background:radial-gradient(70% 90% at 0% 100%,color-mix(in srgb,var(--candle) 24%,transparent),transparent 60%),linear-gradient(176deg,color-mix(in srgb,var(--paper) 92%,var(--ink)),var(--paper) 40%,color-mix(in srgb,var(--paper) 88%,var(--paper-ink)));box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--paper-ink) 78%,var(--candle)),inset 0 0 60px 14px color-mix(in srgb,var(--paper-ink) 50%,transparent);filter:url(#burn)}
+.paper .eyebrow{color:var(--before-on-paper)}
+.paper h2{color:var(--paper-ink)}
+.paper .lede{color:var(--paper-ink)}
+.paper a{color:var(--after-on-paper);text-decoration-color:color-mix(in srgb,var(--after-on-paper) 55%,transparent)}
+.paper a:hover{color:var(--before-on-paper);text-decoration-color:var(--before-on-paper)}
+.paper code{background:color-mix(in srgb,var(--paper-ink) 10%,transparent);color:var(--paper-ink)}
+.paper kbd{border-color:var(--paper-ink);color:var(--paper-ink);background:color-mix(in srgb,var(--paper) 70%,#fff)}
+.mode-banner{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:22px;padding:12px 14px;border:2px solid var(--paper-ink);background:color-mix(in srgb,var(--paper) 70%,var(--ink));box-shadow:5px 5px 0 var(--paper-ink);max-width:56em;font-size:16px}
+.mode-banner b{font:700 13px/1 var(--font-data);letter-spacing:.1em;padding:6px 8px;border:1.5px solid var(--paper-ink)}
+.steps{list-style:none;padding:0;margin-top:clamp(26px,3.4vw,40px);display:grid;gap:14px;counter-reset:s}
+.step{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,.92fr);gap:clamp(14px,2vw,28px);align-items:start;padding:clamp(16px,2vw,22px) 0;border-top:1.5px solid color-mix(in srgb,var(--paper-ink) 70%,transparent)}
+.step .n{display:grid;place-items:center;width:52px;height:52px;border:2px solid var(--before-on-paper);border-radius:50%;font:800 26px/1 var(--font-display);color:var(--before-on-paper);transform:rotate(-6deg)}
+.step .t{display:block;font:500 12px/1 var(--font-data);letter-spacing:.14em;color:var(--paper-dim);margin-bottom:8px}
+.step h3{font-size:clamp(22px,2.2vw,28px);color:var(--paper-ink)}
+.step p{margin-top:8px;font-size:16.5px;line-height:1.55}
+.step .go{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font:700 15px/1 var(--font-data);color:var(--paper-ink);text-decoration:none;padding:10px 12px;border:1.5px solid var(--paper-ink);background:transparent;transition:background-color .2s,color .2s,transform .15s}
+.step .go:hover{background:var(--paper-ink);color:var(--paper);transform:translateY(-1px)}
+.step .go svg{width:16px;height:16px}
+.see{border:2px solid var(--paper-ink);background:color-mix(in srgb,var(--paper) 62%,var(--ink));padding:12px 14px;font:500 14px/1.5 var(--font-data);font-variant-ligatures:none}
+.see .k{display:block;font:700 11px/1 var(--font-data);letter-spacing:.16em;color:var(--paper-dim);margin-bottom:8px}
+.see p{margin:0 0 4px;font:inherit}
+.see .red{color:var(--before-on-paper);font-weight:700}
+.see .blue{color:var(--after-on-paper);font-weight:700}
+.bonus{margin-top:20px;padding:16px 18px;border:2px dashed color-mix(in srgb,var(--paper-ink) 60%,transparent);max-width:60em;font-size:16.5px}
+.bonus b{color:var(--before-on-paper)}
+
+/* ---------- tables (criteria, kiro, real) ---------- */
+.tbl{width:100%;border-collapse:collapse;margin-top:clamp(24px,3vw,36px);font-size:16px;line-height:1.5}
+.tbl th,.tbl td{text-align:left;vertical-align:top;padding:14px 14px 14px 0;border-bottom:1px solid var(--rule)}
+.tbl thead th{font:500 11.5px/1.3 var(--font-data);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);border-bottom:1.5px solid var(--muted)}
+.tbl tbody th{font:800 21px/1.1 var(--font-display);color:var(--ink);width:19%}
+.tbl tbody th small{display:block;margin-top:6px;font:500 12px/1.35 var(--font-data);letter-spacing:.04em;color:var(--muted)}
+.tbl td.open{width:24%}
+.tbl td.open a{display:inline-block;margin:0 6px 6px 0;font:700 14px/1.2 var(--font-data);text-decoration:none;padding:6px 8px;border:1px solid var(--rule);background:color-mix(in srgb,var(--stone) 60%,transparent)}
+.tbl td.open a:hover{border-color:var(--after);color:var(--ink)}
+.tbl td.ev{font-size:14.5px;color:color-mix(in srgb,var(--ink) 80%,var(--muted))}
+.tbl td.ev a,.tbl td a.f{font-family:var(--font-data);font-size:.92em;overflow-wrap:anywhere}
+/* stacked file links get a 24 px target each (WCAG 2.5.8) */
+.tbl td.ev a,.tbl td a.f,.rc .src a{display:inline-block;padding:4px 0;min-height:24px}
+.tbl tr{transition:background-color .2s}
+.tbl tbody tr:hover{background:color-mix(in srgb,var(--ink) 3.5%,transparent)}
+
+/* ---------- 03 kiro tally ---------- */
+.tally{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:0;margin-top:clamp(24px,3vw,36px);border:1px solid var(--rule);background:color-mix(in srgb,var(--stone) 45%,var(--bg))}
+.tally a{display:flex;flex-direction:column;gap:6px;padding:16px 12px;border-right:1px solid var(--rule);text-decoration:none;transition:background-color .2s}
+.tally a:last-child{border-right:0}
+.tally a:hover{background:color-mix(in srgb,var(--after) 10%,transparent);color:var(--ink)}
+.tally b{font:800 clamp(30px,3.2vw,44px)/1 var(--font-display);color:var(--after)}
+.tally span{font:500 12.5px/1.3 var(--font-data);color:var(--muted)}
+@media (max-width:980px){.tally{grid-template-columns:repeat(3,minmax(0,1fr))}.tally a{border-bottom:1px solid var(--rule)}.tally a:nth-child(3n){border-right:0}}
+.who{margin-top:22px;padding:16px 18px;border-left:3px solid var(--after);background:color-mix(in srgb,var(--stone) 40%,transparent);max-width:62em;font-size:16px}
+.who b{color:var(--paper)}
+.tag{display:inline-block;font:700 11px/1 var(--font-data);letter-spacing:.12em;padding:4px 6px 3px;border:1px solid currentColor;margin-left:6px;vertical-align:2px;white-space:nowrap}
+.tag.k{color:var(--after)}
+.tag.c{color:var(--candle)}
+.tag.t{color:var(--muted)}
+
+/* ---------- 04 video ---------- */
+.vgrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(20px,3vw,40px);margin-top:clamp(24px,3vw,36px);align-items:start}
+.player{position:relative;aspect-ratio:16/9;border:1px solid var(--rule);background:var(--stone);box-shadow:0 30px 60px rgb(0 0 0 / .45);overflow:hidden}
+.player img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.82;transition:opacity .25s,transform .4s var(--ease)}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.player .play{position:absolute;inset:0;display:grid;place-items:center;text-decoration:none;color:var(--ink)}
+.player .play span{display:flex;align-items:center;gap:12px;padding:14px 20px;background:color-mix(in srgb,var(--bg) 82%,transparent);border:1px solid var(--ink);font:700 17px/1 var(--font-body);transition:background-color .2s,color .2s}
+.player .play svg{width:22px;height:22px}
+.player .play:hover img{opacity:1;transform:scale(1.015)}
+.player .play:hover span{background:var(--ink);color:var(--bg)}
+.chapters{list-style:none;padding:0;border-top:1px solid var(--rule)}
+.chapters li{border-bottom:1px solid var(--rule)}
+.chapters a{display:grid;grid-template-columns:5ch minmax(0,1fr);gap:12px;padding:11px 4px;text-decoration:none;font-size:16px;transition:background-color .2s}
+.chapters a:hover{background:color-mix(in srgb,var(--ink) 6%,transparent);color:var(--ink)}
+.chapters time{color:var(--muted);font-size:15px}
+.chapters .kiro a{background:color-mix(in srgb,var(--after) 9%,transparent)}
+.chapters .kiro time{color:var(--after);font-weight:700}
+.chapters .kiro a::after{content:"Kiro";grid-column:2;justify-self:start;font:700 11px/1 var(--font-data);letter-spacing:.14em;color:var(--after);border:1px solid var(--after);padding:3px 5px 2px;margin-top:2px}
+
+/* ---------- 05 receipts ---------- */
+.rgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,1.4vw,18px);margin-top:clamp(24px,3vw,36px)}
+.rc{display:flex;flex-direction:column;gap:8px;padding:clamp(16px,1.8vw,22px);border:1px solid var(--rule);background:linear-gradient(180deg,color-mix(in srgb,var(--stone) 70%,var(--bg)),var(--bg));transition:border-color .25s,transform .25s var(--ease)}
+.rc:hover{border-color:color-mix(in srgb,var(--ink) 40%,var(--rule));transform:translateY(-2px)}
+.rc .big{font:800 clamp(34px,3.6vw,50px)/1 var(--font-display);color:var(--after);letter-spacing:-.01em}
+.rc .big small{font-size:.5em;color:var(--ink);letter-spacing:0}
+.rc h3{font:700 16.5px/1.35 var(--font-body);color:var(--ink)}
+.rc p{font-size:14.5px;line-height:1.5;color:color-mix(in srgb,var(--ink) 78%,var(--muted))}
+.rc .src{margin-top:auto;padding-top:8px;font:500 12.5px/1.45 var(--font-data);color:var(--muted);overflow-wrap:anywhere}
+.rc .src a{color:var(--ink)}
+.rc.red .big{color:var(--before)}
+.built{margin-top:22px;font:500 13.5px/1.55 var(--font-data);color:var(--muted);max-width:70em}
+.built a{color:var(--ink)}
+
+/* ---------- 06 real vs recorded ---------- */
+.badge{display:inline-block;font:800 15px/1 var(--font-display);letter-spacing:.08em;text-transform:uppercase;padding:.34em .5em .26em;border:.14em double currentColor;transform:rotate(-3deg);white-space:nowrap}
+.b-live{color:var(--after)}
+.b-rec{color:var(--candle)}
+.b-clone{color:var(--ink)}
+.b-held{color:var(--muted)}
+.b-no{color:var(--before)}
+.tbl td.st{width:16%}
+.kt tbody th{width:auto}
+.kt td.ev{padding-right:18px}
+
+/* ---------- 07 clone ---------- */
+.term{margin-top:clamp(24px,3vw,36px);border:1px solid var(--rule);background:color-mix(in srgb,var(--bg) 70%,var(--stone));box-shadow:0 30px 60px rgb(0 0 0 / .45)}
+.term-bar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--rule);font:500 12px/1.3 var(--font-data);color:var(--muted)}
+.term pre{margin:0;padding:14px 16px 18px;overflow-x:auto;font:500 13.5px/1.7 var(--font-data);font-variant-ligatures:none;color:var(--ink)}
+.term pre .c{color:var(--muted)}
+.term pre .o{color:var(--after)}
+.term pre .p{color:var(--before);user-select:none}
+
+/* ---------- 08 limits ---------- */
+.limits{counter-reset:l;list-style:none;padding:0;margin-top:clamp(24px,3vw,36px);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(20px,3vw,44px)}
+.limits li{counter-increment:l;position:relative;padding:16px 0 16px 46px;border-top:1px solid var(--rule);font-size:16px;line-height:1.55}
+.limits li::before{content:counter(l);position:absolute;left:0;top:14px;width:30px;height:30px;display:grid;place-items:center;border:1.5px solid var(--before);border-radius:50%;font:800 16px/1 var(--font-display);color:var(--before)}
+.limits b{color:var(--paper)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--rule);padding:34px 0 44px;font-size:14.5px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between}
+footer .fb{display:flex;align-items:center;gap:10px;font:800 18px/1 var(--font-display);color:var(--ink)}
+footer .fb img{width:24px;height:24px}
+footer nav{display:flex;flex-wrap:wrap;gap:8px 18px}
+footer a{display:inline-block;padding:5px 0;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
+footer a:hover{border-bottom-color:var(--before)}
+footer .stampline{width:100%;font:500 12px/1.5 var(--font-data)}
+
+/* ---------- small screens ---------- */
+@media (max-width:980px){
+  .hero .wrap,.vgrid{grid-template-columns:minmax(0,1fr)}
+  .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .step{grid-template-columns:auto minmax(0,1fr)}
+  .step .see{grid-column:2}
+}
+@media (max-width:760px){
+  body{font-size:17px}
+  .tbl thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+  .tbl,.tbl tbody,.tbl tr,.tbl th,.tbl td{display:block;width:auto!important}
+  .tbl tr{padding:14px 0;border-bottom:1px solid var(--rule)}
+  .tbl th,.tbl td{border:0;padding:4px 0}
+  .tbl td[data-l]::before{content:attr(data-l);display:block;font:500 11px/1.3 var(--font-data);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:8px 0 4px}
+  .limits{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:560px){
+  .rgrid{grid-template-columns:minmax(0,1fr)}
+  .step{grid-template-columns:minmax(0,1fr);gap:10px}
+  .step .see{grid-column:auto}
+  .step .n{width:42px;height:42px;font-size:21px}
+  .ctas .btn{flex:1 1 100%;justify-content:center}
+  .slip{transform:none}
+  .ln{grid-template-columns:2.6ch minmax(0,1fr) auto 12px;gap:0 7px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the judge guide</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="burn" x="-4%" y="-4%" width="108%" height="108%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".021 .028" numOctaves="4" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="18" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="ink" x="-8%" y="-14%" width="116%" height="128%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="4" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.25 0 0 0 1.62" result="m"/>
+      <feComposite in="SourceGraphic" in2="m" operator="in" result="t"/>
+      <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="9" result="w"/>
+      <feDisplacementMap in="t" in2="w" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<header class="top">
+  <nav class="wrap" aria-label="Site">
+    <a class="brand" href="/"><img src="/landing/icon.svg" alt="" width="26" height="26"><span class="bt">SYNTAX ERROR IN 20</span><small>Judges</small></a>
+    <a class="nl" href="#path">Path</a>
+    <a class="nl" href="#criteria">Criteria</a>
+    <a class="nl" href="#kiro">Kiro</a>
+    <a class="nl" href="#video">Video</a>
+    <a class="nl" href="#receipts">Receipts</a>
+    <a class="nl" href="#limits">Limits</a>
+    <a class="btn" href="https://github.com/edycutjong/ready"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+  </nav>
+</header>
+
+<main id="main">
+<section class="hero" aria-labelledby="h1">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">For judges · Kiroween 2026 · Resurrection</p>
+      <h1 id="h1">Three minutes with a listing that <span class="re">rose</span>.</h1>
+      <p class="one"><b>SYNTAX ERROR IN 20</b> is a Kiro agent that repairs the lines OCR misread in 1984 magazine type-in programs. It can change a line only through a gate that checks it against the checksum the magazine printed beside it, and a real C64 core then runs the program and decides the verdict.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#path"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M10 3v13M5.5 11.5 10 16l4.5-4.5"/></svg>The 60-second path</a>
+        <a class="btn" href="/"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M4 10h11M11 5.5 15.5 10 11 14.5"/></svg>Open the live site</a>
+        <a class="btn" href="#video"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M6 4.5v11l9-5.5z"/></svg>Video, {{video_len}}</a>
+      </div>
+      <ul class="facts">
+        <li>No login, no install, no key</li>
+        <li>The live site is recorded playback, and says so</li>
+        <li>MIT, public repo, <code>.kiro/</code> at the root</li>
+      </ul>
+    </div>
+    <figure class="slip" aria-label="Line 20 of The Last Seance: as OCR read it, refused; the agent's fix, accepted by the checksum gate; the recorded run ended with IT LIVES.">
+      <div class="slip-paper" aria-hidden="true"></div>
+      <p class="prog">THE LAST SEANCE</p>
+      <p class="src">a page we typeset in the 1984 format · recorded run {{run_date}} · {{model}} · {{kiro_cli}}</p>
+<!--@slip-->
+      <p class="verdict-line">gate: {{reason_agent_s}} <span>· ACCEPTED, then the C64 ran it: RESURRECTED, {{ok_after}}/{{n_lines}} lines, {{wall_s}} s, {{credits}} Kiro credits</span></p>
+      <p class="c64err" aria-label="the C64 before the patch said: SYNTAX ERROR IN 20">?SYNTAX&nbsp;&nbsp;ERROR IN 20</p>
+      <div class="lives" role="img" aria-label="IT LIVES, as recorded">IT LIVES<small>AS RECORDED</small></div>
+    </figure>
+  </div>
+</section>
+
+<nav class="toc" aria-label="On this page">
+  <ol class="wrap">
+    <li><a href="#path"><b>01</b>60-second path</a></li>
+    <li><a href="#criteria"><b>02</b>The five criteria</a></li>
+    <li><a href="#kiro"><b>03</b>Kiro, file by file</a></li>
+    <li><a href="#video"><b>04</b>Video by chapter</a></li>
+    <li><a href="#receipts"><b>05</b>Receipts</a></li>
+    <li><a href="#real"><b>06</b>Real vs recorded</a></li>
+    <li><a href="#clone"><b>07</b>Verify from a clone</a></li>
+    <li><a href="#limits"><b>08</b>Honest limits</a></li>
+  </ol>
+</nav>
+
+<!-- 01 -->
+<section class="sec paper" id="path" aria-labelledby="path-h">
+  <div class="wrap">
+    <p class="eyebrow">01 · The 60-second path</p>
+    <h2 id="path-h">Five steps, about a minute, laptop or phone.</h2>
+    <p class="lede">Each step opens the exact page and names the button. The box beside it is what you should see; if you see something else, that is a bug and we want to know. The times are a budget, not a measurement.</p>
+    <p class="mode-banner"><b>RECORDED PLAYBACK</b><span>The C64 screens on <a href="/">/</a> are real Kiro runs, recorded. No Commodore ROM is hosted (rights), so no C64 runs in your browser; the gate does. A clone runs the C64 (<a href="#clone">07</a>).</span></p>
+    <ol class="steps">
+      <li class="step">
+        <span class="n" aria-hidden="true">1</span>
+        <div>
+          <span class="t">0:00 – 0:15 · WATCH</span>
+          <h3>The Last Seance raises itself</h3>
+          <p>It plays once on its own. Line 20 is struck in red: <code>PRIMT</code> is our planted misprint, <code>™</code> is how OCR read the quote. The agent's patch appears under it and re-inks blue when the gate accepts it. <kbd>Resurrect</kbd> replays it.</p>
+          <a class="go" href="/">Open /<svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M4 10h11M11 5.5 15.5 10 11 14.5"/></svg></a>
+        </div>
+        <div class="see"><span class="k">YOU SHOULD SEE</span><p class="red">?SYNTAX&nbsp;&nbsp;ERROR IN 20</p><p class="blue">20: checksum {{printed20}} = printed {{printed20}}</p><p>the program's own screen, a certificate, and the <b>IT LIVES</b> stamp captioned "as recorded"</p></div>
+      </li>
+      <li class="step">
+        <span class="n" aria-hidden="true">2</span>
+        <div>
+          <span class="t">0:15 – 0:25 · CHEAT</span>
+          <h3>Try to delete the error away</h3>
+          <p>Press <kbd>Cheat: delete the error line</kbd>. Deleting the failing line would make the error vanish, so the gate refuses it. It is the same gate code the Kiro Pre Tool Use hook runs, here in your tab.</p>
+          <a class="go" href="/">Open /<svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M4 10h11M11 5.5 15.5 10 11 14.5"/></svg></a>
+        </div>
+        <div class="see"><span class="k">YOU SHOULD SEE</span><p class="red">REFUSED (R4.4)</p><p>deletion is a hard refusal</p><p>"The dead don't get deleted. Nice try."</p></div>
+      </li>
+      <li class="step">
+        <span class="n" aria-hidden="true">3</span>
+        <div>
+          <span class="t">0:25 – 0:40 · BEAT THE GATE</span>
+          <h3>Fix line 20 yourself</h3>
+          <p>The <b>fix it yourself</b> box holds line 20 as OCR read it. Press <kbd>Judge my line</kbd> as it is, then change <code>™</code> to <code>"</code>, then <code>PRIMT</code> to <code>PRINT</code>. Rewrites such as <code>20 PRINT"IT LIVES"</code> hit the 40% edit cap.</p>
+          <a class="go" href="/">Open /<svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M4 10h11M11 5.5 15.5 10 11 14.5"/></svg></a>
+        </div>
+        <div class="see"><span class="k">YOU SHOULD SEE, IN ORDER</span><p class="red">REFUSED · no C64 key types ™</p><p class="red">REFUSED · printed :rem {{printed20}}, computed {{tm_fixed_sum}}</p><p class="blue">ACCEPTED · {{printed20}} = {{printed20}}</p></div>
+      </li>
+      <li class="step">
+        <span class="n" aria-hidden="true">4</span>
+        <div>
+          <span class="t">0:40 – 0:50 · THE CHECKSUM KNOWS WHERE</span>
+          <h3>Pick The Ossuary</h3>
+          <p>The C64 blames line 19, but the red checksum cross is on DATA line 890 (we printed a period for a comma). Judge line 19 as read: it already matches its printed checksum. <b>The Ninth Knock</b> has two faults: OCR broke line 40, and behind it a DATA misprint in line 80 would run with no error and print <code>IT NIVES</code> (measured in eval case 5d); only its checksum flags it.</p>
+          <a class="go" href="/">Open /, pick The Ossuary<svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M4 10h11M11 5.5 15.5 10 11 14.5"/></svg></a>
+        </div>
+        <div class="see"><span class="k">YOU SHOULD SEE</span><p class="red">?OUT OF DATA&nbsp;&nbsp;ERROR IN 19</p><p>line 19: "already matches its printed checksum (135 = 135): the misprint is not in this line"</p></div>
+      </li>
+      <li class="step">
+        <span class="n" aria-hidden="true">5</span>
+        <div>
+          <span class="t">0:50 – 1:00 · KIRO'S OWN LOG</span>
+          <h3>Read the hooks fire</h3>
+          <p>Every hook firing of the three runs in time order, written by the hook processes, not the model, with the tool calls and credits from Kiro's own stream between them.</p>
+          <a class="go" href="/kiro">Open /kiro<svg viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M4 10h11M11 5.5 15.5 10 11 14.5"/></svg></a>
+        </div>
+        <div class="see"><span class="k">LOOK FOR</span><p class="blue">checksum-gate (kiro-pre-tool-use) exit 0 · accepted</p><p>and, in The Ossuary:</p><p class="red">until-title (kiro-stop) exit 0 · block</p><p>the Agent Stop hook refusing to let the agent stop before it had run the program</p></div>
+      </li>
+    </ol>
+    <p class="bonus"><b>Then the part you could use tomorrow.</b> Open <a href="/scan">/scan</a> and press <kbd>Read the real 1984 page</kbd> (or <kbd>Read our authored page</kbd>, or upload your own scan). tesseract.js reads it in your tab, each line gets a tick or a cross against its printed <code>:rem</code>, a flagged line is rechecked on every keystroke as you fix it, and you can download the <code>.bas</code> and an errata sheet. No Kiro call, 0 credits.</p>
+  </div>
+</section>
+
+<!-- 02 -->
+<section class="sec" id="criteria" aria-labelledby="crit-h">
+  <div class="wrap">
+    <p class="eyebrow">02 · The five criteria</p>
+    <h2 id="crit-h">Where each one is answered.</h2>
+    <table class="tbl">
+      <thead><tr><th scope="col">Criterion</th><th scope="col">Open</th><th scope="col">What you will find</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Potential Impact<small>who uses it, today</small></th><td class="open" data-l="Open"><a href="/scan">/scan</a></td><td data-l="What you will find">A real June 1984 COMPUTE!'s Gazette page (archive.org's scan, fetched on demand) or your own scan, read by tesseract.js in your tab. Each line whose recomputed sum equals its printed <code>:rem</code> gets a tick; you fix the flagged lines by hand and export a <code>.bas</code> and an errata sheet. For retro-computing hobbyists and archivists typing a listing back in. MIT, nothing to install.</td></tr>
+        <tr><th scope="row">Technological Implementation<small>depth of Kiro use</small></th><td class="open" data-l="Open"><a href="#kiro">03 Kiro</a><a href="/kiro">/kiro</a><a href="{{gh:docs/EXPERIMENTS.md}}">EXPERIMENTS.md</a></td><td data-l="What you will find">{{n_specs}} Kiro specs, a custom agent limited to {{tools}} MCP tools, {{n_hooks}} hooks (one refuses a patch with exit 2), {{steering}} steering files, a skill, a workflow and a Power; {{e_runs}} experiment runs, each arm changing one thing (model, loop control, context, steering).</td></tr>
+        <tr><th scope="row">Design<small>the look is the state</small></th><td class="open" data-l="Open"><a href="/">/</a><a href="/landing/">landing</a></td><td data-l="What you will find">A candle-lit galley proof: the failing line is struck in blood-red proof ink and re-inks blue when the gate accepts the patch; each listing is a headstone with its cause of death; the run ends in a certificate of resurrection and an <b>IT LIVES</b> stamp. Lighthouse CI gates all six judge-facing routes, this one included, on each push (<a class="f" href="{{gh:lighthouserc.json}}">lighthouserc.json</a>).</td></tr>
+        <tr><th scope="row">Innovation<small>what is new here</small></th><td class="open" data-l="Open"><a href="{{gh:docs/EXPERIMENTS.md}}">EXPERIMENTS.md (E0)</a></td><td data-l="What you will find">The judge is the checksum printed in 1984 plus the machine's own screen and memory: the model chooses where to look, code decides what is true. On the real 1984 page, search without a model fixed {{e0_search}} of {{e0_failing}} failing lines; the agent made all {{e0_failing}} checksum-consistent (N=2).</td></tr>
+        <tr><th scope="row">Presentation<small>the story, told straight</small></th><td class="open" data-l="Open"><a href="#video">video</a><a href="{{gh:README.md}}">README</a><a href="/deck/">deck</a></td><td data-l="What you will find">A {{video_len}} video with chapters (<a href="#video">04</a>), a README whose three GIFs are captures of the live site at 1× speed, a landing page and a deck built from the same run log, and this page, whose figures are read from the repo's evidence files when it is built.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 03 -->
+<section class="sec" id="kiro" aria-labelledby="kiro-h">
+  <div class="wrap">
+    <p class="eyebrow">03 · Kiro, impossible to miss</p>
+    <h2 id="kiro-h">Every Kiro feature, its file, its evidence.</h2>
+    <p class="lede"><code>.kiro/</code> sits at the repo root and is committed. Each tile opens the file on GitHub; each row below names what it did here and the evidence a judge can open.</p>
+    <div class="tally">
+      <a href="{{gh:.kiro/specs}}"><b>{{n_specs}}</b><span>specs (3 feature, 1 bugfix)</span></a>
+      <a href="{{gh:.kiro/agents/resurrector.json}}"><b>1</b><span>custom agent</span></a>
+      <a href="{{gh:mcp/c64-server}}"><b>{{tools}}</b><span>MCP tools, nothing else</span></a>
+      <a href="{{gh:scripts/hooks}}"><b>{{n_hooks}}</b><span>hooks</span></a>
+      <a href="{{gh:.kiro/steering}}"><b>{{steering}}</b><span>steering files</span></a>
+      <a href="{{gh:.kiro/skills/petscii-notation}}"><b>1</b><span>skill</span></a>
+      <a href="{{gh:.kiro/workflows/resurrect-ab.workflow.yaml}}"><b>1</b><span>workflow</span></a>
+      <a href="{{gh:powers/c64-resurrect}}"><b>1</b><span>Power (tried)</span></a>
+      <a href="{{gh:docs/EXPERIMENTS.md}}"><b>{{e_runs}}</b><span>experiment runs</span></a>
+    </div>
+    <p class="who"><b>Who wrote what.</b> Kiro wrote the specs, <code>src/basic/</code>, the MCP tools (tasks 1–5), the first agent profile, <code>resurrector.md</code> and the skill <span class="tag k">KIRO</span>. The gate, the contract, the hook scripts, <code>server.ts</code> and REPLAY were written by Claude Code and labelled <code>claude-direct</code> <span class="tag c">CLAUDE-DIRECT</span>. Session by session, with credits: <a href="{{gh:docs/DX-REPORT.md}}">docs/DX-REPORT.md</a>. Every prompt sent to Kiro through the first build days, in order: <a href="{{gh:prompts}}">prompts/</a>.</p>
+    <table class="tbl kt">
+      <colgroup><col style="width:16%"><col style="width:21%"><col style="width:39%"><col style="width:24%"></colgroup>
+      <thead><tr><th scope="col">Kiro feature</th><th scope="col">In this repo</th><th scope="col">What it did here</th><th scope="col">Evidence</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Feature specs</th><td class="ev" data-l="In this repo"><a href="{{gh:.kiro/specs/checksum-oracle}}">checksum-oracle/</a><br><a href="{{gh:.kiro/specs/c64-mcp-server}}">c64-mcp-server/</a><br><a href="{{gh:.kiro/specs/resurrect-loop}}">resurrect-loop/</a></td><td data-l="What it did here">Kiro wrote all three (requirements, design with correctness properties, tasks), then built the tokenizer and checksum (<code>src/basic/</code>, tasks 1–6) and the MCP tool layer (tasks 1–5). Before writing the tokenizer it probed the real C64 core and found <b>three places where our spec was wrong about the machine</b>.</td><td class="ev" data-l="Evidence"><a href="{{gh:docs/DX-REPORT.md}}">DX-REPORT.md</a><br><a href="{{gh:tests/unit/tokenizer-rom.test.ts}}">tokenizer-rom.test.ts</a><br><a href="{{gh:prompts/README.md}}">prompts/README.md</a></td></tr>
+        <tr><th scope="row">Bugfix spec</th><td class="ev" data-l="In this repo"><a href="{{gh:.kiro/specs/bugfix-boot-detect}}">bugfix-boot-detect/</a></td><td data-l="What it did here">Current / Expected / Unchanged for two boot-detection bugs we measured; Kiro wrote the spec and the fix (tasks 1, 4, 5). Our re-judge then caught a stale-screen bug in that fix, fixed <code>claude-direct</code>.</td><td class="ev" data-l="Evidence"><a href="{{gh:tests/unit/boot-detect.test.ts}}">boot-detect.test.ts</a><br><a href="{{gh:evidence/boot-detect}}">evidence/boot-detect/</a></td></tr>
+        <tr><th scope="row">Custom agent</th><td class="ev" data-l="In this repo"><a href="{{gh:.kiro/agents/resurrector.json}}">resurrector.json</a></td><td data-l="What it did here">The runtime agent ({{model}}): its only tools are <code>@c64</code>; file read, shell, file write and web are denied; three hooks are declared inline. It can propose, never write.</td><td class="ev" data-l="Evidence"><a href="{{gh:tests/unit/resurrector-profile.test.ts}}">resurrector-profile.test.ts</a><br><a href="{{gh:evidence/spikes/spike-G.json}}">spike-G.json</a></td></tr>
+        <tr><th scope="row">MCP server</th><td class="ev" data-l="In this repo"><a href="{{gh:.kiro/settings/mcp.json}}">mcp.json</a> → <a href="{{gh:mcp/c64-server}}">mcp/c64-server/</a></td><td data-l="What it did here">{{tools_word}} tools over a headless C64: <code>c64_reload</code>, <code>c64_run</code>, <code>c64_read_screen</code>, <code>c64_press</code>, <code>checksum_line</code>, <code>apply_patch</code>.</td><td class="ev" data-l="Evidence"><a href="{{gh:tests/unit/mcp-tools.test.ts}}">mcp-tools.test.ts</a><br><a href="{{gh:tests/unit/mcp-stdio.test.ts}}">mcp-stdio.test.ts</a><br>the tool calls on <a href="/kiro">/kiro</a></td></tr>
+        <tr><th scope="row">Hook: Pre Tool Use<small>checksum-gate</small></th><td class="ev" data-l="In this repo"><a href="{{gh:scripts/hooks/checksum-gate.mjs}}">checksum-gate.mjs</a> → <a href="{{gh:src/gate/checksum-gate.ts}}">src/gate/</a></td><td data-l="What it did here">Runs the same gate as the server and the browser on every <code>apply_patch</code> before it reaches the server: exit 2, with the gate's reason on STDERR, refuses it and the server never sees the call.</td><td class="ev" data-l="Evidence"><a href="{{gh:tests/unit/hooks.test.ts}}">hooks.test.ts</a> (exit 2 on a deletion and on a checksum mismatch)<br><a href="{{gh:evidence/spikes/spike-K1.md}}">spike-K1.md</a> (real kiro-cli: the refused call is absent from the server's log)</td></tr>
+        <tr><th scope="row">Hook: Agent Stop<small>until-title</small></th><td class="ev" data-l="In this repo"><a href="{{gh:scripts/hooks/until-title.mjs}}">until-title.mjs</a></td><td data-l="What it did here">The model cannot declare success: the hook blocks the stop until the server's contract says RESURRECTED, only unfixable lines remain, or a cap hits ({{cap_iter}} attempts, {{cap_credits}} credits, {{cap_s}} s).</td><td class="ev" data-l="Evidence"><a href="{{gh:evidence/spikes/spike-K2.md}}">spike-K2.md</a><br><a href="{{gh:docs/EXPERIMENTS.md}}">EXPERIMENTS.md</a> E2: it blocked a premature stop in {{e2_blocked}} of the {{e2_runs}} runs outside E3</td></tr>
+        <tr><th scope="row">Hook: Session Start<small>listing-context</small></th><td class="ev" data-l="In this repo"><a href="{{gh:scripts/hooks/listing-context.mjs}}">listing-context.mjs</a></td><td data-l="What it did here">Hands the agent the listing with each line's printed checksum and status; never a reference transcript.</td><td class="ev" data-l="Evidence">the <code>listing-context</code> rows in <a href="{{gh:public/runs}}">public/runs/</a> and on <a href="/kiro">/kiro</a></td></tr>
+        <tr><th scope="row">Hook: File Save<small>prop-tests-on-save</small></th><td class="ev" data-l="In this repo"><a href="{{gh:.kiro/hooks/prop-tests-on-save.json}}">prop-tests-on-save.json</a></td><td data-l="What it did here">After a save under <code>src/basic</code> or <code>src/gate</code>, runs the property tests.</td><td class="ev" data-l="Evidence"><a href="{{gh:evidence/hooks/file-save.jsonl}}">file-save.jsonl</a>: {{fs_n}} firings; the first {{fs_fail}} exited 1 (the property-test include was not configured yet), the last passed {{fs_passed}} property tests</td></tr>
+        <tr><th scope="row">Steering</th><td class="ev" data-l="In this repo"><a href="{{gh:.kiro/steering}}">.kiro/steering/</a> ({{steering}} files)</td><td data-l="What it did here">Commodore BASIC V2, Gazette notation and the resurrector's rules; three files are resources of the agent. Six were written <code>claude-direct</code>, <code>resurrector.md</code> by Kiro.</td><td class="ev" data-l="Evidence"><a href="{{gh:docs/EXPERIMENTS.md}}">EXPERIMENTS.md</a> E4: removing <code>commodore-basic-v2.md</code> showed no measurable difference at N=2</td></tr>
+        <tr><th scope="row">Skill</th><td class="ev" data-l="In this repo"><a href="{{gh:.kiro/skills/petscii-notation}}">petscii-notation/</a></td><td data-l="What it did here">PETSCII control-code notation, declared as a resource of the agent (<code>skill://petscii-notation</code>).</td><td class="ev" data-l="Evidence">In the two recorded runs that tried <code>Load skill: petscii-notation</code> (The Last Seance, The Ninth Knock, on <a href="/kiro">/kiro</a>), kiro-cli's call failed on a permission error: no recorded run shows the skill body loaded</td></tr>
+        <tr><th scope="row">Workflow</th><td class="ev" data-l="In this repo"><a href="{{gh:.kiro/workflows/resurrect-ab.workflow.yaml}}">resurrect-ab.workflow.yaml</a></td><td data-l="What it did here">Two experiment arms in parallel plus an aggregator (recipe written <code>claude-direct</code>); ran once headless through <code>run_workflow</code>.</td><td class="ev" data-l="Evidence"><a href="{{gh:evidence/experiments/workflow-run-2026-11-26.md}}">workflow-run-2026-11-26.md</a></td></tr>
+        <tr><th scope="row">Power</th><td class="ev" data-l="In this repo"><a href="{{gh:powers/c64-resurrect}}">powers/c64-resurrect/</a></td><td data-l="What it did here">Packages the skills and the MCP server. Installed, both skills appear; its MCP server does not connect. Tried, reported as not a result.</td><td class="ev" data-l="Evidence"><a href="{{gh:evidence/power/activation-2026-11-26.md}}">activation-2026-11-26.md</a></td></tr>
+        <tr><th scope="row">Experiments<small>E0–E4</small></th><td class="ev" data-l="In this repo"><a href="{{gh:docs/EXPERIMENTS.md}}">docs/EXPERIMENTS.md</a></td><td data-l="What it did here">{{e_runs}} real runs in E1–E4 (N=2 per arm), each arm changing one thing: model, loop control, context, steering. E0 asks whether a model adds anything over plain search.</td><td class="ev" data-l="Evidence"><a href="{{gh:evidence/experiments}}">evidence/experiments/</a></td></tr>
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:18px">Every Kiro session ran in <code>kiro-cli</code>; the Kiro IDE was not used. Two spec lines reached or neared their credit caps ({{cap_line1}}, {{cap_line2}}), and the tasks after that were written <code>claude-direct</code> and labelled.</p>
+  </div>
+</section>
+
+<!-- 04 -->
+<section class="sec" id="video" aria-labelledby="video-h">
+  <div class="wrap">
+    <p class="eyebrow">04 · The video, by chapter</p>
+    <h2 id="video-h">{{video_len}}. Kiro at 1:05 and 1:22.</h2>
+    <div class="vgrid">
+      <div class="player" id="yt">
+        <a class="play" href="https://youtu.be/Jv69K3jQ6QI" data-t="0">
+          <img src="/landing/og.jpg?v=p4" width="1200" height="630" alt="" loading="lazy" decoding="async">
+          <span><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M6 4.5v11l9-5.5z"/></svg>Play the demo video ({{video_len}}, YouTube)</span>
+        </a>
+      </div>
+      <div>
+        <ol class="chapters" aria-label="Video chapters">
+<!--@chapters-->
+        </ol>
+        <p class="note" style="margin-top:14px">Cut on 2026-11-25 at evals release 1, so its receipts shot reads 492 tests and 6 of 6 model runs; the figures on this page are from the later code (<a href="#limits">limit 6</a>). The voice-over is synthesized.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 -->
+<section class="sec" id="receipts" aria-labelledby="rc-h">
+  <div class="wrap">
+    <p class="eyebrow">05 · Receipts</p>
+    <h2 id="rc-h">Each number, with the file that holds it.</h2>
+    <div class="rgrid">
+      <article class="rc"><p class="big">{{fc_tests}}<small> + {{fc_xfail}} expected fail</small></p><h3>tests pass, in {{fc_files}} files</h3><p>Unit, property and real-core tests. The 1 expected fail is a known title-detection limit kept as a test. Run on a fresh clone of <code>{{fc_commit}}</code>.</p><p class="src"><a href="{{gh:evidence/tests/fresh-clone-2026-11-27.txt}}">evidence/tests/fresh-clone-2026-11-27.txt</a></p></article>
+      <article class="rc"><p class="big">{{ev_cases}}</p><h3>agent eval cases pass</h3><p>And {{ev_model}} model runs with the shipped profile ended RESURRECTED (4 model cases × N=3). N=3 per case shows the loop works on these inputs, not a rate.</p><p class="src"><a href="{{gh:docs/EVALS.md}}">docs/EVALS.md</a></p></article>
+      <article class="rc"><p class="big">{{rj_ok}}/{{rj_runs}}</p><h3>recordings re-judge, {{rj_mis}} mismatches</h3><p>Every recording on disk re-run through the same gate and C64 core: {{rj_pub}} public (a clone re-judges these), {{rj_local}} kept local for rights.</p><p class="src"><a href="{{gh:evidence/boot-detect/rejudge-p6d.json}}">rejudge-p6d.json</a> · <a href="{{gh:scripts/rejudge-runs.mjs}}">rejudge-runs.mjs</a></p></article>
+      <article class="rc"><p class="big">{{off_ok}}/{{off_n}}</p><h3>offline checks pass</h3><p>With every non-local request blocked: REPLAY plays to RESURRECTED on an in-browser C64, and OCR plus checksum flags work on an uploaded page. CI runs it on every push.</p><p class="src"><a href="{{gh:evidence/offline/verify-offline.json}}">verify-offline.json</a> · <a href="{{gh:scripts/verify_offline.mjs}}">verify_offline.mjs</a></p></article>
+      <article class="rc"><p class="big">{{lj_ok}}/{{lj_n}}</p><h3>live judge-path checks on ready.edycu.dev</h3><p>A clean browser walks the path above on the deployed site: autoplay, certificate, Cheat refused, fix-it-yourself, .PRG download, /kiro rows, 0 console errors, no ROM served. Last captured {{lj_date}}; CI re-runs it after each deploy.</p><p class="src"><a href="{{gh:evidence/e2e/live-judge-path.json}}">live-judge-path.json</a> · <a href="{{gh:scripts/live-judge-path.mjs}}">live-judge-path.mjs</a></p></article>
+      <article class="rc"><p class="big">{{b_gate_p95}}<small> ms p95</small></p><h3>gate <code>applyPatch</code></h3><p>p50 {{b_gate_p50}} ms over N={{b_gate_n}} in node. Emulator boot p50 {{b_boot}} ms (N={{b_boot_n}}); REPLAY of the recorded run p50 {{b_replay}} ms (N={{b_replay_n}}); OCR of the authored page p50 {{b_ocr}} ms (N={{b_ocr_n}}).</p><p class="src"><a href="{{gh:evidence/bench/bench-2026-11-26-p7.json}}">bench-2026-11-26-p7.json</a> · <a href="{{gh:scripts/bench.mjs}}">bench.mjs</a></p></article>
+      <article class="rc red"><p class="big">{{e0_search}} <small>vs</small> {{e0_failing}}</p><h3>of {{e0_failing}} failing lines fixed: search alone vs the agent, on the real 1984 page</h3><p>Of {{e0_failing}} failing lines, search without a model fixed {{e0_search}}; the agent made all {{e0_failing}} checksum-consistent (N=2), on this one page. Search fixes only lines with a unique candidate; the agent's fixes are checksum-consistent, not proven source-exact.</p><p class="src"><a href="{{gh:docs/EXPERIMENTS.md}}">EXPERIMENTS.md</a> E0 · <a href="{{gh:evidence/experiments/e0.json}}">e0.json</a></p></article>
+      <article class="rc"><p class="big">{{e2_blocked}}/{{e2_runs}}</p><h3>runs where the Stop hook blocked a premature stop</h3><p>Outside E3. The runner never had to resume a session: Kiro's own Agent Stop hook was enough on these inputs.</p><p class="src"><a href="{{gh:docs/EXPERIMENTS.md}}">EXPERIMENTS.md</a> E2 · <a href="{{gh:evidence/experiments/e1-e4.json}}">e1-e4.json</a></p></article>
+      <article class="rc"><p class="big">{{credits}}<small> credits</small></p><h3>the whole recorded Last Seance run</h3><p>1 patch, {{wall_s}} s wall, {{iterations}} iteration, metered by kiro-cli. The same run plays on <a href="/">/</a> and its raw log is public.</p><p class="src"><a href="{{gh:public/runs/line20-2026-11-24T19-56-44Z.jsonl}}">public/runs/line20-…jsonl</a></p></article>
+    </div>
+    <p class="built">This page is generated by <a href="{{gh:scripts/landing/build-site.mjs}}">scripts/landing/build-site.mjs</a>: the figures above are read from the files they link to (or checked against README, EVALS and EXPERIMENTS), every GitHub link is checked to exist in the repo, and the build fails on a mismatch. Five GitHub Actions workflows run on each push to main (CI, E2E, CodeQL, Security, Quality); Deploy and Release follow a green CI run. The badges are in the <a href="{{gh:README.md}}">README</a>.</p>
+  </div>
+</section>
+
+<!-- 06 -->
+<section class="sec" id="real" aria-labelledby="real-h">
+  <div class="wrap">
+    <p class="eyebrow">06 · What is real, what is recorded</p>
+    <h2 id="real-h">Nothing here is a mock. Some of it is a recording.</h2>
+    <table class="tbl">
+      <thead><tr><th scope="col">Claim</th><th scope="col">Status</th><th scope="col">Where to check</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">The gate judges patches</th><td class="st" data-l="Status"><span class="badge b-live">Live in your tab</span></td><td data-l="Where to check">Cheat and <b>fix it yourself</b> on <a href="/">/</a> run the same <code>applyPatch</code> the Kiro Pre Tool Use hook runs. <a class="f" href="{{gh:src/gate/checksum-gate.ts}}">src/gate/checksum-gate.ts</a></td></tr>
+        <tr><th scope="row">OCR and checksum flags</th><td class="st" data-l="Status"><span class="badge b-live">Live in your tab</span></td><td data-l="Where to check">A self-hosted tesseract.js on <a href="/scan">/scan</a>; no Kiro call. <a class="f" href="{{gh:evidence/e2e/scan-authored.json}}">evidence/e2e/scan-authored.json</a></td></tr>
+        <tr><th scope="row">The Kiro runs and their hook rows</th><td class="st" data-l="Status"><span class="badge b-rec">Recorded, real</span></td><td data-l="Where to check">Recorded by <code>kiro-cli</code> on the builder's machine; hook rows written by the hook processes. <a class="f" href="{{gh:public/runs}}">public/runs/</a>, <a href="/kiro">/kiro</a></td></tr>
+        <tr><th scope="row">The C64 screens on /</th><td class="st" data-l="Status"><span class="badge b-rec">Recorded</span></td><td data-l="Where to check">Captured when each run was recorded. No ROM is hosted; the page says RECORDED PLAYBACK and the stamp says "as recorded".</td></tr>
+        <tr><th scope="row">A C64 re-runs every accepted patch</th><td class="st" data-l="Status"><span class="badge b-clone">From a clone</span></td><td data-l="Where to check"><code>npm run dev</code> switches the page to REPLAY; <code>rejudge-runs.mjs</code> re-runs the {{rj_pub}} public recordings (<a href="#clone">07</a>).</td></tr>
+        <tr><th scope="row">The agent repaired a real 1984 page</th><td class="st" data-l="Status"><span class="badge b-held">Counts only</span></td><td data-l="Where to check">Eval case 1: {{case1}} TITLE-PATH RESURRECTED. In the earlier spike G runs on the same page (N=2), 19 of 28 lines were source-exact against a vision-read reference; the rest are checksum-consistent. The page, its OCR and the runs stay out of the repo (rights), so a clone cannot reproduce it. <a class="f" href="{{gh:docs/EVALS.md}}">docs/EVALS.md</a></td></tr>
+        <tr><th scope="row">A recorded agent run hit a hook refusal</th><td class="st" data-l="Status"><span class="badge b-no">Not in any run</span></td><td data-l="Where to check">The agent tests each candidate with <code>checksum_line</code> first; every recorded gate event is <code>accepted</code>. The exit-2 path is shown by <a class="f" href="{{gh:tests/unit/hooks.test.ts}}">hooks.test.ts</a> and the day-1 probe <a class="f" href="{{gh:evidence/spikes/spike-K1.md}}">spike-K1.md</a>; the refusal you see on screen is Cheat.</td></tr>
+        <tr><th scope="row">Steering changes the agent</th><td class="st" data-l="Status"><span class="badge b-no">Not shown</span></td><td data-l="Where to check">E4 removed one steering file: no measurable difference at N=2. <a class="f" href="{{gh:docs/EXPERIMENTS.md}}">docs/EXPERIMENTS.md</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 07 -->
+<section class="sec" id="clone" aria-labelledby="clone-h">
+  <div class="wrap">
+    <p class="eyebrow">07 · Verify it yourself</p>
+    <h2 id="clone-h">From a clone: no Kiro account, no key, no credits.</h2>
+    <p class="lede">Node ≥ 22.18. Captured on a fresh clone of <code>{{fc_commit}}</code>: <a href="{{gh:evidence/tests/fresh-clone-2026-11-27.txt}}">fresh-clone-2026-11-27.txt</a>. On Node 22, <code>npm ci</code> prints an engine warning for <code>c64-ready</code> (it asks for ≥ 24.14); CI runs the suite on Node 22 and 24.</p>
+    <div class="term">
+      <div class="term-bar"><span>zsh · ready</span><span>expected output in blue</span></div>
+<pre><span class="p">$ </span>git clone https://github.com/edycutjong/ready &amp;&amp; cd ready &amp;&amp; npm ci
+<span class="p">$ </span>npm test
+<span class="o">  Test Files  {{fc_files}} passed ({{fc_files}})
+       Tests  {{fc_tests}} passed | {{fc_xfail}} expected fail ({{fc_total}})</span>
+<span class="p">$ </span>node scripts/eval-agents.mjs --deterministic
+<span class="o">{"summary":{"deterministic":"7/7","model":"0/0"}}</span>     <span class="c"># last line</span>
+<span class="p">$ </span>node scripts/rejudge-runs.mjs
+<span class="o">{"runs":{{rj_pub}},"ok":{{rj_pub}},"mismatches":0,...}</span>    <span class="c"># every public recording, on the real C64 core</span>
+<span class="p">$ </span>npm run dev
+<span class="c"># http://localhost:5173 now says REPLAY: your browser's C64 re-runs every accepted patch</span></pre>
+    </div>
+    <p class="note" style="margin-top:16px">Step-by-step detail and the command behind every number: <a href="{{gh:DEMO.md}}">DEMO.md</a>. The same guide as Markdown: <a href="{{gh:JUDGE.md}}">JUDGE.md</a>.</p>
+  </div>
+</section>
+
+<!-- 08 -->
+<section class="sec" id="limits" aria-labelledby="lim-h">
+  <div class="wrap">
+    <p class="eyebrow">08 · Honest limits</p>
+    <h2 id="lim-h">What it does not do, said before you find it.</h2>
+    <ol class="limits">
+      <li><b>The live site is recorded playback.</b> No Commodore ROM is hosted (rights), so nothing runs on a C64 in your browser there; the page says RECORDED PLAYBACK and the stamp says "as recorded". A clone does run the C64.</li>
+      <li><b>The three runs on / are pages we typeset</b> in the 1984 format with planted misprints, read by real OCR. The one real 1984 page the agent repaired is reported by counts only (rights).</li>
+      <li><b>/scan withholds the agent's repair</b> and leaves the fixing to you. On the real page tesseract.js misreads most lines: at 1600 px, {{scan_ok}} of the {{scan_lines}} lines it read matched their printed checksum (<a href="{{gh:evidence/spikes/spike-P-ocr-live.json}}">spike-P-ocr-live.json</a>). Its CDN keeps a copy of the archive.org image for up to a day (and may serve a stale one for up to a week while it refreshes).</li>
+      <li><b>No recorded run of the shipped agent contains a hook refusal.</b> The exit-2 path is shown by the tests and the day-1 probe sessions; the refusal on screen is Cheat.</li>
+      <li><b>Headless, Kiro's Agent Stop hook forces one more turn per prompt, not a loop,</b> so <code>scripts/record-run.mjs</code> resumes the session between cycles. In the {{e2_runs}} runs outside E3 it never had to.</li>
+      <li><b>The video is older than this repo.</b> Its receipts read 492 tests and 6 of 6 model runs; the figures here ({{fc_tests}} tests + {{fc_xfail}} expected fail, {{ev_model}} model runs) are from the later code. Its description names three specs: the bugfix spec was written the next day.</li>
+      <li><b>Small N:</b> N=3 per eval case and N=2–3 per experiment arm, on one machine: directions, not rates.</li>
+      <li><b>Kiro coverage:</b> kiro-cli only, the Kiro IDE was not used. <code>resurrect-loop</code> tasks T2–T6 and <code>c64-mcp-server</code> task 8 are still open in their <code>tasks.md</code>.</li>
+    </ol>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="fb"><img src="/landing/icon.svg" alt="" width="24" height="24">SYNTAX ERROR IN 20</p>
+    <nav aria-label="Footer">
+      <a href="/">Live site</a>
+      <a href="/scan">/scan</a>
+      <a href="/kiro">/kiro</a>
+      <a href="/landing/">Landing</a>
+      <a href="/deck/">Pitch deck</a>
+      <a href="https://youtu.be/Jv69K3jQ6QI">Video</a>
+      <a href="https://github.com/edycutjong/ready">GitHub (MIT)</a>
+      <a href="{{gh:JUDGE.md}}">JUDGE.md</a>
+      <a href="https://dev.to/edycutjong/i-gave-a-kiro-agent-a-commodore-64-and-a-checksum-it-cant-argue-with-5hbn">Write-up</a>
+      <a href="https://kiroween.devpost.com/">Kiroween 2026</a>
+    </nav>
+    <p class="stampline">Resurrection · MIT · build hash {{site_ver}} · figures read from the repo's evidence files at build time · no trackers, no cookies until you press play</p>
+  </div>
+</footer>
+
+<script>
+// The video loads only when asked (no third-party request before then). Chapter links jump the embedded player;
+// without JavaScript every link simply opens YouTube at that time.
+(() => {
+  const box = document.getElementById("yt");
+  const play = (t) => {
+    box.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/Jv69K3jQ6QI?autoplay=1&rel=0&start=' + (t | 0) +
+      '" title="SYNTAX ERROR IN 20, demo video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+  };
+  document.querySelectorAll("[data-t]").forEach((a) => a.addEventListener("click", (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    play(a.getAttribute("data-t"));
+    if (a.closest(".chapters")) box.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+  }));
+})();
+</script>
+</body>
+</html>

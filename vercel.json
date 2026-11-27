@@ -6,6 +6,7 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/kiro", "destination": "/index.html" },
-    { "source": "/scan", "destination": "/index.html" }
+    { "source": "/scan", "destination": "/index.html" },
+    { "source": "/judge", "destination": "/judge/index.html" }
   ]
 }
