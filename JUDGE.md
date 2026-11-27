@@ -7,10 +7,13 @@ or the file that shows it.
 
 **What:** a Kiro agent repairs the lines OCR misread in 1984 magazine type-in programs, but it can change a line only
 through a gate that checks it against the checksum the magazine printed beside it, and a real C64 core then runs the
-program and decides the verdict (the hosted site plays back recorded runs; a clone runs the C64). **Who:** anyone typing a listing back in from a scan;
+program and decides the verdict (the hosted site plays back recorded runs; a clone runs the C64). **Who:** retro-computing hobbyists and archivists typing a listing back in from a scan;
 [`/scan`](https://ready.edycu.dev/scan) checks a page's lines against their printed checksums in your browser today.
 **Why:** an LLM asked to fix a listing can write a line that runs and is wrong, and a plain fix loop has nothing that
 checks it; here the model only proposes, and two checks it cannot argue with, the 1984 printout and the machine, decide.
+**Kiro:** 4 specs (3 feature + 1 bugfix), a custom agent limited to 6 MCP tools, 4 hooks (the Pre Tool Use one refuses
+a patch with exit 2, the Agent Stop one will not let the agent quit early), 7 steering files, a skill, a workflow, a Power
+(tried) and 18 experiment runs; each is mapped to a file and its evidence in [Kiro, impossible to miss](#kiro-impossible-to-miss).
 
 **Video:** [2 min 46 s on YouTube](https://youtu.be/Jv69K3jQ6QI). Kiro is on screen at
 [1:05](https://youtu.be/Jv69K3jQ6QI?t=65) (the specs, and what Kiro caught) and
@@ -36,7 +39,8 @@ recorded, and no C64 runs in your browser (see [Honest limits](#honest-limits)).
    `?SYNTAX  ERROR IN 20`. The agent's patch appears under the struck line and re-inks blue when the gate accepts it
    (`20: checksum 159 = printed 159`); then the program's own screen, the certificate and the **IT LIVES** stamp,
    captioned "as recorded". **Resurrect** replays it.
-2. **Cheat.** Press **Cheat: delete the error line**: `REFUSED (R4.4)`, deletion is a hard refusal. It is the
+2. **Cheat.** Press **Cheat: delete the error line**: `REFUSED (R4.4)`, deletion is a hard refusal (the page adds
+   one line of its own: "The dead don't get deleted. Nice try."). It is the
    same gate code the Kiro Pre Tool Use hook runs, here in your tab.
 3. **Beat the gate.** The **fix it yourself** box holds line 20 as OCR read it. **Judge my line** as it is:
    REFUSED, no C64 key types `™`. Change `™` to `"`: REFUSED, printed `:rem 159`, computed 158. Change `PRIMT` to

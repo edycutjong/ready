@@ -1,14 +1,14 @@
 <div align="center">
   <img src="docs/icon-animated.svg" alt="SYNTAX ERROR IN 20 icon" width="144">
   <h1>SYNTAX ERROR IN 20 🕯️</h1>
-  <p><em>A Kiro agent repairs the lines OCR misread in 1984 magazine type-in programs, but only through a gate: a fix must be typeable on a C64 and match its printed checksum (allowing for OCR misreads of the printed digits), and a real C64 core then runs the program and decides the verdict; the live site plays back recorded runs.</em></p>
+  <p><em>One misread character kills a 1984 magazine program. A Kiro agent may fix the line only if it matches the checksum the magazine printed beside it, and a Commodore 64 core then decides whether the program lives. The live site plays back recorded real runs; you can try to beat the gate yourself.</em></p>
+  <p><strong>Kiro, used here:</strong> 4 specs (3 feature + 1 bugfix) · a custom agent limited to 6 MCP tools · 4 hooks (one refuses a patch with exit 2) · 7 steering files · a skill · a workflow · a Power (tried) · 18 experiment runs. <a href="JUDGE.md#kiro-impossible-to-miss">Feature → file → evidence</a>.</p>
   <img src="docs/readme-hero-animated.svg" alt="SYNTAX ERROR IN 20: a singed 1984 listing under one candle, a blood-red proof mark on line 20 and a blue C64 screen" width="100%">
 
   <br/>
 
   [![For judges](https://img.shields.io/badge/For_judges-the_judge_path-1F4E79?style=for-the-badge)](JUDGE.md)
   [![Live Demo](https://img.shields.io/badge/🚀_Live-Demo-06b6d4?style=for-the-badge)](https://ready.edycu.dev)
-
   [![Demo Video](https://img.shields.io/badge/▶_Demo-Video-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/Jv69K3jQ6QI)
   [![Landing](docs/badges/production-landing.svg)](https://ready.edycu.dev/landing/)
   [![Scan](docs/badges/production-scan.svg)](https://ready.edycu.dev/scan)
@@ -16,27 +16,11 @@
   [![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-f59e0b?style=for-the-badge)](https://ready.edycu.dev/deck/)
   [![Built for Kiroween](https://img.shields.io/badge/Devpost-Kiroween_2026_·_Resurrection-ef4444?style=for-the-badge)](https://kiroween.devpost.com/)
 
-  <br/>
-
-  ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
-  ![Preact](https://img.shields.io/badge/Preact-673AB8?style=flat&logo=preact&logoColor=white)
-  ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)
-  ![Kiro](https://img.shields.io/badge/Kiro-agent_+_MCP_+_hooks-8b5cf6?style=flat)
-  ![Vercel](https://img.shields.io/badge/Vercel-black?style=flat&logo=vercel)
-  [![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
-  [![Release](docs/badges/release.svg)](https://github.com/edycutjong/ready/releases/latest)
-  [![CI](https://github.com/edycutjong/ready/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/ci.yml)
-  [![E2E](https://github.com/edycutjong/ready/actions/workflows/e2e.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/e2e.yml)
-  [![CodeQL](https://github.com/edycutjong/ready/actions/workflows/codeql.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/codeql.yml)
-  [![Security](https://github.com/edycutjong/ready/actions/workflows/security.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/security.yml)
-  [![Quality](https://github.com/edycutjong/ready/actions/workflows/quality.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/quality.yml)
-  [![Deploy](https://github.com/edycutjong/ready/actions/workflows/deploy.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/deploy.yml)
-
 </div>
 
 ---
 
-> **The problem, and who has it.** Anyone typing a 1984 type-in listing back in from a scan: one character the OCR misread
+> **The problem, and who has it.** Retro-computing hobbyists and archivists typing a 1984 type-in listing back in from a scan: one character the OCR misread
 > and the program dies (`?SYNTAX  ERROR IN 20`), and nothing in a plain LLM fix loop stops the model from inventing a line that runs and is wrong.
 >
 > **What this is.** A Kiro agent that may only change a line through a gate: typeable on a C64 keyboard, within the 40% edit cap, and its checksum
@@ -46,7 +30,7 @@
 >
 > **What you can open.** https://ready.edycu.dev plays back three recorded real Kiro runs on pages we typeset in the 1984 format
 > (one planted typo; two faults where one runs silently; an error the C64 blames on the wrong line), re-judging each patch in
-> your browser. Then type your own fix for the broken line and the same gate judges it, or press Cheat. No C64 ROM is served,
+> your browser. Then type your own fix for the broken line and the same gate judges it, or press Cheat (the gate answers `REFUSED (R4.4)`, and the page adds: "The dead don't get deleted. Nice try."). No C64 ROM is served,
 > so nothing on the site runs on a C64 live; the recordings are labelled as recordings.
 >
 > **Why Kiro:** Kiro specs built the tokenizer/checksum oracle and the MCP tool layer, and Kiro found three places where our own
@@ -195,6 +179,20 @@ npm run typecheck
 The KERNAL-equality property (`tests/prop/kernal-equality.prop.ts`) types generated lines and the committed `tests/fixtures/crypt.bas` (100 OCR-style mutations) into
 the real C64 core and compares its memory with our tokenizer.
 
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![Preact](https://img.shields.io/badge/Preact-673AB8?style=flat&logo=preact&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)
+![Kiro](https://img.shields.io/badge/Kiro-agent_+_MCP_+_hooks-8b5cf6?style=flat)
+![Vercel](https://img.shields.io/badge/Vercel-black?style=flat&logo=vercel)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
+[![Release](docs/badges/release.svg)](https://github.com/edycutjong/ready/releases/latest)
+[![CI](https://github.com/edycutjong/ready/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/ci.yml)
+[![E2E](https://github.com/edycutjong/ready/actions/workflows/e2e.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/e2e.yml)
+[![CodeQL](https://github.com/edycutjong/ready/actions/workflows/codeql.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/codeql.yml)
+[![Security](https://github.com/edycutjong/ready/actions/workflows/security.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/security.yml)
+[![Quality](https://github.com/edycutjong/ready/actions/workflows/quality.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/quality.yml)
+[![Deploy](https://github.com/edycutjong/ready/actions/workflows/deploy.yml/badge.svg)](https://github.com/edycutjong/ready/actions/workflows/deploy.yml)
+
 Six GitHub Actions pipelines run on every push to `main` (the first five also on pull requests):
 
 | Workflow | What it proves |
@@ -229,7 +227,7 @@ The demo video was cut on 2026-11-25 at evals release 1, so its receipts read 49
 
 ## 📄 License
 
-MIT for the code in this repository ([`LICENSE`](LICENSE)); [`NOTICE`](NOTICE) states what it does not cover (the Commodore ROMs embedded in the `c64-ready` emulator WASM, magazine pages and listing text).
+MIT for the code in this repository ([`LICENSE`](LICENSE)); [`NOTICE`](NOTICE) states what it does not cover (the Commodore ROMs embedded in the `c64-ready` emulator WASM, magazine pages and listing text) and records the source, licence and checksum of the committed third-party files: the self-hosted fonts (SIL OFL 1.1, licence texts in [`public/fonts/`](public/fonts/)) and the tesseract.js English model.
 
 ## 🙏 Acknowledgments
 
