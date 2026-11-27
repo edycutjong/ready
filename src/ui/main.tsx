@@ -2,6 +2,7 @@ import { render } from "preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { createC64ReadyCore, type C64Core } from "../emu/core.ts";
 import { cheat, replay, type ReplayResult, type RunEvent } from "../replay/replay.ts";
+import { quip } from "./quips.ts";
 import { judgePatch } from "../replay/judge-patch.ts";
 import { certificateHeading, errata, errataText, lineOrigins, prgBytes, provenance, type RecoveryEvent } from "../replay/certificate.ts";
 import type { CanonicalLine } from "../basic/types.ts";
@@ -243,12 +244,14 @@ function Desk() {
               <button data-testid="cheat" onClick={() => { const c = cheat(view.listing, result.input.spec.expectedLines, view.errLine); const V = c.verdict.verdict.toUpperCase(), r = c.verdict.reason; setCheatOut(`Cheat: empty line ${c.line} → ${r.startsWith(V) ? r : `${V} — ${r}`}`); }}>Cheat: delete the error line</button>
               <p class="note">Cheat runs the same gate code as the Kiro Pre Tool Use hook, in your browser. It does not call Kiro.</p>
               {cheatOut && <p data-testid="cheat-out" class="refused">{cheatOut}</p>}
+              {cheatOut && <p class="quip">{quip(cheatOut, false)}</p>}
               <form class="mine" onSubmit={(e) => { e.preventDefault(); judgeMine(); }}>
                 <label for="mine">Or fix it yourself. Type the line the way you would on a C64:</label>
                 <input id="mine" data-testid="mine" type="text" spellcheck={false} autocomplete="off" value={mine} onInput={(e) => { setMine((e.target as HTMLInputElement).value); setMineOut(null); }} />
                 <button data-testid="mine-judge" type="submit">Judge my line</button>
               </form>
               {mineOut && <p data-testid="mine-out" class={mineOut.ok ? "accepted-out" : "refused"}>{mineOut.text}</p>}
+              {mineOut && <p class="quip">{quip(mineOut.text, mineOut.ok)}</p>}
               <p class="note">The agent's gate, the agent's rules: typeable on a C64 keyboard, its checksum equal to the one printed, at most 40% of the line changed, no deleting or adding lines. Judged against the page as read, before the agent's fix. Only the gate judges here: no C64 runs your line.</p>
             </section>
           </div>
