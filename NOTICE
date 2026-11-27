@@ -9,7 +9,7 @@ Third-party files committed in this repository, each under its own licence:
 - `public/fonts/*.woff` (6 files): byte-identical (sha256) to the latin subsets in the npm packages
   `@fontsource/rokkitt`, `@fontsource/atkinson-hyperlegible-next` and `@fontsource/atkinson-hyperlegible-mono`
   (5.3.0). SIL Open Font License 1.1; the licence text with each family's copyright line ships next to the fonts:
-  `public/fonts/OFL-rokkitt.txt` (Copyright 2016 The Rokkitt Project Authors),
+  `public/fonts/OFL-rokkitt.txt` (Copyright 2016 "The Rokkit Project Authors", spelled so upstream),
   `public/fonts/OFL-atkinson-hyperlegible-next.txt` and `public/fonts/OFL-atkinson-hyperlegible-mono.txt`
   (Copyright 2020-2024 The Atkinson Hyperlegible Next / Mono Project Authors).
 - `public/ocr/eng.traineddata.gz`: the English LSTM model tesseract.js loads by default. Its decompressed content
