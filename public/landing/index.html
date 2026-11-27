@@ -187,7 +187,7 @@ code.in{font-size:.9em;color:var(--ink);background:color-mix(in srgb,var(--rule)
 .replay{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 14px;align-items:center;margin-top:clamp(12px,1.6vw,20px)}
 .replay .btn{padding:9px 13px;font-size:13.5px;color:var(--muted)}
 .replay .btn:hover{color:var(--ink)}
-.ticker{font:500 12.5px/1.5 var(--font-data);color:var(--muted);min-height:3em}
+.ticker{font:500 12.5px/1.5 var(--font-data);color:var(--muted);min-height:4.5em} /* 3 lines: the longest event (hook checksum-gate, Pre Tool Use …) wraps to three; reserving them keeps the hero from growing mid-replay */
 .ticker b{color:var(--ink);font-weight:700}
 .nw{white-space:nowrap}
 .track{grid-column:1/-1;position:relative;height:36px;margin:0 12px}
